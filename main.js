@@ -84,11 +84,51 @@ const room = new THREE.LineSegments(
 room.rotation.y = 3.15;
 scene.add( room );
 
+//Room Walls
+//const geometry = new THREE.PlaneGeometry( 20, 10 );
+const material = new THREE.MeshBasicMaterial( {color: 0xffff33, side: THREE.DoubleSide} );
+
+const planeFrontWall = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
+
+const planeSideWallLeft = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), material );
+const planeSideWallRight = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), material );
+
+const planeFloor = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), new THREE.MeshBasicMaterial( {color: 'red', side: THREE.DoubleSide} ) );
+const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
+
+planeFrontWall.position.z = -12.4;
+
+planeSideWallLeft.position.x = -9.9;
+planeSideWallLeft.position.z = 0;
+planeSideWallLeft.rotation.y = 1.5708; // 90° rotation
+
+planeSideWallRight.position.x = 9.9;
+planeSideWallRight.position.z = 0;
+planeSideWallRight.rotation.y = -1.5708; // 90° rotation
+
+planeFloor.position.x = 0;
+planeFloor.position.y = -4.9;
+planeFloor.rotation.x = -1.5708; // 90° rotation
+
+
+room.add( planeFrontWall );
+room.add( planeSideWallLeft );
+room.add( planeSideWallRight );
+room.add( planeFloor );
+/*
+room.add( planeSideWallLeft );
+room.add( planeSideWallRight );
+room.add( planeFrontWall );
+room.add( planeFloor );
+room.add( planeRoof );
+*/
+
 //Text
+const fontName = 'abel-regular.ttf';
 const fontLoader = new FontLoader();
 const ttfLoader = new TTFLoader();
 const lineText = new THREE.Object3D();
-ttfLoader.load('abel-regular.ttf', (json) => {
+ttfLoader.load(fontName, (json) => {
   const jsonFont = fontLoader.parse(json);
   /*
   const textGeometry = new TextGeometry('hola!', {
@@ -133,11 +173,11 @@ ttfLoader.load('abel-regular.ttf', (json) => {
   // make shape ( N.B. edge view not visible )
 
   const text = new THREE.Mesh( geometry, matLite );
-  text.position.z = - 50;
-  //scene.add( text );
+  text.position.z = 0.15;
+  planeFrontWall.add( text );
 
   // make line shape ( N.B. edge view remains visible )
-
+/*
   const holeShapes = [];
 
   for ( let i = 0; i < shapes.length; i ++ ) {
@@ -173,10 +213,13 @@ ttfLoader.load('abel-regular.ttf', (json) => {
     const lineMesh = new THREE.Line( geometry, matDark );
     lineText.add( lineMesh );
 
-  }
-  lineText.position.z = -15;
-  room.add( lineText );
+  }  
+  //planeFrontWall.add( lineText );*/
 });
+
+lineText.position.x = 0;
+lineText.position.y = 0;
+lineText.position.z = 2;
 
 
 
@@ -278,7 +321,7 @@ function animate(){
   //lineText.position.z = -15 * Math.sin();
 
   
-  lineText.position.z = (Math.sin((clock.getElapsedTime()*10) * 0.2 + 0.2)-13);
+  //lineText.position.z = (Math.sin((clock.getElapsedTime()*10) * 0.2 + 0.2)-13);
 
   /*
   cube2.mesh.rotation.x += 0.01;
