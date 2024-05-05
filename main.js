@@ -68,6 +68,7 @@ const camera = new THREE.PerspectiveCamera(50, options.width / options.height, 1
 camera.position.z = -10;
 camera.position.y = 0;
 camera.position.x = 0;
+//camera.aspect = window.innerWidth / window.innerHeight;
 
 // Controls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -154,13 +155,13 @@ ttfLoader.load(fontName, (json) => {
   const matLite = new THREE.MeshBasicMaterial( {
     color: color,
     transparent: true,
-    opacity: 0.4,
+    opacity: 1,
     side: THREE.DoubleSide
   } );
 
-  const message = 'BlackCube';
+  const message = 'BlackCube siudfbnvgsadjgn \n odsaghsapg';
 
-  const shapes = jsonFont.generateShapes( message, 1 );
+  const shapes = jsonFont.generateShapes( message, 0.33 );
 
   const geometry = new THREE.ShapeGeometry( shapes );
 
@@ -174,6 +175,7 @@ ttfLoader.load(fontName, (json) => {
 
   const text = new THREE.Mesh( geometry, matLite );
   text.position.z = 0.15;
+  text.position.x = -5;
   planeFrontWall.add( text );
 
   // make line shape ( N.B. edge view remains visible )
@@ -228,7 +230,7 @@ const masterCubeGeo = new THREE.BoxGeometry(3, 3, 3);
 const masterCubeMat = new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.0})
 const masterCubeMesh = new THREE.Mesh(masterCubeGeo, masterCubeMat);
 masterCubeMesh.position.y = 0;
-//scene.add(masterCubeMesh);
+scene.add(masterCubeMesh);
 
 function createCube(color){
   const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
