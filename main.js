@@ -2,6 +2,8 @@ import './style.css';
 import * as THREE from 'three';
 import { OrbitControls, BoxLineGeometry, FontLoader, TTFLoader, TextGeometry } from 'three/examples/jsm/Addons.js';
 
+import * as M1 from './module1.js'
+
 // Inner Cubes List
 var listInnerCubes = [
   //1st livel
@@ -159,7 +161,7 @@ ttfLoader.load(fontName, (json) => {
     side: THREE.DoubleSide
   } );
 
-  const message = 'BlackCube siudfbnvgsadjgn \n odsaghsapg';
+  const message = M1.getExampleText();
 
   const shapes = jsonFont.generateShapes( message, 0.33 );
 
@@ -285,7 +287,7 @@ const wireMat = new THREE.MeshBasicMaterial({
 });
 const wireMesh = new THREE.Mesh(masterCubeGeo, wireMat);
 wireMesh.scale.setScalar(1.001);
-masterCubeMesh.add(wireMesh);
+//masterCubeMesh.add(wireMesh);
 
 /*
 masterCubeMesh.children.forEach(function(cube){
