@@ -39,7 +39,6 @@ $ And keep this in mind
 ### Branches
 
 * Master: working
-* first-branch: Massimo
 * three-dev: Massimo
 
 ## Additional Documentation and Acknowledgments
