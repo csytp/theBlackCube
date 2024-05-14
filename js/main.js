@@ -52,7 +52,7 @@ var listInnerCubes = [
 ];
 
 
-let camera, scene, renderer;
+let camera, camera2, scene, renderer;
 let lightProbe;
 
 // Options
@@ -81,6 +81,10 @@ document.getElementById('app').appendChild(renderer.domElement);
 /*const*/ camera = new THREE.PerspectiveCamera(50, options.width / options.height, 1, 1000 );
 camera.position.set( 0, 0, -10 );
 
+/*const*/ /*camera2 = new THREE.PerspectiveCamera(50, options.width / options.height, 1, 1000 );
+camera2.position.set( 0, 0, -1 );
+const helper = new THREE.CameraHelper( camera2);
+scene.add( helper );*/
 
 // Objects
 
@@ -107,29 +111,36 @@ const planeSideWallRight = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), ma
 const planeFloor = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
 //const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
 const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
+
+// Lights from panels
 /*
-const lightPanel1 = new THREE.PointLight( 0xFFFFFF, 50, 50);
-lightPanel1.position.set(0, 0, 5);
-planeFrontWall.add( lightPanel1 );*/
+const lightPanel1 = new THREE.PointLight( 0xFFFFFF, 100, 100);
+lightPanel1.position.set(0, 2, -3);
+camera.add( lightPanel1 );
+*/
+/*
+// left light
+const lightPanel2 = new THREE.PointLight( 0xFFFFFF, 50, 500);
+lightPanel2.position.set(-7, 2, -10);
+camera.add( lightPanel2 );
+// right light
 
-const lightPanel2 = new THREE.PointLight( 0xFFFFFF, 100, 100);
-lightPanel2.position.set(-2, 3, 7);
-planeSideWallLeft.add( lightPanel2 );
+const lightPanel3 = new THREE.PointLight( 0xFFFFFF, 50, 500);
+lightPanel3.position.set(7, 2, -10);
+camera.add( lightPanel3 );
+*/
+//front direct light
+/*
+const lightPanel4 = new THREE.DirectionalLight( 0xFF0000, 10);
+lightPanel4.position.set(0, 0, -1);
+camera.add( lightPanel4 );*/
+//front up direct light
 
 
-const lightPanel3 = new THREE.PointLight( 0xFFFFFF, 100, 100);
-lightPanel3.position.set(2, 3, 7);
-planeSideWallRight.add( lightPanel3 );
-
-const lightPanel4 = new THREE.PointLight( 0xFFFFFF, 100, 100);
-//lightPanel4.position.set(5, 7, 3);
-lightPanel4.position.set(0,0,-1.5);
-planeRoof.add( lightPanel4 );
-
-
-const pointLightHelper = new THREE.PointLightHelper( lightPanel4 );
-scene.add( pointLightHelper );
-
+/*
+const pointLightHelper = new THREE.DirectionalLightHelper( lightPanel5 );
+camera.add( pointLightHelper );
+*/
 planeFrontWall.position.z = -12.4;
 planeBackWall.position.z = 2;
 
@@ -160,8 +171,54 @@ room.add( planeRoof );
 
 // FIX ROOM (and rotate only the mastercube)
 scene.add( camera ); // required when the camera has a child
+//scene.add( camera2 );
 camera.add( room );
-//scene.add(room);
+//scene.add(room); // when testing room structure
+
+const spotLight1 = new THREE.SpotLight( 0xFFFFFF, 250);
+spotLight1.position.set( 2, 3, -8 );
+spotLight1.angle = Math.PI / 4; // apertura del cono luce
+spotLight1.penumbra = 0.2;
+spotLight1.decay = 2;
+spotLight1.distance = 0;
+
+const spotLight2 = new THREE.SpotLight( 0xFFFFFF, 250);
+spotLight2.position.set( -2, 3, -8 );
+spotLight2.angle = Math.PI / 4; // apertura del cono luce
+spotLight2.penumbra = 0.2;
+spotLight2.decay = 2;
+spotLight2.distance = 0;
+
+const spotLight3 = new THREE.SpotLight( 0xFFFFFF, 250);
+spotLight3.position.set( 2, -3, -8 );
+spotLight3.angle = Math.PI / 4; // apertura del cono luce
+spotLight3.penumbra = 0.2;
+spotLight3.decay = 2;
+spotLight3.distance = 0;
+
+const spotLight4 = new THREE.SpotLight( 0xFFFFFF, 250);
+spotLight4.position.set( -2, -3, -8 );
+spotLight4.angle = Math.PI / 4; // apertura del cono luce
+spotLight4.penumbra = 0.2;
+spotLight4.decay = 2;
+spotLight4.distance = 0;
+
+const lightPanel3 = new THREE.PointLight( 0xFFFFFF, 50, 500);
+lightPanel3.position.set(0,0,0);
+camera.add( lightPanel3 );
+/*
+spotLight.castShadow = true;
+spotLight.shadow.mapSize.width = 512;
+spotLight.shadow.mapSize.height = 512;
+spotLight.shadow.camera.near = 1;
+spotLight.shadow.camera.far = 10;
+spotLight.shadow.focus = 1;*/
+camera.add( spotLight1 );
+camera.add( spotLight2 );
+camera.add( spotLight3 );
+camera.add( spotLight4 );
+camera.add( lightPanel3 );
+
 
 //TEXT
 
@@ -171,6 +228,25 @@ const masterCubeMat = new THREE.MeshLambertMaterial({color: 0xffffff, transparen
 const masterCubeMesh = new THREE.Mesh(masterCubeGeo, masterCubeMat);
 masterCubeMesh.position.y = 0;
 scene.add(masterCubeMesh);
+
+//camera.lookAt(masterCubeMesh);
+
+var raycaster2 = new THREE.Raycaster();
+var mouse = new THREE.Vector2();
+//var targetMesh
+function onMouseClick( event ) {
+    raycaster2.setFromCamera( mouse, camera );
+    var isIntersected = raycaster2.intersectObject( masterCubeMesh );
+    if (isIntersected) {
+        console.log('Mesh clicked!')
+    }
+}
+function onMouseMove( event ) {
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+}
+window.addEventListener( 'mouseclick', onMouseClick, false );
+window.addEventListener( 'mousemove', onMouseMove, false );
 
 function createCube(color){
   const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -248,20 +324,25 @@ lightProbe = new THREE.LightProbe();
 const ambientLight = new THREE.AmbientLight(0xffffff);
 room.add(ambientLight);
 */
-
+/*
 const light = new THREE.PointLight( 0xFFFFFF, 100, 18);
 light.position.set(0,0,0);
 camera.add( light );
-
+*/
 // Controls
 const controls = new TrackballControls(camera, renderer.domElement);
-controls.enableDamping = true;
+//controls.enableDamping = true;
 //controls.dampingFactor = 0.5;
 //controls.target = new THREE.Vector3( 0, 1, 1.8 );
-/*
-controls.minDistance = 20;
-controls.maxDistance = 1000;
-*/
+
+//controls.minDistance = 0;
+controls.noPan = true;
+controls.maxDistance = controls.minDistance = 0;  
+controls.noKeys = true;
+controls.noRotate = false;
+controls.noZoom = true;
+//controls.maxDistance = 1000;
+
 /*
 controls.minPolarAngle = 0; // radians
 controls.maxPolarAngle = Math.PI; // radians
@@ -280,7 +361,7 @@ scene.add(gridHelper);
 
 // ANIMATIONS CONTROLS / EVENT LISTNERS
 const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
+//const mouse = new THREE.Vector2();
 let intersects = []
 let hovered = {}
 
@@ -305,16 +386,19 @@ window.addEventListener('pointermove', (e) => {
 });
 
 // Loop
-
+var t = 0;
 function animate(){
   requestAnimationFrame( animate );
   controls.update();
   renderer.render(scene, camera);
 
+  //spotLight.position.set(1.5, -2, Math.sin(t)+2);
+  t += 0.05;
+/*
   masterCubeMesh.rotation.x += 0.008;
   masterCubeMesh.rotation.z += 0.008;
   masterCubeMesh.rotation.z += 0.008;
-
+*/
 }
 animate();
 
