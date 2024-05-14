@@ -2,8 +2,11 @@ import './../css/style.css';
 import * as THREE from 'three';
 import { OrbitControls, BoxLineGeometry, FontLoader, TTFLoader, TextGeometry,TrackballControls} from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/Addons.js';
+import { LightProbeGenerator  } from 'three/examples/jsm/Addons.js';
+//import { GUI } from 'three/examples/jsm/Addons.js';
 
 import * as M1 from './module1.js'
+import { lights } from 'three/examples/jsm/nodes/Nodes.js';
 //import * as TM from './text-module.js'
 
 // Inner Cubes List
@@ -49,7 +52,8 @@ var listInnerCubes = [
 ];
 
 
-let camera, scene, renderer, labelRenderer;
+let camera, scene, renderer;
+let lightProbe;
 
 // Options
 const options = {
@@ -62,7 +66,7 @@ const clock = new THREE.Clock();
 
 // Scene
 /*const*/ scene = new THREE.Scene();
-scene.background = new THREE.Color( 0xffffff );
+//scene.background = new THREE.Color( 0xffffff );
 
 // Render
 /*const*/ renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
@@ -92,149 +96,64 @@ room.position.set( 0, 0, - 10 );
 
 //Room Walls
 //const geometry = new THREE.PlaneGeometry( 20, 10 );
-const material = new THREE.MeshBasicMaterial( {color: 0xffff33, side: THREE.DoubleSide} );
+const material = new THREE.MeshLambertMaterial( {color:  0xf2f4f4 , side: THREE.DoubleSide, alpha: true} );
 
 const planeFrontWall = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
+const planeBackWall = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
 
 const planeSideWallLeft = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), material );
 const planeSideWallRight = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), material );
 
-const planeFloor = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), new THREE.MeshBasicMaterial( {color: 'red', side: THREE.DoubleSide} ) );
-const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
+const planeFloor = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
+//const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
+const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
+
+const lightPanel1 = new THREE.PointLight( 0xFFFFFF, 50, 50);
+lightPanel1.position.set(4, 0, 12);
+planeFrontWall.add( lightPanel1 );
+
+const lightPanel2 = new THREE.PointLight( 0xFFFFFF, 50, 50);
+lightPanel2.position.set(0, 0, 0);
+planeSideWallLeft.add( lightPanel2 );
+
+const lightPanel3 = new THREE.PointLight( 0xFFFFFF, 50, 50);
+lightPanel3.position.set(0, 0, 0);
+planeSideWallRight.add( lightPanel3 );
 
 planeFrontWall.position.z = -12.4;
+planeBackWall.position.z = 2;
 
 planeSideWallLeft.position.x = -9.9;
 planeSideWallLeft.position.z = 0;
-planeSideWallLeft.rotation.y = 1.5708; // 90° rotation
+planeSideWallLeft.rotation.y = Math.PI / 2;
 
 planeSideWallRight.position.x = 9.9;
 planeSideWallRight.position.z = 0;
-planeSideWallRight.rotation.y = -1.5708; // -90° rotation
+planeSideWallRight.rotation.y = -Math.PI / 2;
 
 planeFloor.position.x = 0;
 planeFloor.position.y = -4.9;
-planeFloor.rotation.x = -1.5708; // -90° rotation
+planeFloor.rotation.x = -Math.PI / 2;
+
+planeRoof.position.x = 0;
+planeRoof.position.y = 4.9;
+planeRoof.rotation.x = Math.PI / 2 ;
 
 
 room.add( planeFrontWall );
+//room.add( planeBackWall );
 room.add( planeSideWallLeft );
 room.add( planeSideWallRight );
 room.add( planeFloor );
-//room.add( planeRoof );
+room.add( planeRoof );
+
 
 // FIX ROOM (and rotate only the mastercube)
 scene.add( camera ); // required when the camera has a child
 camera.add( room );
+//scene.add(room);
 
 //TEXT
-
-/*const*/
-
-labelRenderer = new CSS2DRenderer();
-labelRenderer.setSize( window.innerWidth, window.innerHeight );
-labelRenderer.domElement.style.position = 'absolute';
-labelRenderer.domElement.style.top = '0px';
-document.body.appendChild( labelRenderer.domElement );
-
-
-const fontName = 'abel-regular.ttf';
-const fontLoader = new FontLoader();
-const ttfLoader = new TTFLoader();
-const lineText = new THREE.Object3D();
-ttfLoader.load(fontName, (json) => {
-  const jsonFont = fontLoader.parse(json);
-  
-  const textGeometry = new TextGeometry('hola!', {
-    //height: 2,
-    size: 1,
-    font: jsonFont
-  });
-  const textMaterial = new THREE.MeshNormalMaterial();
-  const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-  textMesh.position.x = 5;
-  textMesh.position.y = 0;
-
-  //scene.add(textMesh);
-  
-
-  const color = 0x000;
-
-  const matDark = new THREE.LineBasicMaterial( {
-    color: color,
-    side: THREE.DoubleSide
-  } );
-
-  const matLite = new THREE.MeshBasicMaterial( {
-    color: color,
-    transparent: true,
-    opacity: 1,
-    side: THREE.DoubleSide
-  } );
-
-  const message = M1.getExampleText();  //get text
-
-  const shapes = jsonFont.generateShapes( message, 0.33 );
-
-  const geometry = new THREE.ShapeGeometry( shapes );
-
-  geometry.computeBoundingBox();
-
-  const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
-
-  geometry.translate( xMid, 0, 0 );
-
-  // make shape ( N.B. edge view not visible )
-
-  const text = new THREE.Mesh( geometry, matLite );
-  text.position.z = 0.15;
-  text.position.x = 0;
-  planeFrontWall.add( text );
-
-  // make line shape ( N.B. edge view remains visible )
-  /*
-  const holeShapes = [];
-
-  for ( let i = 0; i < shapes.length; i ++ ) {
-
-    const shape = shapes[ i ];
-
-    if ( shape.holes && shape.holes.length > 0 ) {
-
-      for ( let j = 0; j < shape.holes.length; j ++ ) {
-
-        const hole = shape.holes[ j ];
-        holeShapes.push( hole );
-
-      }
-
-    }
-
-  }
-
-  shapes.push.apply( shapes, holeShapes );
-
-  const lineText = new THREE.Object3D();
-
-  for ( let i = 0; i < shapes.length; i ++ ) {
-
-    const shape = shapes[ i ];
-
-    const points = shape.getPoints();
-    const geometry = new THREE.BufferGeometry().setFromPoints( points );
-
-    geometry.translate( xMid, 0, 0 );
-
-    const lineMesh = new THREE.Line( geometry, matDark );
-    lineText.add( lineMesh );
-
-  }  
-  planeFrontWall.add( lineText );*/
-});
-
-lineText.position.x = -5;
-lineText.position.y = -2;
-lineText.position.z = 2;
 
 // Master Cube
 const masterCubeGeo = new THREE.BoxGeometry(3, 3, 3);
@@ -243,12 +162,9 @@ const masterCubeMesh = new THREE.Mesh(masterCubeGeo, masterCubeMat);
 masterCubeMesh.position.y = 0;
 scene.add(masterCubeMesh);
 
-
-
-
 function createCube(color){
   const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
-  const meshMaterial = new THREE.MeshStandardMaterial({color: color});  
+  const meshMaterial = new THREE.MeshPhongMaterial({color: color});  
   const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
   const obj = new THREE.Object3D();
   obj.add(mesh);
@@ -279,7 +195,7 @@ function fillMasterCube(){
     
   listInnerCubes.forEach(function(innerCube){
 
-    const cube = createCube(getRandomColor());
+    const cube = createCube(0x000000);
 
     cube.mesh.position.x = innerCube.x;
     cube.mesh.position.y = innerCube.y;
@@ -313,14 +229,22 @@ const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
 directionalLight.position.z = 10;
 directionalLight.position.x = 10;
 directionalLight.position.y = 10;
-scene.add(directionalLight)
+masterCubeMesh.add(directionalLight);
+*//*
+lightProbe = new THREE.LightProbe();
+//lightProbe.add( masterCubeMesh );
+*/
+/*
+const ambientLight = new THREE.AmbientLight(0xffffff);
+room.add(ambientLight);
 */
 
-const ambientLight = new THREE.AmbientLight(0xffffff);
-scene.add(ambientLight);
+const light = new THREE.PointLight( 0xFFFFFF, 100, 18);
+light.position.set(0,0,0);
+camera.add( light );
 
 // Controls
-const controls = new TrackballControls(camera, labelRenderer.domElement);
+const controls = new TrackballControls(camera, renderer.domElement);
 controls.enableDamping = true;
 //controls.dampingFactor = 0.5;
 //controls.target = new THREE.Vector3( 0, 1, 1.8 );
@@ -376,10 +300,10 @@ function animate(){
   requestAnimationFrame( animate );
   controls.update();
   renderer.render(scene, camera);
-/*
-  masterCubeMesh.rotation.x += 0.01;
-  masterCubeMesh.rotation.z += 0.02;
-  masterCubeMesh.rotation.z += 0.008;*/
+
+  masterCubeMesh.rotation.x += 0.008;
+  masterCubeMesh.rotation.z += 0.008;
+  masterCubeMesh.rotation.z += 0.008;
 
 }
 animate();
