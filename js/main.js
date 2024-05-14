@@ -123,7 +123,7 @@ planeSideWallRight.add( lightPanel3 );
 
 const lightPanel4 = new THREE.PointLight( 0xFFFFFF, 100, 100);
 //lightPanel4.position.set(5, 7, 3);
-lightPanel4.position.set(0,0,-1);
+lightPanel4.position.set(0,0,-1.5);
 planeRoof.add( lightPanel4 );
 
 
