@@ -1,8 +1,10 @@
-import './style.css';
+import './../css/style.css';
 import * as THREE from 'three';
 import { OrbitControls, BoxLineGeometry, FontLoader, TTFLoader, TextGeometry } from 'three/examples/jsm/Addons.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/Addons.js';
 
 import * as M1 from './module1.js'
+//import * as TM from './text-module.js'
 
 // Inner Cubes List
 var listInnerCubes = [
@@ -46,6 +48,9 @@ var listInnerCubes = [
   {x:1, y:1, z:-1, value: ''},
 ];
 
+
+let camera, scene, renderer, labelRenderer;
+
 // Options
 const options = {
   width: window.innerWidth,
@@ -56,26 +61,22 @@ const options = {
 const clock = new THREE.Clock();
 
 // Scene
-const scene = new THREE.Scene();
+/*const*/ scene = new THREE.Scene();
 scene.background = new THREE.Color( 0xffffff );
 
 // Render
-const renderer = new THREE.WebGLRenderer({alpha: true});
+/*const*/ renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
 renderer.setSize(options.width, options.height);
-renderer.setPixelRatio(2);
-document.body.appendChild(renderer.domElement);
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.xr.enabled = true;
+//document.body.appendChild( VRButton.createButton( renderer ) );
+//document.body.appendChild(renderer.domElement);
+document.getElementById('app').appendChild(renderer.domElement);
 
 // Camera
-const camera = new THREE.PerspectiveCamera(50, options.width / options.height, 1, 1000 );
-camera.position.z = -10;
-camera.position.y = 0;
-camera.position.x = 0;
-//camera.aspect = window.innerWidth / window.innerHeight;
+/*const*/ camera = new THREE.PerspectiveCamera(50, options.width / options.height, 1, 1000 );
+camera.position.set( 0, 0, -10 );
 
-// Controls
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.05;
 
 // Objects
 
@@ -84,8 +85,10 @@ const room = new THREE.LineSegments(
   new BoxLineGeometry( 20, 10, 25, 100, 100, 100 ).translate( 0, 0, 0 ),
   new THREE.LineBasicMaterial( { color: 0x808080 } )
 );
-room.rotation.y = 3.15;
-scene.add( room );
+room.rotation.set(0, 0, 0);
+room.position.set( 0, 0, - 10 );
+//scene.add( room );
+
 
 //Room Walls
 //const geometry = new THREE.PlaneGeometry( 20, 10 );
@@ -107,33 +110,41 @@ planeSideWallLeft.rotation.y = 1.5708; // 90° rotation
 
 planeSideWallRight.position.x = 9.9;
 planeSideWallRight.position.z = 0;
-planeSideWallRight.rotation.y = -1.5708; // 90° rotation
+planeSideWallRight.rotation.y = -1.5708; // -90° rotation
 
 planeFloor.position.x = 0;
 planeFloor.position.y = -4.9;
-planeFloor.rotation.x = -1.5708; // 90° rotation
+planeFloor.rotation.x = -1.5708; // -90° rotation
 
 
 room.add( planeFrontWall );
 room.add( planeSideWallLeft );
 room.add( planeSideWallRight );
 room.add( planeFloor );
-/*
-room.add( planeSideWallLeft );
-room.add( planeSideWallRight );
-room.add( planeFrontWall );
-room.add( planeFloor );
-room.add( planeRoof );
-*/
+//room.add( planeRoof );
 
-//Text
+// FIX ROOM (and rotate only the mastercube)
+scene.add( camera ); // required when the camera has a child
+camera.add( room );
+
+//TEXT
+
+/*const*/
+
+labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize( window.innerWidth, window.innerHeight );
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0px';
+document.body.appendChild( labelRenderer.domElement );
+
+
 const fontName = 'abel-regular.ttf';
 const fontLoader = new FontLoader();
 const ttfLoader = new TTFLoader();
 const lineText = new THREE.Object3D();
 ttfLoader.load(fontName, (json) => {
   const jsonFont = fontLoader.parse(json);
-  /*
+  
   const textGeometry = new TextGeometry('hola!', {
     //height: 2,
     size: 1,
@@ -141,11 +152,11 @@ ttfLoader.load(fontName, (json) => {
   });
   const textMaterial = new THREE.MeshNormalMaterial();
   const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-  textMesh.position.x = 15;
+  textMesh.position.x = 5;
   textMesh.position.y = 0;
 
-  scene.add(textMesh);
-  */
+  //scene.add(textMesh);
+  
 
   const color = 0x000;
 
@@ -161,7 +172,7 @@ ttfLoader.load(fontName, (json) => {
     side: THREE.DoubleSide
   } );
 
-  const message = M1.getExampleText();
+  const message = M1.getExampleText();  //get text
 
   const shapes = jsonFont.generateShapes( message, 0.33 );
 
@@ -177,11 +188,11 @@ ttfLoader.load(fontName, (json) => {
 
   const text = new THREE.Mesh( geometry, matLite );
   text.position.z = 0.15;
-  text.position.x = -5;
+  text.position.x = 0;
   planeFrontWall.add( text );
 
   // make line shape ( N.B. edge view remains visible )
-/*
+  /*
   const holeShapes = [];
 
   for ( let i = 0; i < shapes.length; i ++ ) {
@@ -203,7 +214,7 @@ ttfLoader.load(fontName, (json) => {
 
   shapes.push.apply( shapes, holeShapes );
 
-  //const lineText = new THREE.Object3D();
+  const lineText = new THREE.Object3D();
 
   for ( let i = 0; i < shapes.length; i ++ ) {
 
@@ -218,14 +229,12 @@ ttfLoader.load(fontName, (json) => {
     lineText.add( lineMesh );
 
   }  
-  //planeFrontWall.add( lineText );*/
+  planeFrontWall.add( lineText );*/
 });
 
-lineText.position.x = 0;
-lineText.position.y = 0;
+lineText.position.x = -5;
+lineText.position.y = -2;
 lineText.position.z = 2;
-
-
 
 // Master Cube
 const masterCubeGeo = new THREE.BoxGeometry(3, 3, 3);
@@ -233,6 +242,9 @@ const masterCubeMat = new THREE.MeshLambertMaterial({color: 0xffffff, transparen
 const masterCubeMesh = new THREE.Mesh(masterCubeGeo, masterCubeMat);
 masterCubeMesh.position.y = 0;
 scene.add(masterCubeMesh);
+
+
+
 
 function createCube(color){
   const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -306,34 +318,68 @@ scene.add(directionalLight)
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
 scene.add(ambientLight);
-//renderer.render(scene, camera);
+
+// Controls
+const controls = new OrbitControls(camera, labelRenderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+//controls.target = new THREE.Vector3( 0, 1, 1.8 );
+controls.minDistance = 5;
+controls.maxDistance = 100;
+controls.addEventListener('change', () => {
+  masterCubeMesh.position.copy(controls.target.clone());
+});
+
+// Helper
+/*
+const gridHelper = new THREE.GridHelper(12, 12);
+scene.add(gridHelper);
+*/
+
+// ANIMATIONS CONTROLS / EVENT LISTNERS
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let intersects = []
+let hovered = {}
+
+
+
+window.addEventListener('pointermove', (e) => {
+
+  mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
+  raycaster.setFromCamera(mouse, camera);
+  intersects = raycaster.intersectObjects(scene.children, true);
+  console.log(intersects);
+/*
+  Object.keys(hovered).forEach((key) => {
+    const hit = intersects.find((hit) => hit.object.uuid === key)
+    if (hit === undefined) {
+      const hoveredItem = hovered[key]
+      if (hoveredItem.object.onPointerOver) hoveredItem.object.onPointerOut(hoveredItem)
+      delete hovered[key]
+    }
+  });*/
+
+});
 
 // Loop
-//let sinValue = -15 * Math.sin(1);
+
 function animate(){
   requestAnimationFrame( animate );
   controls.update();
   renderer.render(scene, camera);
 /*
-  camera.position.x += 1;
-  console.log(camera.position.x);*/
+  masterCubeMesh.rotation.x += 0.01;
+  masterCubeMesh.rotation.z += 0.02;
+  masterCubeMesh.rotation.z += 0.008;*/
 
-  masterCubeMesh.rotation.x +=0.01;
-  masterCubeMesh.rotation.y +=0.02;
-  masterCubeMesh.rotation.z +=0.008;
-
-  //lineText.position.z = -15 * Math.sin();
-
-  
-  //lineText.position.z = (Math.sin((clock.getElapsedTime()*10) * 0.2 + 0.2)-13);
-
-  /*
-  cube2.mesh.rotation.x += 0.01;
-  cube3.mesh.rotation.x += 0.01;
-  
-  cubeObj.rotation.y += 0.01;
-  //cubeObj.position.y += -0.01;
-  cubeObj2.rotation.x += -0.01;
-  cubeObj2.rotation.y += -0.01;*/  
 }
 animate();
+
+function onWindowResize() {
+
+	camera.aspect = window.innerWidth / window.innerHeight;
+	camera.updateProjectionMatrix();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+
+}

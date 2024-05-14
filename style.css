@@ -1,9 +1,0 @@
-*{
-  margin: 0;
-  padding: 0;
-  block-size: border-box;
-}
-
-html, body {
-  overflow: hidden;
-}
