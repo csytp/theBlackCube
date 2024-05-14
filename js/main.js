@@ -1,6 +1,6 @@
 import './../css/style.css';
 import * as THREE from 'three';
-import { OrbitControls, BoxLineGeometry, FontLoader, TTFLoader, TextGeometry } from 'three/examples/jsm/Addons.js';
+import { OrbitControls, BoxLineGeometry, FontLoader, TTFLoader, TextGeometry,TrackballControls} from 'three/examples/jsm/Addons.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/Addons.js';
 
 import * as M1 from './module1.js'
@@ -320,12 +320,20 @@ const ambientLight = new THREE.AmbientLight(0xffffff);
 scene.add(ambientLight);
 
 // Controls
-const controls = new OrbitControls(camera, labelRenderer.domElement);
+const controls = new TrackballControls(camera, labelRenderer.domElement);
 controls.enableDamping = true;
-controls.dampingFactor = 0.05;
+//controls.dampingFactor = 0.5;
 //controls.target = new THREE.Vector3( 0, 1, 1.8 );
-controls.minDistance = 5;
-controls.maxDistance = 100;
+/*
+controls.minDistance = 20;
+controls.maxDistance = 1000;
+*/
+/*
+controls.minPolarAngle = 0; // radians
+controls.maxPolarAngle = Math.PI; // radians
+controls.minAzimuthAngle = - Infinity; // radians
+controls.maxAzimuthAngle = Infinity;
+*/
 controls.addEventListener('change', () => {
   masterCubeMesh.position.copy(controls.target.clone());
 });
@@ -342,7 +350,7 @@ const mouse = new THREE.Vector2();
 let intersects = []
 let hovered = {}
 
-
+window.addEventListener("resize", onWindowResize);
 
 window.addEventListener('pointermove', (e) => {
 
@@ -377,9 +385,8 @@ function animate(){
 animate();
 
 function onWindowResize() {
-
+/*
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
-	renderer.setSize( window.innerWidth, window.innerHeight );
-
+	renderer.setSize( window.innerWidth, window.innerHeight );*/
 }
