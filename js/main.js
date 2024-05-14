@@ -90,7 +90,7 @@ const room = new THREE.LineSegments(
   new THREE.LineBasicMaterial( { color: 0x808080 } )
 );
 room.rotation.set(0, 0, 0);
-room.position.set( 0, 0, - 10 );
+room.position.set( 0, 0, -10 );
 //scene.add( room );
 
 
@@ -107,18 +107,28 @@ const planeSideWallRight = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), ma
 const planeFloor = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
 //const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
 const planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
-
+/*
 const lightPanel1 = new THREE.PointLight( 0xFFFFFF, 50, 50);
-lightPanel1.position.set(4, 0, 12);
-planeFrontWall.add( lightPanel1 );
+lightPanel1.position.set(0, 0, 5);
+planeFrontWall.add( lightPanel1 );*/
 
-const lightPanel2 = new THREE.PointLight( 0xFFFFFF, 50, 50);
-lightPanel2.position.set(0, 0, 0);
+const lightPanel2 = new THREE.PointLight( 0xFFFFFF, 100, 100);
+lightPanel2.position.set(-2, 3, 7);
 planeSideWallLeft.add( lightPanel2 );
 
-const lightPanel3 = new THREE.PointLight( 0xFFFFFF, 50, 50);
-lightPanel3.position.set(0, 0, 0);
+
+const lightPanel3 = new THREE.PointLight( 0xFFFFFF, 100, 100);
+lightPanel3.position.set(2, 3, 7);
 planeSideWallRight.add( lightPanel3 );
+
+const lightPanel4 = new THREE.PointLight( 0xFFFFFF, 100, 100);
+//lightPanel4.position.set(5, 7, 3);
+lightPanel4.position.set(0,0,-1);
+planeRoof.add( lightPanel4 );
+
+
+const pointLightHelper = new THREE.PointLightHelper( lightPanel4 );
+scene.add( pointLightHelper );
 
 planeFrontWall.position.z = -12.4;
 planeBackWall.position.z = 2;
