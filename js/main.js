@@ -52,7 +52,7 @@ var listInnerCubes = [
 ];
 
 
-let camera, camera2, scene, renderer;
+let camera, scene, renderer;
 let lightProbe;
 
 // Options
@@ -78,7 +78,7 @@ renderer.xr.enabled = true;
 document.getElementById('app').appendChild(renderer.domElement);
 
 // Camera
-/*const*/ camera = new THREE.PerspectiveCamera(50, options.width / options.height, 1, 1000 );
+/*const*/ camera = new THREE.PerspectiveCamera(100, options.width / options.height, 1, 1000 );
 camera.position.set( 0, 0, -10 );
 
 /*const*/ /*camera2 = new THREE.PerspectiveCamera(50, options.width / options.height, 1, 1000 );
@@ -172,17 +172,14 @@ spotLight4.penumbra = 0.2;
 spotLight4.decay = 2;
 spotLight4.distance = 0;
 
-const lightPanel3 = new THREE.PointLight( 0xFFFFFF, 100, 250);
-lightPanel3.position.set(0,0,-3);
+const frontLight = new THREE.PointLight( 0xFFFFFF, 100, 250);
+frontLight.position.set(0,0,-3);
 
 camera.add( spotLight1 );
 camera.add( spotLight2 );
 camera.add( spotLight3 );
 camera.add( spotLight4 );
-camera.add( lightPanel3 );
-
-
-//TEXT
+camera.add( frontLight );
 
 // Master Cube
 const masterCubeGeo = new THREE.BoxGeometry(3, 3, 3);
@@ -190,8 +187,6 @@ const masterCubeMat = new THREE.MeshLambertMaterial({color: 0xffffff, transparen
 const masterCubeMesh = new THREE.Mesh(masterCubeGeo, masterCubeMat);
 masterCubeMesh.position.y = 0;
 scene.add(masterCubeMesh);
-
-//camera.lookAt(masterCubeMesh);
 
 var raycaster2 = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -270,26 +265,7 @@ masterCubeMesh.children.forEach(function(cube){
   console.log(cube);
 
 });*/
-// Lights
-/*
-const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-directionalLight.position.z = 10;
-directionalLight.position.x = 10;
-directionalLight.position.y = 10;
-masterCubeMesh.add(directionalLight);
-*//*
-lightProbe = new THREE.LightProbe();
-//lightProbe.add( masterCubeMesh );
-*/
-/*
-const ambientLight = new THREE.AmbientLight(0xffffff);
-room.add(ambientLight);
-*/
-/*
-const light = new THREE.PointLight( 0xFFFFFF, 100, 18);
-light.position.set(0,0,0);
-camera.add( light );
-*/
+
 // Controls
 const controls = new TrackballControls(camera, renderer.domElement);
 
@@ -315,6 +291,7 @@ const raycaster = new THREE.Raycaster();
 let intersects = []
 let hovered = {}
 
+// EVENT LISTENERS
 window.addEventListener("resize", onWindowResize);
 
 window.addEventListener('pointermove', (e) => {
@@ -348,14 +325,14 @@ function animate(){
 
   t += 0.05;
 
+  /*
   masterCubeMesh.rotation.x += 0.008;
   masterCubeMesh.rotation.z += 0.008;
-  masterCubeMesh.rotation.z += 0.008;
+  masterCubeMesh.rotation.z += 0.008;*/
 }
 animate();
 
 function onWindowResize() {
-
 	camera.aspect = window.innerWidth / window.innerHeight;
 	camera.updateProjectionMatrix();
 	renderer.setSize( window.innerWidth, window.innerHeight );
