@@ -1,4 +1,4 @@
-import '../css/style.css';
+//import '../css/style.css';
 import * as THREE from 'three';
 import { BoxLineGeometry } from "three/addons/geometries/BoxLineGeometry.js";
 import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
