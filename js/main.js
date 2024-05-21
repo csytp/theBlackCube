@@ -4,7 +4,6 @@ import { BoxLineGeometry } from "three/addons/geometries/BoxLineGeometry.js";
 import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
 import { CSS2DRenderer } from 'three/addons/renderers/CSS2DRenderer.js';
 import { LightProbeGenerator } from 'three/addons/lights/LightProbeGenerator.js';
 //import { GUI } from 'three/examples/jsm/Addons.js';
