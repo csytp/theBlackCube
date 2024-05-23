@@ -65,17 +65,22 @@ var listInnerCubes = [
   {x:1, y:1, z:-1, val: true, top_panel:true, left_panel: true, front_panel: true}
 ];
 
+
+var interactionsText = {
+  rotation: 'Ruota!',
+  zoom: 'ZOOM!!!'
+}
+
 function init(){
 
   // Clock
   clock = new THREE.Clock();
-  
-  // Timer
-  timer = new Timer();
 
   // Scene
   /*const*/ scene = new THREE.Scene();
   scene.background = new THREE.Color( 0xffffff );
+
+  timer = new Timer();
 
   // Render
   /*const*/ renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
@@ -87,9 +92,11 @@ function init(){
   document.getElementById('app').appendChild(renderer.domElement);
 
   // Camera
-  /*const*/ camera = new THREE.PerspectiveCamera(50, options.width / options.height, 1, 1000 );
+  let far = (window.innerWidth < 768 ? 60 : 50);
+  //let far = 50;
+  /*const*/ camera = new THREE.PerspectiveCamera(far, options.width / options.height, 1, 1000 );
   camera.position.set( 0, 0, -10 );
-  //camera.lookAt(0,0,0);
+  //camera.lookAt(masterCubeMesh);
   scene.add( camera ); // required when the camera has a child
 }
 init();
@@ -241,16 +248,18 @@ fillMasterCube();
 
 // CONTROLS
 const controls = new TrackballControls(camera, renderer.domElement);
-
-controls.noPan = true;
-controls.maxDistance = controls.minDistance = 0;  
-controls.noKeys = true;
+/*
+controls.noPan = false;
+controls.maxDistance = 10
+controls.minDistance = -20;  
+controls.noKeys = false;
 controls.noRotate = false;
-controls.noZoom = true;
+controls.noZoom = false;
 
-
+*/
 // Loop
 var aperturaMastercube_flag = false;
+var rotazioneCubo_flag = false;
 
 
 function animate(){
@@ -269,7 +278,14 @@ function animate(){
     });
     aperturaMastercube_flag = false;
   }
-
+/*
+  if( rotazioneCubo_flag == true){ // fine aperura mastercube
+    tasksSecond.forEach(() => {
+      tasksSecond.pop();
+    });
+    rotazioneCubo_flag = false;
+  }
+*/
 
 }
 animate();
@@ -430,83 +446,58 @@ function getRandomColor()
   //return {r, g, b};
 }
 
-function randomCubesRotation(){
-  let x = Math.floor(Math.random()*26+1);
-  let y = Math.floor(Math.random()*26+1);
 
-  //cubeArray[y].mesh.rotateX(THREE.Math.degToRad(90));
+function randomCubesRotation(cubeIndex){
+  
+  console.log(cubeArray[cubeIndex]);
+  setTimeout(()=>{
+    tasksSecond.push(()=>{
 
-  cubeArray.forEach((cube, index)=>{
-    if(index == x){
-      let rgb = getRandomColor();
-      /*
-      console.log(rgb.r);
-      console.log(rgb.g);
-      console.log(rgb.b);*/
+      //cubeArray[cubeIndex].mesh.rotation.x += 0.01;         
 /*
-      console.log(cube.mesh.material.color.r);
-      console.log(cube.mesh.material.color.g);
-      console.log(cube.mesh.material.color.b);
-*/
-/*
-      gsap.set(cube.mesh.material.color, {
-        duration: 2,
-        r: rgb.r,
-        g: rgb.g,
-        b: rgb.b
-      }); 
-      */     
-/*
-      gsap.to(cube.mesh.material.color, {
-      //gsap.to(scene.background, {
-        duration: 2,
-        r: rgb.r,
-        g: rgb.g,
-        b: rgb.b
-      });
-      gsap.timeline().seek(0).play();*/
-      cube.mesh.material.color= getRandomColor();
-    }
-  });
+      if(cubeArray[cubeIndex].mesh.position.z <= 360)
+        {
+          rotazioneCubo_flag = true;
+          //console.log('stop');
+          //clearInterval(10);
+        }*/
+    });
+    
+  },2000);
+  
+
 }
-//randomCubesRotation();
+
 
 /* ******************************* EVENTS LISTENERS ******************************* */
 
 function onClickFuncs(){
-  randomCubesRotation();
+  let cubeIndex = Math.floor(Math.random()*26);
+  //randomCubesRotation(cubeIndex);
 
-/* console.log(timer.getDelta());
-console.log(timer.getElapsed()); */
 }
-
+/*
 document.addEventListener(
   "keydown",
   (event) => {
     const keyName = event.key;
 
     if (keyName === "a") {
-      // do not alert when only Control key is pressed.
-      console.log('hola!');
       aperturaMastercube();
     }
   },
   false,
 );
+*/
 
 
-function activateText(button) { // You missed this part
-  document.getElementById('text-container').setAttribute('style', 'display: block');
-}
-function disableText(button) { // You missed this part
-  
-}
-
-function toggleText(value, button) {    
-  if (value === 1) {
-      document.getElementById('text-container').setAttribute('style', 'display: none');
+function toggleText(value, element) {    
+  if (value === 0) {
+      //element.setAttribute('style', 'display: none');
+      element.classList.remove('flash');
   } else {
-    document.getElementById('text-container').setAttribute('style', 'display: block');
+    //element.setAttribute('style', 'display: flex');
+    element.classList.add('flash');
   }
 };
 
@@ -514,9 +505,13 @@ document.addEventListener(
   "keydown",
   (event) => {
     const keyName = event.key;
-
+/*
     if (keyName === "z") {
-      toggleText(1);
+      toggleText(0, document.getElementById('text-container'));
+    }*/
+    if(keyName === "x") {
+      toggleText(0, document.getElementById('white-screen'));
+      console.log("x pressed");
     }
   },
   false,
@@ -526,9 +521,13 @@ document.addEventListener(
   "keyup",
   (event) => {
     const keyName = event.key;
-
+/*
     if (keyName === "z") {
-      toggleText(0);
+      toggleText(1, document.getElementById('text-container'));
+    }*/
+    if(keyName === "x") {
+      toggleText(1, document.getElementById('white-screen'));
+      console.log("x left");
     }
   },
   false,
@@ -546,7 +545,8 @@ window.addEventListener('pointermove', (e) => {
 
   mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
-  intersects = raycaster.intersectObjects(scene.children, true);
+  //intersects = raycaster.intersectObjects(scene.children, true);
+  intersects = raycaster.intersectObjects(masterCubeMesh.children, true);
   //console.log(intersects);
 /*
   Object.keys(hovered).forEach((key) => {
@@ -562,25 +562,91 @@ window.addEventListener('pointermove', (e) => {
 
 window.addEventListener("resize", onWindowResize);
 window.addEventListener( 'click', onMouseClick, false );
-window.addEventListener( 'mousemove', onMouseMove, false );
+//window.addEventListener( 'mousemove', onMouseMove, false );
 
 
 function onMouseClick( event ) {
-
   
   raycaster2.setFromCamera( mouse, camera );
-  var isIntersected = raycaster2.intersectObject( masterCubeMesh );
+  var isIntersected = raycaster2.intersectObjects(masterCubeMesh.children, true);
 
   if (isIntersected) {
 
-      //console.log('Mesh clicked!');
+      console.log('Mesh clicked!');
       onClickFuncs();
   }
 }
+
 function onMouseMove( event ) {
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    /*
+    console.log(mouse.x);
+    console.log(mouse.y);
+    console.log(event);*/
+    //return event;
 }
+
+var whiteFlashVisible = false;
+function goFlash(){
+    
+  //console.log(document.getElementById('white-screen').getAttribute('z-index'));
+  //document.getElementById('white-screen').setAttribute('style', 'z-index: 0');
+  document.getElementById('white-screen').classList.add('flash');
+  whiteFlashVisible = true;
+}
+
+function removeFlash(){
+  document.getElementById('white-screen').classList.remove('flash');
+  whiteFlashVisible = true;
+}
+
+function flash(){
+  let time = timer.getDelta();
+  console.log("time->"+time);
+  if (time > 1){
+    setInterval(removeFlash,100);
+  }
+  else{
+    setInterval(goFlash,100);
+  }
+}
+
+function touchFuncs() {
+  const el = document.getElementById("app");
+  el.addEventListener("touchstart", () => {
+    console.log('touchstart!!');
+    aperturaMastercube();
+    /*
+    flash();*/
+    toggleText(1, document.getElementById('text-container'));
+  });
+  el.addEventListener("touchend", () => {
+    console.log('touchend!!');
+    toggleText(0, document.getElementById('text-container'));
+    /*
+    clearInterval(removeFlash,100);
+    clearInterval(goFlash,100);*/
+  });
+  el.addEventListener("touchcancel", () => {
+    console.log('touchcancel!!');
+  });
+  el.addEventListener("touchmove", () => {
+    console.log('touchmove!!');
+
+    /*
+    console.log(camera.rotation.x);
+    console.log(camera.rotation.y);
+    console.log(camera.rotation.z);
+*/
+    
+    
+  });
+  console.log("Initialized.");
+}
+document.addEventListener("DOMContentLoaded", touchFuncs);
+
 
 
 function onWindowResize() {

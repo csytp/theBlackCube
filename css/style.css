@@ -1,3 +1,14 @@
+@font-face {
+    font-family: CourierPrime-Bold;
+    src: url(../font/CourierPrime-Bold.ttf);
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: CourierPrime-Regular;
+    src: url(../font/CourierPrime-Regular.ttf);
+}
+
 *{margin: 0;padding: 0;block-size: border-box;}
 
 html, body {overflow: hidden;}
@@ -5,8 +16,18 @@ body{position: relative; z-index: 1;}
 
 #app canvas{width: 100%;height: 100%;}
 
-#text-container{display:none !important; pointer-events: none; position: absolute; top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; z-index: 0; display: flex; justify-content: center;}
+#text-container{display: none; pointer-events: none; 
+    position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1;  
+    width: 100%; height: 100%; justify-content: center;
+    font-family: CourierPrime-Regular;}
+
 #text-container div{width: 100%; height: 100%; font-size: 1.2rem; text-align: justify; padding: 10px;}
 
+#white-screen{display:none; pointer-events: none; background-color: #ffffff;
+    position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: -1;  
+    width: 100%; height: 100%;}
 
-#web-socket{position: absolute; top: 0; left: 0;height: 150px;}
+.flash{z-index: 0 !important; display: flex !important;}
+
+
+#web-socket{display:none; position: absolute; top: 0; left: 0;height: 150px;}
