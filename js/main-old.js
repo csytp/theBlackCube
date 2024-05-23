@@ -1,5 +1,6 @@
 import './../css/style.css';
 import * as THREE from 'three';
+import gsap from "gsap";
 import { BoxLineGeometry, TrackballControls, Timer } from 'three/examples/jsm/Addons.js';
 
 
@@ -412,10 +413,11 @@ function aperturaMastercube(){
 
 function getRandomColor()
 {
-  let r = Math.floor(Math.random()*100);
-  let g = Math.floor(Math.random()*100);
-  let b = Math.floor(Math.random()*100);
-  let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
+  let r = Math.floor(Math.random()*255);
+  let g = Math.floor(Math.random()*255);
+  let b = Math.floor(Math.random()*255);
+  //let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
+  let color = new THREE.Color("rgb("+r+", "+g+", "+b+")");
 /*
   console.log(r);
   console.log(g);
@@ -424,15 +426,43 @@ function getRandomColor()
   console.log(color);
 */
   return color;
+  //return {r, g, b};
 }
 
 function randomCubesRotation(){
   let x = Math.floor(Math.random()*26+1);
+  let y = Math.floor(Math.random()*26+1);
+
+  cubeArray[y].mesh.rotateX(THREE.Math.degToRad(90));
+
   cubeArray.forEach((cube, index)=>{
     if(index == x){
-      console.log(clock.getDelta());
-      cube.mesh.material.color = getRandomColor();
-      console.log(timer.getDelta());
+      let rgb = getRandomColor();
+      /*
+      console.log(rgb.r);
+      console.log(rgb.g);
+      console.log(rgb.b);*/
+/*
+      console.log(cube.mesh.material.color.r);
+      console.log(cube.mesh.material.color.g);
+      console.log(cube.mesh.material.color.b);
+*/
+      gsap.set(cube.mesh.material.color, {
+        duration: 2,
+        r: rgb.r,
+        g: rgb.g,
+        b: rgb.b
+      });      
+/*
+      gsap.to(cube.mesh.material.color, {
+      //gsap.to(scene.background, {
+        duration: 2,
+        r: rgb.r,
+        g: rgb.g,
+        b: rgb.b
+      });
+      gsap.timeline().seek(0).play();*/
+      //cube.mesh.material.color= getRandomColor();
     }
   });
 }
