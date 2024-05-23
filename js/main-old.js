@@ -262,7 +262,8 @@ function animate(){
   tasksFirst.forEach((task) => task());
   tasksSecond.forEach((task) => task());
 
-  if( aperturaMastercube_flag == true){
+
+  if( aperturaMastercube_flag == true){ // fine aperura mastercube
     tasksSecond.forEach(() => {
       tasksSecond.pop();
     });
@@ -433,7 +434,7 @@ function randomCubesRotation(){
   let x = Math.floor(Math.random()*26+1);
   let y = Math.floor(Math.random()*26+1);
 
-  cubeArray[y].mesh.rotateX(THREE.Math.degToRad(90));
+  //cubeArray[y].mesh.rotateX(THREE.Math.degToRad(90));
 
   cubeArray.forEach((cube, index)=>{
     if(index == x){
@@ -447,12 +448,14 @@ function randomCubesRotation(){
       console.log(cube.mesh.material.color.g);
       console.log(cube.mesh.material.color.b);
 */
+/*
       gsap.set(cube.mesh.material.color, {
         duration: 2,
         r: rgb.r,
         g: rgb.g,
         b: rgb.b
-      });      
+      }); 
+      */     
 /*
       gsap.to(cube.mesh.material.color, {
       //gsap.to(scene.background, {
@@ -462,7 +465,7 @@ function randomCubesRotation(){
         b: rgb.b
       });
       gsap.timeline().seek(0).play();*/
-      //cube.mesh.material.color= getRandomColor();
+      cube.mesh.material.color= getRandomColor();
     }
   });
 }
@@ -472,6 +475,9 @@ function randomCubesRotation(){
 
 function onClickFuncs(){
   randomCubesRotation();
+
+/* console.log(timer.getDelta());
+console.log(timer.getElapsed()); */
 }
 
 document.addEventListener(
@@ -483,6 +489,46 @@ document.addEventListener(
       // do not alert when only Control key is pressed.
       console.log('hola!');
       aperturaMastercube();
+    }
+  },
+  false,
+);
+
+
+function activateText(button) { // You missed this part
+  document.getElementById('text-container').setAttribute('style', 'display: block');
+}
+function disableText(button) { // You missed this part
+  
+}
+
+function toggleText(value, button) {    
+  if (value === 1) {
+      document.getElementById('text-container').setAttribute('style', 'display: none');
+  } else {
+    document.getElementById('text-container').setAttribute('style', 'display: block');
+  }
+};
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+    const keyName = event.key;
+
+    if (keyName === "z") {
+      toggleText(1);
+    }
+  },
+  false,
+);
+
+document.addEventListener(
+  "keyup",
+  (event) => {
+    const keyName = event.key;
+
+    if (keyName === "z") {
+      toggleText(0);
     }
   },
   false,
@@ -543,3 +589,25 @@ function onWindowResize() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
   displayRoom();
 }
+
+
+/* ******************************* WEB SOCKET ******************************* */
+
+var sliderValue = document.getElementById("sliderValue")
+var inputValue = document.getElementById("inputValue");
+var slider = document.getElementById("slider");
+
+
+console.log(slider.value);
+slider.oninput = function () {
+  sliderValue.innerHTML = "slider value:" + slider.value;
+  websocketOut.send(new Float64Array([slider.value]));
+};
+var websocketIn = new WebSocket("ws://localhost:8888", "klfo");
+var websocketOut = new WebSocket("ws://localhost:8888", "kinput");
+websocketIn.binaryType = "arraybuffer";
+
+websocketIn.onmessage = function (message) {
+  messageData = new Float64Array(message.data);
+  inputValue.innerHTML = messageData[0];
+};
