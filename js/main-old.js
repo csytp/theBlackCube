@@ -721,11 +721,11 @@ function touchFuncs() {
     aperturaMastercube();
     /*
     flash();*/
-    toggleText(1, document.getElementById("text-container"));
+    //toggleText(1, document.getElementById("text-container"));
   });
   el.addEventListener("touchend", () => {
     console.log("touchend!!");
-    toggleText(0, document.getElementById("text-container"));
+    //toggleText(0, document.getElementById("text-container"));
     /*
     clearInterval(removeFlash,100);
     clearInterval(goFlash,100);*/
