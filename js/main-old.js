@@ -1,4 +1,4 @@
-//import './../css/style.css';
+import './../css/style.css';
 import * as THREE from "three";
 //import gsap from "gsap";
 //import { BoxLineGeometry, TrackballControls, Timer } from 'three/examples/jsm/Addons.js';
