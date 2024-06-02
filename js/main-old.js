@@ -96,7 +96,7 @@ function init(){
   //let far = 50;
   /*const*/ camera = new THREE.PerspectiveCamera(far, options.width / options.height, 1, 1000 );
   camera.position.set( 0, 0, -10 );
-  //camera.lookAt(masterCubeMesh);
+  //camera.lookAt(masterCubeGrp);
   scene.add( camera ); // required when the camera has a child
 }
 init();
@@ -211,14 +211,9 @@ function initLights(){
 initLights();
 
 // Master Cube
-/*
-const masterCubeGeo = new THREE.BoxGeometry(3, 3, 3);
-const masterCubeMat = new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.0})
-const masterCubeMesh = new THREE.Mesh(masterCubeGeo, masterCubeMat);
-masterCubeMesh.position.y = 0;
-*/
-var masterCubeMesh = new THREE.Group();
-scene.add(masterCubeMesh);
+var masterCubeGrp = new THREE.Group();
+masterCubeGrp.position.y = 0;
+scene.add(masterCubeGrp);
 
 
 function createCube(color, val, center, bottom_panel, top_panel, left_panel, right_panel, front_panel, rear_panel){
@@ -243,7 +238,7 @@ function fillMasterCube(){
     cube.mesh.position.z = innerCube.z;
     
     
-    masterCubeMesh.add(cube.mesh);
+    masterCubeGrp.add(cube.mesh);
   });
 }
 fillMasterCube();
@@ -299,8 +294,8 @@ animate();
 function animationsLoops(){
   //Fluttuare  
   tasksFirst.push(()=>{
-    masterCubeMesh.position.y = Math.sin(Date.now()*0.001)*0.5;
-    masterCubeMesh.rotation.y = Math.sin(Date.now()*0.001)*0.1;
+    masterCubeGrp.position.y = Math.sin(Date.now()*0.001)*0.5;
+    masterCubeGrp.rotation.y = Math.sin(Date.now()*0.001)*0.1;
   });   
 }
 animationsLoops();
@@ -324,109 +319,26 @@ setTimeout(1000, animationsLaunch());
 
 function aperturaMastercube(){
   cubeArray.forEach((cube, index)=>{
-    
-    if(cube.bottom_panel && cube.mesh.position.y >= -bottom_lim){
-      setTimeout(()=>{
-        tasksSecond.push(()=>{
 
-          cube.mesh.position.y += -speed;         
+    if(cube.bottom_panel)
+      gsap.to(cube.mesh.position, {duration:1, y: -bottom_lim, ease: 'none'});
 
-          if(cube.mesh.position.y <= -bottom_lim)
-            {
-              aperturaMastercube_flag = true;
-              //console.log('stop');
-              //clearInterval(10);
-            }
-        });
-        
-      },200);
-    }
+    if(cube.top_panel)
+      gsap.to(cube.mesh.position, {duration:1, y: top_lim, ease: 'none'});
 
-    if(cube.top_panel && cube.mesh.position.y <= top_lim){
-      setTimeout(()=>{
-        tasksSecond.push(()=>{
+      if(cube.left_panel)
+      gsap.to(cube.mesh.position, {duration:1, x: left_lim, ease: 'none'});
 
-          cube.mesh.position.y += speed;         
+    if(cube.right_panel)
+      gsap.to(cube.mesh.position, {duration:1, x: -right_lim, ease: 'none'});
 
-          if(cube.mesh.position.y >= top_lim)
-            {
-              aperturaMastercube_flag = true;
-              //console.log('stop');
-              //clearInterval(10);
-            }
-        });
-        
-      },200);
-    }
+    if(cube.rear_panel)
 
-    if(cube.left_panel && cube.mesh.position.x <= left_lim){
-      
-      setTimeout(()=>{
-        tasksSecond.push(()=>{
+      gsap.to(cube.mesh.position, {duration:1, z: rear_lim, ease: 'none'});
 
-          cube.mesh.position.x += speed;         
+    if(cube.front_panel)
+      gsap.to(cube.mesh.position, {duration:1, z: -front_lim, ease: 'none'});
 
-          if(cube.mesh.position.x >= left_lim)
-            {
-              aperturaMastercube_flag = true;
-              //console.log('stop');
-              //clearInterval(10);
-            }
-        });
-        
-      },200);
-    }
-
-    if(cube.right_panel && cube.mesh.position.x >= -right_lim){
-      setTimeout(()=>{
-        tasksSecond.push(()=>{
-
-          cube.mesh.position.x += -speed;         
-
-          if(cube.mesh.position.x <= -right_lim)
-            {
-              aperturaMastercube_flag = true;
-              //console.log('stop');
-              //clearInterval(10);
-            }
-        });
-        
-      },200);
-    }
-
-    if(cube.rear_panel && cube.mesh.position.x >= -right_lim){
-      setTimeout(()=>{
-        tasksSecond.push(()=>{
-
-          cube.mesh.position.z += speed;         
-
-          if(cube.mesh.position.z >= rear_lim)
-            {
-              aperturaMastercube_flag = true;
-              //console.log('stop');
-              //clearInterval(10);
-            }
-        });
-        
-      },200);
-    }
-
-    if(cube.front_panel && cube.mesh.position.z >= -front_lim){
-      setTimeout(()=>{
-        tasksSecond.push(()=>{
-
-          cube.mesh.position.z += -speed;         
-
-          if(cube.mesh.position.z <= -front_lim)
-            {
-              aperturaMastercube_flag = true;
-              //console.log('stop');
-              //clearInterval(10);
-            }
-        });
-        
-      },200);
-    }
   });
 }
 
@@ -454,47 +366,79 @@ function getRandomColor()
 /* ******************************* EVENTS LISTENERS ******************************* */
 
 var myTween= [];
-function onClickFuncs(){
-  let cubeIndex;
-/*
+var rotationFlag = false;
+function randomCubeAnimation(){/*
   if(myTween)
     myTween.kill();
 */
   // Random Cubes Rotation
+    let cubeIndex = Math.floor(Math.random()*26);
 
-  //for start
-  //for(let i=0 ; i < 5 ; i++){
+  // Rotation Properties  
+    let myDurationRotation = Math.random()*3;
+    let myDelayRotation = Math.random()*1.5;
+    let myRepeatRotation = Math.floor(Math.random()*3);
+    const degreeRotation = 360;
+  // Position Properties  
+    let myDurationPosition = Math.random()*2;
+    let myDelayPosition = Math.random()*1.5;
+    let myRepeatPosition = Math.floor(Math.random()*2);
+    let myPosition = Math.floor(Math.random()*2-1);
 
-    cubeIndex = Math.floor(Math.random()*26);
-  
-    /* console.log(cubeIndex);
-    console.log(masterCubeMesh.children[cubeIndex]); */
-  
-    var gradi = 360;
-  
-    myTween.push(gsap.to(masterCubeMesh.children[cubeIndex].rotation, {duration: 1.5, x:(gradi*Math.PI/180), ease:'none',
-                  onComplete: function(){
-                    if(this == myTween.shift()){
-                      //console.log('Sono uguali!');
-                      //console.log(masterCubeMesh.children[cubeIndex].rotation.x);
-                      masterCubeMesh.children[cubeIndex].rotation.x = 0;
-                      //console.log(masterCubeMesh.children[cubeIndex].rotation.x);
-                      //this.x = 0;
-                    }
-                  }})
-    );
+    console.log('cubeIndex',cubeIndex);
+    console.log('cubeOriginalPos',masterCubeGrp.children[cubeIndex].position.x);
+
+    var animPropRotation = {
+      duration: myDurationRotation,
+      delay: myDelayRotation,
+      repeat: myRepeatRotation,
+      x:(degreeRotation*Math.PI/180),
+      ease:'sine',
+
+      onComplete: function(){
+        if(!myRepeatRotation){
+          myTween.shift().kill();
+          console.log('shift!!');
+        }
+        masterCubeGrp.children[cubeIndex].rotation.x = 0;
+      }
+    }
+    var animPropPositionFrom = {
+      x:masterCubeGrp.children[cubeIndex].position.x
+    }
+    var animPropPositionTo = {
+      duration: myDurationPosition,
+      delay: myDelayPosition,
+      //repeat: myRepeatPosition,
+      repeat: 0,
+      x:myPosition,
+      yoyo: true,
+      ease:'sine',
+/*
+      onComplete: function(){
+        if(!myRepeatPosition){
+          myTween.shift().kill();
+        }
+        //masterCubeGrp.children[cubeIndex].rotation.x = 0;
+      }*/
+    }
+
+    if(rotationFlag)
+      myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)); // Rotation
+    else{
+      
+      /* gsap.from(masterCubeGrp.children[cubeIndex].position, animPropPositionFrom); // Position
+      myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].position, animPropPositionTo)); // Position */
+    }
   //} //for end
 
   
 
-  //myTween = gsap.to(masterCubeMesh.children[cubeIndex].rotation, {duration: 0.5, x:0, y:0, z:0});
+  //myTween = gsap.to(masterCubeGrp.children[cubeIndex].rotation, {duration: 0.5, x:0, y:0, z:0});
 
   
 }
 
-function onClickQueue(){
-
-}
 
 document.addEventListener(
   "keydown",
@@ -567,7 +511,7 @@ window.addEventListener('pointermove', (e) => {
   mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
   raycaster.setFromCamera(mouse, camera);
   //intersects = raycaster.intersectObjects(scene.children, true);
-  intersects = raycaster.intersectObjects(masterCubeMesh.children, true);
+  intersects = raycaster.intersectObjects(masterCubeGrp.children, true);
   //console.log(intersects);
 /*
   Object.keys(hovered).forEach((key) => {
@@ -578,7 +522,7 @@ window.addEventListener('pointermove', (e) => {
       delete hovered[key]
     }
   });*/
-  onClickFuncs( e );
+  randomCubeAnimation( e );
 
 
 });
@@ -591,7 +535,7 @@ window.addEventListener( 'click', onMouseClick, false );
 function onMouseClick( event ) {
   
   raycaster2.setFromCamera( mouse, camera );
-  var isIntersected = raycaster2.intersectObjects(masterCubeMesh.children, true);
+  var isIntersected = raycaster2.intersectObjects(masterCubeGrp.children, true);
 
   if (isIntersected) {
 
