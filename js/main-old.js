@@ -326,14 +326,13 @@ function aperturaMastercube(){
     if(cube.top_panel)
       gsap.to(cube.mesh.position, {duration:1, y: top_lim, ease: 'none'});
 
-      if(cube.left_panel)
+    if(cube.left_panel)
       gsap.to(cube.mesh.position, {duration:1, x: left_lim, ease: 'none'});
 
     if(cube.right_panel)
       gsap.to(cube.mesh.position, {duration:1, x: -right_lim, ease: 'none'});
 
     if(cube.rear_panel)
-
       gsap.to(cube.mesh.position, {duration:1, z: rear_lim, ease: 'none'});
 
     if(cube.front_panel)
@@ -366,7 +365,7 @@ function getRandomColor()
 /* ******************************* EVENTS LISTENERS ******************************* */
 
 var myTween= [];
-var rotationFlag = false;
+var rotationFlag = true;
 function randomCubeAnimation(){/*
   if(myTween)
     myTween.kill();
@@ -384,23 +383,32 @@ function randomCubeAnimation(){/*
     let myDelayPosition = Math.random()*1.5;
     let myRepeatPosition = Math.floor(Math.random()*2);
     let myPosition = Math.floor(Math.random()*2-1);
-
-    console.log('cubeIndex',cubeIndex);
-    console.log('cubeOriginalPos',masterCubeGrp.children[cubeIndex].position.x);
+    let myAxisIndex = Math.floor(Math.random()*2);
+    let myAxis = ['x', 'y', 'z']
 
     var animPropRotation = {
       duration: myDurationRotation,
       delay: myDelayRotation,
       repeat: myRepeatRotation,
-      x:(degreeRotation*Math.PI/180),
       ease:'sine',
+
+      x: (myAxis[myAxisIndex] == 'x' ? degreeRotation*Math.PI/180 : 0),
+      y: (myAxis[myAxisIndex] == 'y' ? degreeRotation*Math.PI/180 : 0),
+      z: (myAxis[myAxisIndex] == 'z' ? degreeRotation*Math.PI/180 : 0),
 
       onComplete: function(){
         if(!myRepeatRotation){
           myTween.shift().kill();
-          console.log('shift!!');
+          //console.log('shift!!');
         }
-        masterCubeGrp.children[cubeIndex].rotation.x = 0;
+        
+        // Limiting Glitch Rotation (?)
+        if(myAxis[myAxisIndex] == 'x')
+          masterCubeGrp.children[cubeIndex].rotation.x = 0;
+        if(myAxis[myAxisIndex] == 'y')
+          masterCubeGrp.children[cubeIndex].rotation.y = 0;
+        if(myAxis[myAxisIndex] == 'z')
+          masterCubeGrp.children[cubeIndex].rotation.z = 0;
       }
     }
     var animPropPositionFrom = {
