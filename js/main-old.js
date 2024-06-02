@@ -211,11 +211,13 @@ function initLights(){
 initLights();
 
 // Master Cube
-
+/*
 const masterCubeGeo = new THREE.BoxGeometry(3, 3, 3);
 const masterCubeMat = new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.0})
 const masterCubeMesh = new THREE.Mesh(masterCubeGeo, masterCubeMat);
 masterCubeMesh.position.y = 0;
+*/
+var masterCubeMesh = new THREE.Group();
 scene.add(masterCubeMesh);
 
 
@@ -223,10 +225,10 @@ function createCube(color, val, center, bottom_panel, top_panel, left_panel, rig
   const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
   const meshMaterial = new THREE.MeshPhongMaterial({color: color});  
   const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
-  const obj = new THREE.Object3D();
-  obj.add(mesh);
+  //const obj = new THREE.Object3D();
+  //obj.add(mesh);
 
-  return {mesh, obj, val, center, bottom_panel, top_panel, left_panel, right_panel, front_panel, rear_panel}
+  return {mesh, val, center, bottom_panel, top_panel, left_panel, right_panel, front_panel, rear_panel}
 }
 
 function fillMasterCube(){
@@ -241,7 +243,7 @@ function fillMasterCube(){
     cube.mesh.position.z = innerCube.z;
     
     
-    masterCubeMesh.add(cube.obj);
+    masterCubeMesh.add(cube.mesh);
   });
 }
 fillMasterCube();
@@ -447,36 +449,53 @@ function getRandomColor()
 }
 
 
-function randomCubesRotation(cubeIndex){
-  
-  console.log(cubeArray[cubeIndex]);
-  setTimeout(()=>{
-    tasksSecond.push(()=>{
-
-      //cubeArray[cubeIndex].mesh.rotation.x += 0.01;         
-/*
-      if(cubeArray[cubeIndex].mesh.position.z <= 360)
-        {
-          rotazioneCubo_flag = true;
-          //console.log('stop');
-          //clearInterval(10);
-        }*/
-    });
-    
-  },2000);
-  
-
-}
 
 
 /* ******************************* EVENTS LISTENERS ******************************* */
 
+var myTween= [];
 function onClickFuncs(){
-  let cubeIndex = Math.floor(Math.random()*26);
-  //randomCubesRotation(cubeIndex);
+  let cubeIndex;
+/*
+  if(myTween)
+    myTween.kill();
+*/
+  // Random Cubes Rotation
+
+  //for start
+  //for(let i=0 ; i < 5 ; i++){
+
+    cubeIndex = Math.floor(Math.random()*26);
+  
+    /* console.log(cubeIndex);
+    console.log(masterCubeMesh.children[cubeIndex]); */
+  
+    var gradi = 360;
+  
+    myTween.push(gsap.to(masterCubeMesh.children[cubeIndex].rotation, {duration: 1.5, x:(gradi*Math.PI/180), ease:'none',
+                  onComplete: function(){
+                    if(this == myTween.shift()){
+                      //console.log('Sono uguali!');
+                      //console.log(masterCubeMesh.children[cubeIndex].rotation.x);
+                      masterCubeMesh.children[cubeIndex].rotation.x = 0;
+                      //console.log(masterCubeMesh.children[cubeIndex].rotation.x);
+                      //this.x = 0;
+                    }
+                  }})
+    );
+  //} //for end
+
+  
+
+  //myTween = gsap.to(masterCubeMesh.children[cubeIndex].rotation, {duration: 0.5, x:0, y:0, z:0});
+
+  
+}
+
+function onClickQueue(){
 
 }
-/*
+
 document.addEventListener(
   "keydown",
   (event) => {
@@ -488,7 +507,7 @@ document.addEventListener(
   },
   false,
 );
-*/
+
 
 
 function toggleText(value, element) {    
@@ -505,14 +524,15 @@ document.addEventListener(
   "keydown",
   (event) => {
     const keyName = event.key;
-/*
+
     if (keyName === "z") {
       toggleText(0, document.getElementById('text-container'));
-    }*/
+    }
+    /*
     if(keyName === "x") {
       toggleText(0, document.getElementById('white-screen'));
       console.log("x pressed");
-    }
+    }*/
   },
   false,
 );
@@ -521,14 +541,15 @@ document.addEventListener(
   "keyup",
   (event) => {
     const keyName = event.key;
-/*
+
     if (keyName === "z") {
       toggleText(1, document.getElementById('text-container'));
-    }*/
+    }
+    /*
     if(keyName === "x") {
       toggleText(1, document.getElementById('white-screen'));
       console.log("x left");
-    }
+    }*/
   },
   false,
 );
@@ -557,6 +578,8 @@ window.addEventListener('pointermove', (e) => {
       delete hovered[key]
     }
   });*/
+  onClickFuncs( e );
+
 
 });
 
@@ -573,7 +596,6 @@ function onMouseClick( event ) {
   if (isIntersected) {
 
       console.log('Mesh clicked!');
-      onClickFuncs();
   }
 }
 
@@ -658,7 +680,7 @@ function onWindowResize() {
 
 
 /* ******************************* WEB SOCKET ******************************* */
-
+/*
 var sliderValue = document.getElementById("sliderValue")
 var inputValue = document.getElementById("inputValue");
 var slider = document.getElementById("slider");
@@ -676,4 +698,4 @@ websocketIn.binaryType = "arraybuffer";
 websocketIn.onmessage = function (message) {
   messageData = new Float64Array(message.data);
   inputValue.innerHTML = messageData[0];
-};
+};*/
