@@ -1,18 +1,23 @@
 - glitch camera
+
 - testo glitch/scorrimento a capo (programming style):
 	*tipi di scorrimento:
 		~ come commenti ad una live
 		~ tipo star wars
+		
 	*tipi di testo:
 		~ codice -> HTML
 		~ nome del gesto (RUOTA!, ZOOM!, ecc....)
+		
 - sistemare flash/bang (automatico):
 	* semplice flash
 	* flash al negativo d'immagine
+	
 - la comparsa del testo dipende dalle interazioni:
-	*coda di interazioni (?): 
+	* coda di interazioni (?): 
 	registrare tutte le interazioni fatte dall'utente
 	e eseguirle ad un tempo x.
+	
 - array dati da gestire:
 	* posizione
 	* dati accelerometro

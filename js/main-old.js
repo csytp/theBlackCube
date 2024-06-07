@@ -267,23 +267,6 @@ function animate(){
 
   tasksFirst.forEach((task) => task());
   tasksSecond.forEach((task) => task());
-
-
-  if( aperturaMastercube_flag == true){ // fine aperura mastercube
-    tasksSecond.forEach(() => {
-      tasksSecond.pop();
-    });
-    aperturaMastercube_flag = false;
-  }
-/*
-  if( rotazioneCubo_flag == true){ // fine aperura mastercube
-    tasksSecond.forEach(() => {
-      tasksSecond.pop();
-    });
-    rotazioneCubo_flag = false;
-  }
-*/
-
 }
 animate();
 
@@ -314,7 +297,6 @@ function animationsLaunch(){
   
 }
 
-setTimeout(1000, animationsLaunch());
 
 
 function aperturaMastercube(){
@@ -348,15 +330,8 @@ function getRandomColor()
   let b = Math.floor(Math.random()*255);
   //let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
   let color = new THREE.Color("rgb("+r+", "+g+", "+b+")");
-/*
-  console.log(r);
-  console.log(g);
-  console.log(b);
-  console.log("rgb("+r+"%, "+g+"%, "+b+"%)");
-  console.log(color);
-*/
+
   return color;
-  //return {r, g, b};
 }
 
 
@@ -365,11 +340,11 @@ function getRandomColor()
 /* ******************************* EVENTS LISTENERS ******************************* */
 
 var myTween= [];
-var rotationFlag = true;
-function randomCubeAnimation(){/*
+function randomCubeAnimation(){
+  /*
   if(myTween)
     myTween.kill();
-*/
+  */
   // Random Cubes Rotation
     let cubeIndex = Math.floor(Math.random()*26);
 
@@ -419,7 +394,7 @@ function randomCubeAnimation(){/*
       delay: myDelayPosition,
       //repeat: myRepeatPosition,
       repeat: 0,
-      x:myPosition,
+      y:myPosition,
       yoyo: true,
       ease:'sine',
 /*
@@ -431,13 +406,8 @@ function randomCubeAnimation(){/*
       }*/
     }
 
-    if(rotationFlag)
-      myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)); // Rotation
-    else{
-      
-      /* gsap.from(masterCubeGrp.children[cubeIndex].position, animPropPositionFrom); // Position
-      myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].position, animPropPositionTo)); // Position */
-    }
+    myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)); // Rotation
+
   //} //for end
 
   
@@ -447,21 +417,7 @@ function randomCubeAnimation(){/*
   
 }
 
-
-document.addEventListener(
-  "keydown",
-  (event) => {
-    const keyName = event.key;
-
-    if (keyName === "a") {
-      aperturaMastercube();
-    }
-  },
-  false,
-);
-
-
-
+/* KEYBOARD LISTENERS */
 function toggleText(value, element) {    
   if (value === 0) {
       //element.setAttribute('style', 'display: none');
@@ -472,19 +428,92 @@ function toggleText(value, element) {
   }
 };
 
+
+
+var html_lines = Array(); // p elements array
+function readFile(){
+  
+
+  const promise = fetch("https://www.opificiotransmediale.com/test/post.php")
+                  .then( (rispostServer) => rispostServer.json() )
+                  .then( (datiRicevuti) => {
+                    
+                    // Add p element to array after fetching
+                    datiRicevuti.forEach( (dato) => {
+                      let p = document.createElement("p");
+                      let content = document.createTextNode(dato);
+                      p.classList.add('text-line-code');
+                      p.appendChild(content);
+
+                      html_lines.push(p);
+                    });
+
+                  })
+                  .catch( err => console.log('Problemi con il server o la connessione!') )
+                  .finally( _ => {
+
+                    html_lines.forEach( (line, index) => {
+                      gsap.to(line, {
+                        duration: 0.1,
+                        delay: 0.1*index,
+                        opacity: 1,
+                        onUpdate: function(){
+                          document.querySelector("#text-container > div").appendChild(line);
+                        }
+                      });
+                    });
+
+                    html_lines = []; //clear array
+                    console.log('Fetch completata!')
+                  });
+}
+
+
+function stampHtmlLines(line){
+  html_lines.forEach( (line) => {
+    
+  } );
+}
+
+const myrRepetion = 0;
+var countRepetion = 0;
+function blinkText(pElem){
+  var myTween = gsap.to(pElem, {
+    duration: 0.5,
+    //delay: 0.3,
+    autoAlpha:0,
+    repeat: -1,
+    yoyo:true,
+    /*
+    snap:{
+      autoAlpha: [1, 0.5, 0]
+    }*/
+  });
+
+}
+
+
+var indexPress = 0;
 document.addEventListener(
   "keydown",
   (event) => {
     const keyName = event.key;
 
-    if (keyName === "z") {
-      toggleText(0, document.getElementById('text-container'));
+    if (keyName === "a") {
+      aperturaMastercube();
     }
-    /*
-    if(keyName === "x") {
-      toggleText(0, document.getElementById('white-screen'));
-      console.log("x pressed");
-    }*/
+    if (keyName === "0") {
+      readFile();
+      
+    }
+    if (keyName === "1") {
+      //toggleText(0, document.getElementById('text-container'));
+      //document.querySelector("#text-container > div").appendChild(generateTextElement(indexPress++));
+    }
+    if (keyName === "2") {
+      blinkText();
+    }
+    
   },
   false,
 );
@@ -495,7 +524,7 @@ document.addEventListener(
     const keyName = event.key;
 
     if (keyName === "z") {
-      toggleText(1, document.getElementById('text-container'));
+      //toggleText(1, document.getElementById('text-container'));
     }
     /*
     if(keyName === "x") {
@@ -506,7 +535,7 @@ document.addEventListener(
   false,
 );
 
-// ANIMATIONS CONTROLS / EVENT LISTNERS
+/* MOUSE LISTENERS */
 const raycaster = new THREE.Raycaster();
 var raycaster2 = new THREE.Raycaster();
 var mouse = new THREE.Vector2();
@@ -546,7 +575,6 @@ function onMouseClick( event ) {
   var isIntersected = raycaster2.intersectObjects(masterCubeGrp.children, true);
 
   if (isIntersected) {
-
       console.log('Mesh clicked!');
   }
 }
@@ -632,22 +660,3 @@ function onWindowResize() {
 
 
 /* ******************************* WEB SOCKET ******************************* */
-/*
-var sliderValue = document.getElementById("sliderValue")
-var inputValue = document.getElementById("inputValue");
-var slider = document.getElementById("slider");
-
-
-console.log(slider.value);
-slider.oninput = function () {
-  sliderValue.innerHTML = "slider value:" + slider.value;
-  websocketOut.send(new Float64Array([slider.value]));
-};
-var websocketIn = new WebSocket("ws://localhost:8888", "klfo");
-var websocketOut = new WebSocket("ws://localhost:8888", "kinput");
-websocketIn.binaryType = "arraybuffer";
-
-websocketIn.onmessage = function (message) {
-  messageData = new Float64Array(message.data);
-  inputValue.innerHTML = messageData[0];
-};*/
