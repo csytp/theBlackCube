@@ -340,26 +340,24 @@ function getRandomColor()
 /* ******************************* EVENTS LISTENERS ******************************* */
 
 var myTween= [];
+var clusterCubes = 5; // Number of cubes to rotate
+const bankClusterCubes = 26 / clusterCubes; // total of cubes = 26
+console.log('bank', bankClusterCubes);
 function randomCubeAnimation(){
-  /*
-  if(myTween)
-    myTween.kill();
-  */
+
+    //let bankSelected = Math.round(Math.random() * bankClusterCubes + 1 );
+
   // Random Cubes Rotation
-    let cubeIndex = Math.floor(Math.random()*26);
+    let cubeIndex = Math.floor(Math.random() * 26);
 
   // Rotation Properties  
-    let myDurationRotation = Math.random()*3;
-    let myDelayRotation = Math.random()*1.5;
-    let myRepeatRotation = Math.floor(Math.random()*3);
+    let myDurationRotation = Math.random() * 3;
+    let myDelayRotation = Math.random() * 1.5;
+    let myRepeatRotation = Math.floor(Math.random() * 3);
     const degreeRotation = 360;
-  // Position Properties  
-    let myDurationPosition = Math.random()*2;
-    let myDelayPosition = Math.random()*1.5;
-    let myRepeatPosition = Math.floor(Math.random()*2);
-    let myPosition = Math.floor(Math.random()*2-1);
+
+    let myAxis = ['x', 'y', 'z'];
     let myAxisIndex = Math.floor(Math.random()*2);
-    let myAxis = ['x', 'y', 'z']
 
     var animPropRotation = {
       duration: myDurationRotation,
@@ -386,35 +384,8 @@ function randomCubeAnimation(){
           masterCubeGrp.children[cubeIndex].rotation.z = 0;
       }
     }
-    var animPropPositionFrom = {
-      x:masterCubeGrp.children[cubeIndex].position.x
-    }
-    var animPropPositionTo = {
-      duration: myDurationPosition,
-      delay: myDelayPosition,
-      //repeat: myRepeatPosition,
-      repeat: 0,
-      y:myPosition,
-      yoyo: true,
-      ease:'sine',
-/*
-      onComplete: function(){
-        if(!myRepeatPosition){
-          myTween.shift().kill();
-        }
-        //masterCubeGrp.children[cubeIndex].rotation.x = 0;
-      }*/
-    }
 
-    myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)); // Rotation
-
-  //} //for end
-
-  
-
-  //myTween = gsap.to(masterCubeGrp.children[cubeIndex].rotation, {duration: 0.5, x:0, y:0, z:0});
-
-  
+    myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)); // Rotation  
 }
 
 /* KEYBOARD LISTENERS */
@@ -431,8 +402,7 @@ function toggleText(value, element) {
 
 
 var html_lines = Array(); // p elements array
-function readFile(){
-  
+function readFile(){  
 
   const promise = fetch("https://www.opificiotransmediale.com/test/post.php")
                   .then( (rispostServer) => rispostServer.json() )
@@ -443,6 +413,10 @@ function readFile(){
                       let p = document.createElement("p");
                       let content = document.createTextNode(dato);
                       p.classList.add('text-line-code');
+
+                      if(Math.random() > 0.7)
+                        p.classList.add('text-blink-it');
+
                       p.appendChild(content);
 
                       html_lines.push(p);
@@ -458,7 +432,10 @@ function readFile(){
                         delay: 0.1*index,
                         opacity: 1,
                         onUpdate: function(){
+                          console.log(line);
                           document.querySelector("#text-container > div").appendChild(line);
+                        },
+                        onComplete: function(){
                         }
                       });
                     });
@@ -468,12 +445,6 @@ function readFile(){
                   });
 }
 
-
-function stampHtmlLines(line){
-  html_lines.forEach( (line) => {
-    
-  } );
-}
 
 const myrRepetion = 0;
 var countRepetion = 0;
@@ -507,8 +478,7 @@ document.addEventListener(
       
     }
     if (keyName === "1") {
-      //toggleText(0, document.getElementById('text-container'));
-      //document.querySelector("#text-container > div").appendChild(generateTextElement(indexPress++));
+
     }
     if (keyName === "2") {
       blinkText();
