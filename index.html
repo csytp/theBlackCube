@@ -4,16 +4,14 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="./css/style.css" rel="stylesheet" type="style">
+    <link href="css/style.css" rel="stylesheet" type="style">
     <title>The Black Cube</title>
   </head>
   <body>
 
     <div id="white-screen"></div>
-    <div id="text-container">
-      <div>
-      </div>
-    </div>
+
+    <div id="text-container"></div>
     <div id="app"></div>
     <!-- <div id="web-socket">
       <div>
@@ -27,7 +25,10 @@
       </div>
 
     </div> -->
-
+    <audio id="myAudio" >
+      <source src="audio/track.mp3" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
     <script type="module" src="./js/main-old.js"></script>
   </body>
 </html>

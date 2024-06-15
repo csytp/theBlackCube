@@ -1,12 +1,12 @@
 @font-face {
     font-family: CourierPrime-Bold;
-    src: url(../font/CourierPrime-Bold.ttf);
+    src: url(font/CourierPrime-Bold.ttf);
     font-weight: bold;
 }
 
 @font-face {
     font-family: CourierPrime-Regular;
-    src: url(../font/CourierPrime-Regular.ttf);
+    src: url(font/CourierPrime-Regular.ttf);
 }
 
 *{margin: 0;padding: 0;block-size: border-box;}
@@ -18,11 +18,16 @@ body{position: relative; z-index: 1;}
 
 #text-container{display: block; pointer-events: none; 
     position: absolute; top: 0; bottom: 0; left: 0; right: 0; z-index: 1;  
-    width: 100%; height: 100%; justify-content: center;
+    width: 100%; /*height: 100%;*/
     font-family: CourierPrime-Regular;}
 
-#text-container div{display:flex; justify-content: left; font-size: 1.2rem; padding: 10px; position: absolute; bottom: 0;flex-wrap: wrap;}
-/*#text-container div p{flex:none;flex-wrap: wrap;}*/
+/* #text-container div{display:flex; justify-content: left; font-size: 1.2rem; padding: 10px; position: absolute; bottom: 0;flex-wrap: wrap;} */
+/*#text-container p{margin-top: 10px;margin-bottom: 10px;}*/
+
+#rotation-values{
+    position: absolute; top: 0; left: 0;border: 1px solid red; z-index: 3;
+    width: 300px;height: 150px;
+}
 
 
 .text-blink-it{animation-name: blink;animation-duration: 1s; animation-iteration-count: infinite;}
