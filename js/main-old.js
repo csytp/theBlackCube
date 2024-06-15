@@ -17,7 +17,8 @@ ScrollTrigger.saveStyles([
 ]);
 
 document.getElementById("myAudio").autoplay = true; 
-//document.getElementById("myAudio").loop = true; 
+document.getElementById("myAudio").loop = true; 
+document.getElementById("myAudio").muted = true; 
 document.addEventListener("DOMContentLoaded", () => {
   console.log(document.getElementById("myAudio"));
 });
@@ -514,14 +515,19 @@ if(document.getElementById('app')){
   }
   var ptot = 0;
   var arrayContainer = Array();
-  controls.addEventListener('change', function(){
-
+  window.addEventListener('mousedown', function(){
+    
+    console.log('mousedown');
+    
     let textContainer = document.createElement("div");
     textContainer.classList.add('text');
 
-    addText(textContainer, camera.rotation.x);
-    //console.log(arrayContainer);
-    ptot++;
+    controls.addEventListener('change', function(){
+
+      addText(textContainer, camera.rotation.x);
+      //console.log(arrayContainer);
+      ptot++;
+    });
   });
 
   //var offsetContainer = 100;
@@ -568,14 +574,11 @@ if(document.getElementById('app')){
       let i = 0;
       let myTween;
       arrayContainer.forEach((container)=>{
-        //console.log(this.div.getBoundingClientRect().top, container.div);
-        //console.log(container.div.getBoundingClientRect().top);
-        
+
         if(!container.played){
-          //console.log(++i, container);
+
           document.getElementById('text-container').appendChild(container.div);
-          //console.log(a);
-          //console.log(container.played);
+
           myTween= gsap.to(container.div,{
             duration: 10,
             //delay: 1,
@@ -590,12 +593,13 @@ if(document.getElementById('app')){
               //console.log(i, container);
             },
             onComplete: function(){
-              if(ScrollTrigger.isInViewport(container.div))
+              /*
+              if(!ScrollTrigger.isInViewport(container.div))
               {
                 arrayContainer.pop();
                 container.div.remove();
                 console.log('deleted');
-              }
+              }*/
             }
           });
 
@@ -683,7 +687,17 @@ if(document.getElementById('app')){
   window.addEventListener('mouseup', function(){
     console.log('mouseup');
 
-    scrollTextContainer(arrayContainer);
+    console.log(arrayContainer);
+
+    console.log(arrayContainer.length);
+    /*
+    arrayContainer.forEach((container) => {
+      console.log(container);
+    });
+    console.log("wewe",arrayContainer[length+1]);
+*/
+    arrayContainer = [];
+    //scrollTextContainer(arrayContainer);
   });
 
   window.addEventListener("resize", onWindowResize);
