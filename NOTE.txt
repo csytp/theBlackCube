@@ -27,3 +27,5 @@
 	* volume
 	* versione del browser
 	* orientamento schermo
+
+	
