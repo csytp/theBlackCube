@@ -394,6 +394,7 @@ if(document.getElementById('app')){
   /* ******************************* EVENTS LISTENERS ******************************* */
 
   var myTween= [];
+ 
   function randomCubeAnimation(){
 
       //let bankSelected = Math.round(Math.random() * bankClusterCubes + 1 );
@@ -513,103 +514,136 @@ if(document.getElementById('app')){
     });
 
   }
-  var ptot = 0;
-  var arrayContainer = Array();
+  var arrayP = Array();
+  var valoreInizialeX = camera.rotation.x;
+  var valoreFinaleX = 0;
+  var valoreInizialeY = camera.rotation.y;
+  var valoreFinaleY = 0;
+  var valoreInizialeZ = camera.rotation.z;
+  var valoreFinaleZ = 0;
+  
   window.addEventListener('mousedown', function(){
     
-    console.log('mousedown');
+    console.log('mousedown');    
     
-    let textContainer = document.createElement("div");
-    textContainer.classList.add('text');
-
-    controls.addEventListener('change', function(){
-
-      addText(textContainer, camera.rotation.x);
-      //console.log(arrayContainer);
-      ptot++;
-    });
+    // Assegno un id ad ogni div.text
+    let idvalue = 'text-1';    
+    if(document.querySelectorAll('.text').length > 0)
+      idvalue = 'text-' + (document.querySelectorAll('.text').length + 1);
+    
+    // Assegno la classe last all'ultimo div creato
+    // prima rimuovo l'ultimo last inserito
+    if(document.querySelectorAll('.last').length > 0)
+      document.querySelectorAll('.last').forEach((div)=>{ div.classList.remove('last') });
+    
+    // Creo il nuovo div.text.last
+    let scrollerDIV = document.createElement("div");
+    scrollerDIV.classList.add('text');
+    scrollerDIV.classList.add('last');
+    scrollerDIV.setAttribute('id', idvalue);
+    document.getElementById('text-container').appendChild(scrollerDIV); 
   });
 
-  //var offsetContainer = 100;
- 
-  function addText(container, data){
+  controls.addEventListener('change', function(){
+    valoreFinaleX = camera.rotation.x;
+    valoreFinaleY = camera.rotation.y;
+    valoreFinaleZ = camera.rotation.z;
+  });
+  
+  window.addEventListener('mouseup', function(){
+    let degreeX = (valoreFinaleX - valoreInizialeX) * (180/Math.PI);
+    let degreeY = (valoreFinaleY- valoreInizialeY) * (180/Math.PI);
+    let degreeZ = (valoreFinaleZ - valoreInizialeZ) * (180/Math.PI);
 
-    let p = document.createElement("p");
-    let content = document.createTextNode(data);
-    p.classList.add('text-line-code');
-    p.appendChild(content);
+    degreeX = degreeX.toFixed(2);
+    degreeY = degreeY.toFixed(2);
+    degreeZ = degreeZ.toFixed(2);
 
-    container.appendChild(p);
+    degreeX = (degreeX > 0 ? '+'+degreeX : degreeX);
+    degreeY = (degreeY > 0 ? '+'+degreeY : degreeY);
+    degreeZ = (degreeZ > 0 ? '+'+degreeZ : degreeZ);
+
+    let pElemX = document.createElement("p");
+    let pElemY = document.createElement("p");
+    let pElemZ = document.createElement("p");
+    let contentX = document.createTextNode('<x-rotation>'+(degreeX)+'°</x-rotation>');
+    let contentY = document.createTextNode('<y-rotation>'+(degreeY)+'°</y-rotation>');
+    let contentZ = document.createTextNode('<z-rotation>'+(degreeZ)+'°</z-rotation>');
+
+    pElemX.classList.add('text-line-code');
+    pElemY.classList.add('text-line-code');
+    pElemZ.classList.add('text-line-code');
+    pElemX.appendChild(contentX);
+    pElemY.appendChild(contentY);
+    pElemZ.appendChild(contentZ);
 
     if(Math.random() > 0.7)
-      p.classList.add('text-blink-it');   
+      pElemX.classList.add('text-blink-it');
+    if(Math.random() > 0.7)
+      pElemY.classList.add('text-blink-it');
+    if(Math.random() > 0.7)
+      pElemZ.classList.add('text-blink-it');
 
-    arrayContainer.push({
-      div: container,
-      played: false,
-      distanceTop: container.getBoundingClientRect().top + 20
+    if(document.querySelector('.last')){
+      document.querySelector('.last').appendChild(pElemX);
+      document.querySelector('.last').appendChild(pElemY);
+      document.querySelector('.last').appendChild(pElemZ);
+      addScrollTextTimeLine(document.querySelector('.last'));
+    }
+
+    valoreInizialeX = valoreFinaleX;
+    valoreInizialeY = valoreFinaleY;
+    valoreInizialeZ = valoreFinaleZ;
+    
+  });
+
+ 
+  
+/*   window.addEventListener('touchstart', function(){
+    
+    console.log('mousedown');    
+    initTextScolling();
+  }); */
+  var tlArray = Array();
+  function addScrollTextTimeLine(container){
+    
+    let tl = gsap.timeline();
+    //let tl = gsap.timeline({repeatRefresh: true});
+
+    //tl.set(container, { y: 0 });
+    //console.log(document.querySelector('.last').clientHeight);
+
+    tl.to(container, {
+      duration: 6,
+      opacity: 0.5,
+      delay: 0.8,
+      y: -window.innerHeight - document.querySelector('.last').clientHeight,
+      ease: "power2.out",
+      onStart: function() {
+        //pElem.played = true;
+        //console.log(tl);
+        //console.log( document.getElementsById('.text').innerHeight);
+        //console.log( document.querySelector('.text').clientHeight);
+      },
+      onUpdate: function() {
+
+      },
+      onComplete: function(){
+        
+        //document.querySelector('#text-container > .text').remove();
+        container.remove();
+        /* 
+        if(document.querySelectorAll('.text').length > 0)
+          addScrollTextTimeLine(); */
+      }
     });
 
-    
-  }
-
-  /*  scrollTextContainer() params: 
-      1) container to scroll
-      2) p height to calculate the offset so p element goes out from viewport (and will be deleted from DOM)
-  */
-    function scrollTextContainer(arrayContainer, pHeight){
-/*
-      ScrollTrigger.batch('.text', {
-        interval: .333,
-        //batchMax: 4,
-        start: "top 100%",
-        onEnter: batch => gsap.to(batch, {
-          //y: -batch.distanceTop,
-          autoAlpha: 0,
-          stagger: 0.01
-        }),
-      });*/
-      console.log('ptot', ptot);
-
-      let i = 0;
-      let myTween;
-      arrayContainer.forEach((container)=>{
-
-        if(!container.played){
-
-          document.getElementById('text-container').appendChild(container.div);
-
-          myTween= gsap.to(container.div,{
-            duration: 10,
-            //delay: 1,
-            opacity: 0,
-            y: -container.distanceTop /* - container.div.innerHeight*/ ,
-            ease: "elastic.out(1,0.7)",
-            onStart: () => {
-              container.played = true;
-              
-            },
-            onUpdate: () => {
-              //console.log(i, container);
-            },
-            onComplete: function(){
-              /*
-              if(!ScrollTrigger.isInViewport(container.div))
-              {
-                arrayContainer.pop();
-                container.div.remove();
-                console.log('deleted');
-              }*/
-            }
-          });
-
-        }
-
-      });
-
-      arrayContainer = [];
-      ptot = 0;
-      //myTween.kill();
+    //tl.seek(0);
+    //tl.pause();
+    tl.play();
+    //tlArray.push(tl);
+    //arrayContainer = [];
+    //myTween.kill();
 
   }
 
@@ -684,22 +718,14 @@ if(document.getElementById('app')){
     randomCubeAnimation( e );
   });
 
-  window.addEventListener('mouseup', function(){
-    console.log('mouseup');
 
-    console.log(arrayContainer);
-
-    console.log(arrayContainer.length);
-    /*
-    arrayContainer.forEach((container) => {
-      console.log(container);
-    });
-    console.log("wewe",arrayContainer[length+1]);
-*/
-    arrayContainer = [];
-    //scrollTextContainer(arrayContainer);
+  /*
+  window.addEventListener('touchend', function(){
+    addScrollTextTimeLine();
+    tl_start.seek(0);
+    tl_start.play();
   });
-
+ */
   window.addEventListener("resize", onWindowResize);
   window.addEventListener( 'click', onMouseClick, false );
   //window.addEventListener( 'mousemove', onMouseMove, false );
