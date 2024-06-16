@@ -521,28 +521,6 @@ if(document.getElementById('app')){
   var valoreFinaleY = 0;
   var valoreInizialeZ = camera.rotation.z;
   var valoreFinaleZ = 0;
-  
-  window.addEventListener('mousedown', function(){
-    
-    console.log('mousedown');    
-    
-    // Assegno un id ad ogni div.text
-    let idvalue = 'text-1';    
-    if(document.querySelectorAll('.text').length > 0)
-      idvalue = 'text-' + (document.querySelectorAll('.text').length + 1);
-    
-    // Assegno la classe last all'ultimo div creato
-    // prima rimuovo l'ultimo last inserito
-    if(document.querySelectorAll('.last').length > 0)
-      document.querySelectorAll('.last').forEach((div)=>{ div.classList.remove('last') });
-    
-    // Creo il nuovo div.text.last
-    let scrollerDIV = document.createElement("div");
-    scrollerDIV.classList.add('text');
-    scrollerDIV.classList.add('last');
-    scrollerDIV.setAttribute('id', idvalue);
-    document.getElementById('text-container').appendChild(scrollerDIV); 
-  });
 
   controls.addEventListener('change', function(){
     valoreFinaleX = camera.rotation.x;
@@ -550,7 +528,41 @@ if(document.getElementById('app')){
     valoreFinaleZ = camera.rotation.z;
   });
   
+  window.addEventListener('mousedown', function(){
+    initTextScrolling();    
+  });
+
+  window.addEventListener('touchstart', function(){   
+    initTextScrolling();
+  });
+
   window.addEventListener('mouseup', function(){
+    launchTextScrolling();
+  });
+  window.addEventListener('touchend', function(){   
+    launchTextScrolling();
+  });
+  
+  function initTextScrolling(){
+     // Assegno un id ad ogni div.text
+     let idvalue = 'text-1';    
+     if(document.querySelectorAll('.text').length > 0)
+       idvalue = 'text-' + (document.querySelectorAll('.text').length + 1);
+     
+     // Assegno la classe last all'ultimo div creato
+     // prima rimuovo l'ultimo last inserito
+     if(document.querySelectorAll('.last').length > 0)
+       document.querySelectorAll('.last').forEach((div)=>{ div.classList.remove('last') });
+     
+     // Creo il nuovo div.text.last
+     let scrollerDIV = document.createElement("div");
+     scrollerDIV.classList.add('text');
+     scrollerDIV.classList.add('last');
+     scrollerDIV.setAttribute('id', idvalue);
+     document.getElementById('text-container').appendChild(scrollerDIV);
+  }
+
+  function launchTextScrolling(){
     let degreeX = (valoreFinaleX - valoreInizialeX) * (180/Math.PI);
     let degreeY = (valoreFinaleY- valoreInizialeY) * (180/Math.PI);
     let degreeZ = (valoreFinaleZ - valoreInizialeZ) * (180/Math.PI);
@@ -594,24 +606,12 @@ if(document.getElementById('app')){
     valoreInizialeX = valoreFinaleX;
     valoreInizialeY = valoreFinaleY;
     valoreInizialeZ = valoreFinaleZ;
-    
-  });
+  }
 
- 
-  
-/*   window.addEventListener('touchstart', function(){
-    
-    console.log('mousedown');    
-    initTextScolling();
-  }); */
   var tlArray = Array();
   function addScrollTextTimeLine(container){
     
     let tl = gsap.timeline();
-    //let tl = gsap.timeline({repeatRefresh: true});
-
-    //tl.set(container, { y: 0 });
-    //console.log(document.querySelector('.last').clientHeight);
 
     tl.to(container, {
       duration: 6,
@@ -620,31 +620,15 @@ if(document.getElementById('app')){
       y: -window.innerHeight - document.querySelector('.last').clientHeight,
       ease: "power2.out",
       onStart: function() {
-        //pElem.played = true;
-        //console.log(tl);
-        //console.log( document.getElementsById('.text').innerHeight);
-        //console.log( document.querySelector('.text').clientHeight);
       },
       onUpdate: function() {
-
       },
       onComplete: function(){
-        
-        //document.querySelector('#text-container > .text').remove();
         container.remove();
-        /* 
-        if(document.querySelectorAll('.text').length > 0)
-          addScrollTextTimeLine(); */
       }
     });
 
-    //tl.seek(0);
-    //tl.pause();
     tl.play();
-    //tlArray.push(tl);
-    //arrayContainer = [];
-    //myTween.kill();
-
   }
 
 
