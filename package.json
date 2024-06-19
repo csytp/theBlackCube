@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "tone": "^15.0.4",
     "vite": "^5.2.0"
   },
   "dependencies": {

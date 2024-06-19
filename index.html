@@ -4,20 +4,49 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+
     <link href="css/style.css" rel="stylesheet" type="style">
     <title>The Black Cube</title>
   </head>
   <body>
 
-    <div id="white-screen"></div>
-
     <div id="text-container"></div>
     <div id="app"></div>
     
-    <audio id="myAudio" autoplay loop muted>
-      <source src="audio/track.mp3" type="audio/mpeg">
-      Your browser does not support the audio element.
-    </audio>
+    <div id="hideButton" class="d-flex flex-column p-3">
+      <div class="text-center">
+        <h2 class="mt-2 card-title">WEB BOX</h2>
+        <h4>Surveillance and Manipulation in the Digital Age</h4>
+        <br />
+        <h4>
+          Trans-interactive installation for physical and web environments
+        </h4>
+ 
+        <p class="mt-5">
+          <em>~</em> Connect with the physical environment by zooming, scrolling
+          and exploring virtual space.
+        </p>
+        <br />
+        <p>
+          <em>~</em> Turn up the volume and activate the phone ringer for the
+          full experience.
+        </p>
+        <button id="startButton" class="btn btn-dark mt-2 ">START</button>
+        <br />
+        <br />
+        <br />
+        <p>
+          Lorenzo Ballerini <br />with<br />
+          Giuseppe Ernandez & Massimo Reina
+        </p>
+      </div>
+    </div>
     <script type="module" src="./js/main-old.js"></script>
   </body>
 </html>

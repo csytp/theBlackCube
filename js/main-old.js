@@ -6,6 +6,8 @@ import { BoxLineGeometry, TrackballControls, Timer } from 'three/examples/jsm/Ad
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import * as Tone from 'tone';
+
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.refresh(true);
 ScrollTrigger.create({
@@ -16,21 +18,21 @@ ScrollTrigger.saveStyles([
   'text-container'
 ]);
 
-document.getElementById("myAudio").autoplay = true; 
-document.getElementById("myAudio").loop = true; 
-document.getElementById("myAudio").muted = true; 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log(document.getElementById("myAudio"));
-});
-
-
 var tasksFirst = [];
-var tasksSecond = [];
 var cubeArray = [];
 let clock, timer;
-let camera, scene, renderer, room;
+let camera, scene, renderer, controls, room, masterCubeGrp;
 let planeFrontWall, planeBackWall, planeSideWallLeft, planeSideWallRight, planeFloor, planeRoof;
 let spotLight1, spotLight2, spotLight3, spotLight4, frontLight;
+
+var valoreInizialeXRot;
+var valoreFinaleXRot;
+var valoreInizialeYRot;
+var valoreFinaleYRot;
+var valoreInizialeZRot;
+var valoreFinaleZRot;
+var valoreZoomIniziale;
+var valoreZoomFinale;
 
 // Options
 const options = {
@@ -91,18 +93,18 @@ var interactionsText = {
   zoom: 'ZOOM!!!'
 }
 
-if(document.getElementById('app')){
+//if(document.getElementById('app')){
 
   function init(){
   
     // Clock
-    clock = new THREE.Clock();
+    //clock = new THREE.Clock();
   
     // Scene
     /*const*/ scene = new THREE.Scene();
     scene.background = new THREE.Color( 0xffffff );
   
-    timer = new Timer();
+    //timer = new Timer();
   
     // Render
     /*const*/ renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
@@ -120,8 +122,10 @@ if(document.getElementById('app')){
     camera.position.set( 0, 0, -10 );
     //camera.lookAt(masterCubeGrp);
     scene.add( camera ); // required when the camera has a child
+
+    camera.lookAt( scene.position );
   }
-  init();
+
   
   
   function initRoom(){
@@ -174,7 +178,7 @@ if(document.getElementById('app')){
     room.add( planeRoof );
     */
   }
-  initRoom();
+
   
   
   function displayRoom(){
@@ -189,7 +193,7 @@ if(document.getElementById('app')){
       camera.add( room );
     }
   }
-  displayRoom();
+  //displayRoom();
   
   
   function initLights(){
@@ -230,13 +234,15 @@ if(document.getElementById('app')){
     camera.add( spotLight4 );
     camera.add( frontLight );
   }
-  initLights();
+  
 
-
-  // Master Cube
-  var masterCubeGrp = new THREE.Group();
-  masterCubeGrp.position.y = 0;
-  scene.add(masterCubeGrp);
+  function initMasterCube(){
+    // Master Cube
+    masterCubeGrp = new THREE.Group();
+    masterCubeGrp.position.y = 0;
+    scene.add(masterCubeGrp);
+  }
+  
 
 
   function createCube(color, val, center, bottom_panel, top_panel, left_panel, right_panel, front_panel, rear_panel){
@@ -264,34 +270,92 @@ if(document.getElementById('app')){
       masterCubeGrp.add(cube.mesh);
     });
   }
-  fillMasterCube();
+  
 
-  // CONTROLS
-  const controls = new TrackballControls(camera, renderer.domElement);
-  /*
-  controls.noPan = false;
-  controls.maxDistance = 10
-  controls.minDistance = -20;  
-  controls.noKeys = false;
-  controls.noRotate = false;
-  controls.noZoom = false;
+  function initControls(){
+    // CONTROLS
+    controls = new TrackballControls(camera, renderer.domElement);
 
-  */
-  // Loop
-  var aperturaMastercube_flag = false;
-  var rotazioneCubo_flag = false;
+    // Inizializzazione valori per le interazioni
+    // Dipendeza delle variabili da camera e controls
+    valoreInizialeXRot = camera.rotation.x;
+    valoreFinaleXRot = valoreInizialeXRot;
+    valoreInizialeYRot = camera.rotation.y;
+    valoreFinaleYRot = valoreInizialeYRot;
+    valoreInizialeZRot = camera.rotation.z;
+    valoreFinaleZRot = valoreFinaleZRot;
+    valoreZoomIniziale = controls.target.distanceTo( controls.object.position );
+    valoreZoomFinale = valoreZoomIniziale;
 
+    controls.addEventListener('change',function(){
+      readRotationValues();
+      readZoomValue();
+    });
+  }
+
+  function initRaycaster(){
+    // EVENT LISTENERS
+  window.addEventListener('pointermove', (e) => {
+
+    mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
+    raycaster.setFromCamera(mouse, camera);
+    //intersects = raycaster.intersectObjects(scene.children, true);
+    intersects = raycaster.intersectObjects(masterCubeGrp.children, true);
+    //console.log(intersects);
+    /*
+      Object.keys(hovered).forEach((key) => {
+        const hit = intersects.find((hit) => hit.object.uuid === key)
+        if (hit === undefined) {
+          const hoveredItem = hovered[key]
+          if (hoveredItem.object.onPointerOver) hoveredItem.object.onPointerOut(hoveredItem)
+          delete hovered[key]
+        }
+      });*/
+      randomCubeAnimation( e );
+    });
+
+    window.addEventListener("resize", onWindowResize);
+    window.addEventListener( 'click', onMouseClick, false );
+
+    /* MOUSE LISTENERS */
+    const raycaster = new THREE.Raycaster();
+    var raycaster2 = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+    let intersects = []
+    let hovered = {}
+
+    function onMouseClick( event ) {
+      
+      raycaster2.setFromCamera( mouse, camera );
+      var isIntersected = raycaster2.intersectObjects(masterCubeGrp.children, true);
+
+      if (isIntersected) {
+          console.log('Mesh clicked!');
+      }
+    }
+
+    function onMouseMove( event ) {
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        /*
+        console.log(mouse.x);
+        console.log(mouse.y);
+        console.log(event);*/
+        //return event;
+    }
+  }
+  
 
   function animate(){
     requestAnimationFrame( animate );
     controls.update();
-    timer.update();
+    //timer.update();
     renderer.render(scene, camera);
 
     tasksFirst.forEach((task) => task());
-    tasksSecond.forEach((task) => task());
   }
-  animate();
+  
 
   /* ******************************* ANIMATIONS ******************************* */
   function animationsLoops(){
@@ -309,8 +373,6 @@ if(document.getElementById('app')){
   var right_lim = 1.5;
   var front_lim = 1.5;
   var rear_lim = 1.5;
-  var speed = 0.0033;
-  var time = 0.005; // milliseconds
 
 
   function aperturaMastercube(){
@@ -440,17 +502,6 @@ if(document.getElementById('app')){
       myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)); // Rotation  
   }
 
-  /* KEYBOARD LISTENERS */
-  function toggleText(value, element) {    
-    if (value === 0) {
-        //element.setAttribute('style', 'display: none');
-        element.classList.remove('flash');
-    } else {
-      //element.setAttribute('style', 'display: flex');
-      element.classList.add('flash');
-    }
-  };
-
 
   /*
   var html_lines = Array(); // p elements array
@@ -498,50 +549,59 @@ if(document.getElementById('app')){
   }
   */
 
-  const myrRepetion = 0;
-  var countRepetion = 0;
-  function blinkText(pElem){
-    var myTween = gsap.to(pElem, {
-      duration: 0.5,
-      //delay: 0.3,
-      autoAlpha:0,
-      repeat: -1,
-      yoyo:true,
-      /*
-      snap:{
-        autoAlpha: [1, 0.5, 0]
-      }*/
-    });
 
-  }
-  var arrayP = Array();
-  var valoreInizialeX = camera.rotation.x;
-  var valoreFinaleX = 0;
-  var valoreInizialeY = camera.rotation.y;
-  var valoreFinaleY = 0;
-  var valoreInizialeZ = camera.rotation.z;
-  var valoreFinaleZ = 0;
-
-  controls.addEventListener('change', function(){
-    valoreFinaleX = camera.rotation.x;
-    valoreFinaleY = camera.rotation.y;
-    valoreFinaleZ = camera.rotation.z;
-  });
   
-  window.addEventListener('mousedown', function(){
-    initTextScrolling();    
+/*
+  ScrollTrigger.addEventListener("scrollStart", function() {
   });
+  ScrollTrigger.addEventListener("scrollEnd", function() {
+  });
+  */
+ /*
+  window.addEventListener('mousedown', function(){  
+  });*/
+  
 
-  window.addEventListener('touchstart', function(){   
+  var myInt;
+  var interupt;
+  var onTouchMove = false;
+
+  window.addEventListener('touchstart', function(){
+
     initTextScrolling();
+    launchTextScrolling();
+
+    
+    interupt = setInterval(()=>{
+      if(onTouchMove){
+        initTextScrolling();
+        launchTextScrolling();
+      }
+    },2000);
   });
 
-  window.addEventListener('mouseup', function(){
-    launchTextScrolling();
+  window.addEventListener('touchmove', function(){
+    onTouchMove = true;
   });
-  window.addEventListener('touchend', function(){   
-    launchTextScrolling();
+
+
+  window.addEventListener('touchend', function(){
+    onTouchMove = false;
+    clearInterval(myInt);
+    clearInterval(interupt);
   });
+
+  
+  function readRotationValues(){
+    valoreFinaleXRot = camera.rotation.x;
+    valoreFinaleYRot = camera.rotation.y;
+    valoreFinaleZRot = camera.rotation.z;
+  }
+
+  function readZoomValue(){
+    valoreZoomFinale = controls.target.distanceTo( controls.object.position );
+  }
+  
   
   function initTextScrolling(){
      // Assegno un id ad ogni div.text
@@ -563,52 +623,58 @@ if(document.getElementById('app')){
   }
 
   function launchTextScrolling(){
-    let degreeX = (valoreFinaleX - valoreInizialeX) * (180/Math.PI);
-    let degreeY = (valoreFinaleY- valoreInizialeY) * (180/Math.PI);
-    let degreeZ = (valoreFinaleZ - valoreInizialeZ) * (180/Math.PI);
+    let degreeXRot = (valoreFinaleXRot - valoreInizialeXRot) * (180/Math.PI);
+    let degreeYRot = (valoreFinaleYRot- valoreInizialeYRot) * (180/Math.PI);
+    let degreeZRot = (valoreFinaleZRot - valoreInizialeZRot) * (180/Math.PI);
+    let zoomValue = valoreZoomFinale - valoreZoomIniziale;
+    degreeXRot = degreeXRot.toFixed(2);
+    degreeYRot = degreeYRot.toFixed(2);
+    degreeZRot = degreeZRot.toFixed(2);
+    degreeXRot = (degreeXRot > 0 ? '+'+degreeXRot+'°' : degreeXRot+'°');
+    degreeYRot = (degreeYRot > 0 ? '+'+degreeYRot+'°' : degreeYRot+'°');
+    degreeZRot = (degreeZRot > 0 ? '+'+degreeZRot+'°' : degreeZRot+'°');
 
-    degreeX = degreeX.toFixed(2);
-    degreeY = degreeY.toFixed(2);
-    degreeZ = degreeZ.toFixed(2);
+    let pElemXRot = document.createElement("p");
+    let pElemYRot = document.createElement("p");
+    let pElemZRot = document.createElement("p");
+    let pElemZoom = document.createElement("p");
+    let contentX = document.createTextNode('<x-rotation>'+(degreeXRot)+'</x-rotation>');
+    let contentY = document.createTextNode('<y-rotation>'+(degreeYRot)+'</y-rotation>');
+    let contentZ = document.createTextNode('<z-rotation>'+(degreeZRot)+'</z-rotation>');
+    let contentZoom = document.createTextNode('<zoom-in>'+(zoomValue)+'</zoom-in>');
 
-    degreeX = (degreeX > 0 ? '+'+degreeX : degreeX);
-    degreeY = (degreeY > 0 ? '+'+degreeY : degreeY);
-    degreeZ = (degreeZ > 0 ? '+'+degreeZ : degreeZ);
-
-    let pElemX = document.createElement("p");
-    let pElemY = document.createElement("p");
-    let pElemZ = document.createElement("p");
-    let contentX = document.createTextNode('<x-rotation>'+(degreeX)+'°</x-rotation>');
-    let contentY = document.createTextNode('<y-rotation>'+(degreeY)+'°</y-rotation>');
-    let contentZ = document.createTextNode('<z-rotation>'+(degreeZ)+'°</z-rotation>');
-
-    pElemX.classList.add('text-line-code');
-    pElemY.classList.add('text-line-code');
-    pElemZ.classList.add('text-line-code');
-    pElemX.appendChild(contentX);
-    pElemY.appendChild(contentY);
-    pElemZ.appendChild(contentZ);
+    pElemXRot.classList.add('text-line-code');
+    pElemYRot.classList.add('text-line-code');
+    pElemZRot.classList.add('text-line-code');
+    pElemZoom.classList.add('text-line-code');
+    pElemXRot.appendChild(contentX);
+    pElemYRot.appendChild(contentY);
+    pElemZRot.appendChild(contentZ);
+    pElemZoom.appendChild(contentZoom);
 
     if(Math.random() > 0.7)
-      pElemX.classList.add('text-blink-it');
+      pElemXRot.classList.add('text-blink-it');
     if(Math.random() > 0.7)
-      pElemY.classList.add('text-blink-it');
+      pElemYRot.classList.add('text-blink-it');
     if(Math.random() > 0.7)
-      pElemZ.classList.add('text-blink-it');
+      pElemZRot.classList.add('text-blink-it');
+    if(Math.random() > 0.7)
+      pElemZoom.classList.add('text-blink-it');
 
     if(document.querySelector('.last')){
-      document.querySelector('.last').appendChild(pElemX);
-      document.querySelector('.last').appendChild(pElemY);
-      document.querySelector('.last').appendChild(pElemZ);
+      document.querySelector('.last').appendChild(pElemXRot);
+      document.querySelector('.last').appendChild(pElemYRot);
+      document.querySelector('.last').appendChild(pElemZRot);
+      document.querySelector('.last').appendChild(pElemZoom);
       addScrollTextTimeLine(document.querySelector('.last'));
     }
 
-    valoreInizialeX = valoreFinaleX;
-    valoreInizialeY = valoreFinaleY;
-    valoreInizialeZ = valoreFinaleZ;
+    valoreInizialeXRot = valoreFinaleXRot;
+    valoreInizialeYRot = valoreFinaleYRot;
+    valoreInizialeZRot = valoreFinaleZRot;
+    valoreZoomIniziale = valoreZoomFinale;
   }
 
-  var tlArray = Array();
   function addScrollTextTimeLine(container){
     
     let tl = gsap.timeline();
@@ -631,8 +697,6 @@ if(document.getElementById('app')){
     tl.play();
   }
 
-
-  var indexPress = 0;
   document.addEventListener(
     "keydown",
     (event) => {
@@ -640,126 +704,11 @@ if(document.getElementById('app')){
 
       if (keyName === "a") {
         aperturaMastercube();
-      }
-      if (keyName === "0") {
-        //readFileAJAX();
-      }
-      if (keyName === "1") {
-        detectBrowser();
-      }
-      if (keyName === "2") {
-        blinkText();
-      }
-      if (keyName === "3") {
-        
-      }
-      
+      }      
     },
     false,
   );
 
-  document.addEventListener(
-    "keyup",
-    (event) => {
-      const keyName = event.key;
-
-      if (keyName === "z") {
-        //toggleText(1, document.getElementById('text-container'));
-      }
-      /*
-      if(keyName === "x") {
-        toggleText(1, document.getElementById('white-screen'));
-        console.log("x left");
-      }*/
-    },
-    false,
-  );
-
-  /* MOUSE LISTENERS */
-  const raycaster = new THREE.Raycaster();
-  var raycaster2 = new THREE.Raycaster();
-  var mouse = new THREE.Vector2();
-  let intersects = []
-  let hovered = {}
-
-  // EVENT LISTENERS
-  window.addEventListener('pointermove', (e) => {
-
-    mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
-    raycaster.setFromCamera(mouse, camera);
-    //intersects = raycaster.intersectObjects(scene.children, true);
-    intersects = raycaster.intersectObjects(masterCubeGrp.children, true);
-    //console.log(intersects);
-  /*
-    Object.keys(hovered).forEach((key) => {
-      const hit = intersects.find((hit) => hit.object.uuid === key)
-      if (hit === undefined) {
-        const hoveredItem = hovered[key]
-        if (hoveredItem.object.onPointerOver) hoveredItem.object.onPointerOut(hoveredItem)
-        delete hovered[key]
-      }
-    });*/
-    randomCubeAnimation( e );
-  });
-
-
-  /*
-  window.addEventListener('touchend', function(){
-    addScrollTextTimeLine();
-    tl_start.seek(0);
-    tl_start.play();
-  });
- */
-  window.addEventListener("resize", onWindowResize);
-  window.addEventListener( 'click', onMouseClick, false );
-  //window.addEventListener( 'mousemove', onMouseMove, false );
-
-
-  function onMouseClick( event ) {
-    
-    raycaster2.setFromCamera( mouse, camera );
-    var isIntersected = raycaster2.intersectObjects(masterCubeGrp.children, true);
-
-    if (isIntersected) {
-        console.log('Mesh clicked!');
-    }
-  }
-
-  function onMouseMove( event ) {
-      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-      /*
-      console.log(mouse.x);
-      console.log(mouse.y);
-      console.log(event);*/
-      //return event;
-  }
-
-  var whiteFlashVisible = false;
-  function goFlash(){
-      
-    //console.log(document.getElementById('white-screen').getAttribute('z-index'));
-    //document.getElementById('white-screen').setAttribute('style', 'z-index: 0');
-    document.getElementById('white-screen').classList.add('flash');
-    whiteFlashVisible = true;
-  }
-
-  function removeFlash(){
-    document.getElementById('white-screen').classList.remove('flash');
-    whiteFlashVisible = true;
-  }
-
-  function flash(){
-    let time = timer.getDelta();
-    console.log("time->"+time);
-    if (time > 1){
-      setInterval(removeFlash,100);
-    }
-    else{
-      setInterval(goFlash,100);
-    }
-  }
 
   function touchFuncs() {
     const el = document.getElementById("app");
@@ -804,8 +753,90 @@ if(document.getElementById('app')){
     renderer.setSize( window.innerWidth, window.innerHeight );
     displayRoom();
   }
-} // end if app container exist
+ // end if app container exist
 
+/* AUDIO */
+let urlFile = "https://raw.githubusercontent.com/csytp/file_audio_web_box/main/Nastro_Web_Box_OK.aac";
+// VARIABILI TONEJS
+var elem = document.documentElement;
 
+const meter = new Tone.Meter();
+
+// AudioPlayer
+
+// Create a new player instance without autostart
+var player = new Tone.Player({
+  url: urlFile,
+  autostart: true, // Autostart is false to wait for onload
+  loop: 1,
+  onload: function () {
+    // Start playback after the player has loaded the audio
+    player.start();
+    player.connect(meter);
+    // Set the volume
+    player.volume.rampTo(0, 0.5);
+    setInterval(() => {
+      //console.log(meter.getValue());
+      // Background color change logic
+      if (meter.getValue() > -10) {
+        changeBackgroundColor();
+      }
+    }, 50);
+  },
+}).toDestination();
+
+// FUNZIONI GRAFICHE
+// rimuove bottone
+function removeButton() {
+
+  var button = document.getElementById("hideButton");
+  button.remove();
+  //create a synth and connect it to the main output (your speakers)
+  const debug = new Tone.Synth().toDestination();
+
+  //play a middle 'C' for the duration of an 8th note
+  debug.triggerAttackRelease("C4", "16n").volume.value = -80;
+
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.webkitRequestFullscreen) {
+    /* Safari */
+    elem.webkitRequestFullscreen();
+  } else if (elem.msRequestFullscreen) {
+    /* IE11 */
+    elem.msRequestFullscreen();
+  }
+
+  // Initializing threejs-engine
+  init();
+  //initRoom();
+  initLights();
+  initMasterCube();  
+  fillMasterCube();
+  initControls();
+  animate();
+  initRaycaster();
+}
+
+document.getElementById('startButton').addEventListener('click', removeButton);
+
+function changeBackgroundColor() {
+  //document.body.style.backgroundColor = "black";
+  scene.background = new THREE.Color( 0x000000 );
+  setTimeout(() => {
+    //document.body.style.backgroundColor = "white";
+    scene.background = new THREE.Color( 0xffffff );
+    setTimeout(() => {
+      //document.body.style.backgroundColor = "black";
+      scene.background = new THREE.Color( 0x000000 );
+
+      setTimeout(() => {
+        //document.body.style.backgroundColor = "white";
+        scene.background = new THREE.Color( 0xffffff );
+
+      }, 100);
+    }, 100); // Change back to white after 0.5 seconds
+  }, 100); // Change to black after 0.5 seconds
+}
 
 
