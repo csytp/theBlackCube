@@ -455,7 +455,7 @@ var interactionsText = {
 
   /* ******************************* EVENTS LISTENERS ******************************* */
 
-  var myTween= [];
+  
  
   function randomCubeAnimation(){
 
@@ -551,28 +551,72 @@ var interactionsText = {
 
 
   
-/*
+
   ScrollTrigger.addEventListener("scrollStart", function() {
+      
   });
   ScrollTrigger.addEventListener("scrollEnd", function() {
+    initTextScrolling();
+    launchTextScrolling();
   });
-  */
- /*
-  window.addEventListener('mousedown', function(){  
-  });*/
   
 
-  var myInt;
-  var interupt;
+  var myTween= [];
+  var needle;
+  var masterCubeOpened = false;
+  var onMouseMove = false;
   var onTouchMove = false;
+
+  document.getElementById('app').addEventListener('mousedown', () => {
+    if(!masterCubeOpened)
+      {
+        aperturaMastercube();
+        masterCubeOpened = true; 
+      }
+  });
+
+  document.getElementById('app').addEventListener('touchstart', () => {
+    if(!masterCubeOpened)
+      {
+        aperturaMastercube();
+        masterCubeOpened = true; 
+      }
+  });
+ 
+  window.addEventListener('mousedown', function(){
+
+    onMouseMove = true;
+    
+    needle = setInterval(()=>{
+      if(onMouseMove){
+        initTextScrolling();
+        launchTextScrolling();
+      }
+    },1200);
+  });
+
+  window.addEventListener('mouseup', function(){
+    onMouseMove = false;
+    clearInterval(needle);
+  });
+  window.addEventListener('click', function(e){
+    if(!onMouseMove){
+      initTextScrolling();
+      launchTextScrolling();
+    }
+  });
+  
+
 
   window.addEventListener('touchstart', function(){
 
-    initTextScrolling();
-    launchTextScrolling();
+    if(!onTouchMove){
+      initTextScrolling();
+      launchTextScrolling();
+    }
 
     
-    interupt = setInterval(()=>{
+    needle = setInterval(()=>{
       if(onTouchMove){
         initTextScrolling();
         launchTextScrolling();
@@ -584,11 +628,9 @@ var interactionsText = {
     onTouchMove = true;
   });
 
-
   window.addEventListener('touchend', function(){
     onTouchMove = false;
-    clearInterval(myInt);
-    clearInterval(interupt);
+    clearInterval(needle);
   });
 
   
@@ -630,6 +672,7 @@ var interactionsText = {
     degreeXRot = degreeXRot.toFixed(2);
     degreeYRot = degreeYRot.toFixed(2);
     degreeZRot = degreeZRot.toFixed(2);
+    zoomValue = zoomValue.toFixed(2);
     degreeXRot = (degreeXRot > 0 ? '+'+degreeXRot+'°' : degreeXRot+'°');
     degreeYRot = (degreeYRot > 0 ? '+'+degreeYRot+'°' : degreeYRot+'°');
     degreeZRot = (degreeZRot > 0 ? '+'+degreeZRot+'°' : degreeZRot+'°');
@@ -641,7 +684,18 @@ var interactionsText = {
     let contentX = document.createTextNode('<x-rotation>'+(degreeXRot)+'</x-rotation>');
     let contentY = document.createTextNode('<y-rotation>'+(degreeYRot)+'</y-rotation>');
     let contentZ = document.createTextNode('<z-rotation>'+(degreeZRot)+'</z-rotation>');
-    let contentZoom = document.createTextNode('<zoom-in>'+(zoomValue)+'</zoom-in>');
+
+    let contentZoom;
+
+    if(zoomValue == 0){
+      contentZoom = document.createTextNode('<zoom>'+(zoomValue)+'</zoom>');
+    }
+    else if(zoomValue > 0){
+      contentZoom = document.createTextNode('<zoom-out>'+(zoomValue)+'</zoom-out>');
+    }
+    else{
+      contentZoom = document.createTextNode('<zoom-in>'+(zoomValue)+'</zoom-in>');
+    }    
 
     pElemXRot.classList.add('text-line-code');
     pElemYRot.classList.add('text-line-code');
@@ -682,7 +736,7 @@ var interactionsText = {
     tl.to(container, {
       duration: 6,
       opacity: 0.5,
-      delay: 0.8,
+      delay: 0.4,
       y: -window.innerHeight - document.querySelector('.last').clientHeight,
       ease: "power2.out",
       onStart: function() {
@@ -714,7 +768,7 @@ var interactionsText = {
     const el = document.getElementById("app");
     el.addEventListener("touchstart", () => {
       console.log('touchstart!!');
-      aperturaMastercube();
+      
       /*
       flash();*/
       //toggleText(1, document.getElementById('text-container'));
@@ -751,7 +805,7 @@ var interactionsText = {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
-    displayRoom();
+    //displayRoom();
   }
  // end if app container exist
 
@@ -818,9 +872,13 @@ function removeButton() {
   initRaycaster();
 }
 
-document.getElementById('startButton').addEventListener('click', removeButton);
+document.getElementById('startButton').addEventListener('click', function(event){
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  removeButton();
+});
 
-function changeBackgroundColor() {
+function changeBackgroundColor(e) {
   //document.body.style.backgroundColor = "black";
   scene.background = new THREE.Color( 0x000000 );
   setTimeout(() => {
