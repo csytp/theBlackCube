@@ -16,5 +16,8 @@
     "three": "^0.167.1",
     "tone": "^15.0.4",
     "vite": "^5.4.1"
+  },
+  "dependencies": {
+    "nosleep.js": "^0.12.0"
   }
 }

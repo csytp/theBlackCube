@@ -1,4 +1,6 @@
-import './style.css'
+import './style.css';
+
+import NoSleep from 'nosleep.js';
 
 import * as THREE from 'three';
 import { BoxLineGeometry, TrackballControls, OrbitControls, ThreeMFLoader } from 'three/examples/jsm/Addons.js';
@@ -8,7 +10,9 @@ import {ScrollTrigger} from 'gsap/ScrollTrigger'
 
 import * as Tone from 'tone';
 
-import srcStarMap from './img/star.png'
+import srcStarMap from './img/star.png';
+
+
 
 
 gsap.registerPlugin(ScrollTrigger);
@@ -20,6 +24,9 @@ ScrollTrigger.create({
 ScrollTrigger.saveStyles([
   'text-container'
 ]);
+
+// No Sleep import
+var noSleep = new NoSleep();
 
 
 //////// THREEJS ////////
@@ -628,8 +635,14 @@ window.addEventListener('touchstart', function(){
   },2000);
 });
 */
+
+window.addEventListener('touchstart', function(){
+  //No sleep display
+  noSleep.enable();
+});
 window.addEventListener('touchmove', function(){
   onTouchMove = true;
+
 });
 
 window.addEventListener('touchend', function(){
