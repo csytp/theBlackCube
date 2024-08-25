@@ -2,8 +2,12 @@
 export default {
   content: [
     "index.html",
+    /*
     "main.js",
-    "space.js",
+    "space.js",*/
+    "./js/*.js",
+    "./js/components/*.js",
+    "./elements/*.js",
   ],
   theme: {
     extend: {},

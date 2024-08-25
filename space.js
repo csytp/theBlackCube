@@ -290,47 +290,47 @@ function initControls(){
 
 function initRaycaster(){
   // EVENT LISTENERS
-window.addEventListener('pointermove', (e) => {
+  window.addEventListener('pointermove', (e) => {
 
-  mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
-  raycaster.setFromCamera(mouse, camera);
-  //intersects = raycaster.intersectObjects(scene.children, true);
-  intersects = raycaster.intersectObjects(masterCubeGrp.children, true);
-  //console.log(intersects);
-  
-  /*
-    Object.keys(hovered).forEach((key) => {
-      const hit = intersects.find((hit) => hit.object.uuid === key)
-      if (hit === undefined) {
-        const hoveredItem = hovered[key]
-        if (hoveredItem.object.onPointerOver) hoveredItem.object.onPointerOut(hoveredItem)
-        delete hovered[key]
-      }
-    });*/
-    randomCubeAnimation( e );
-  });
-
-  
-
-  /* MOUSE LISTENERS */
-  const raycaster = new THREE.Raycaster();
-  var raycaster2 = new THREE.Raycaster();
-  var mouse = new THREE.Vector2();
-  let intersects = []
-  let hovered = {}
+    mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
+    raycaster.setFromCamera(mouse, camera);
+    //intersects = raycaster.intersectObjects(scene.children, true);
+    intersects = raycaster.intersectObjects(masterCubeGrp.children, true);
+    //console.log(intersects);
+    
+    /*
+      Object.keys(hovered).forEach((key) => {
+        const hit = intersects.find((hit) => hit.object.uuid === key)
+        if (hit === undefined) {
+          const hoveredItem = hovered[key]
+          if (hoveredItem.object.onPointerOver) hoveredItem.object.onPointerOut(hoveredItem)
+          delete hovered[key]
+        }
+      });*/
+      randomCubeAnimation( e );
+    });
 
   
 
-  function onMouseMove( event ) {
-      mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-      mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    /* MOUSE LISTENERS */
+    const raycaster = new THREE.Raycaster();
+    var raycaster2 = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+    let intersects = []
+    let hovered = {}
 
-      /*
-      console.log(mouse.x);
-      console.log(mouse.y);
-      console.log(event);*/
-      //return event;
-  }
+    
+
+    function onMouseMove( event ) {
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+        /*
+        console.log(mouse.x);
+        console.log(mouse.y);
+        console.log(event);*/
+        //return event;
+    }
 }
 
 
