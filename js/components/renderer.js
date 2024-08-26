@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 class Renderer {
   constructor(sketch) {
-    // this.sketch = sketch;
+    this.sketch = sketch;
     // console.log('->>', this.sketch);
     /*
     this.settings = { ...settings };
@@ -15,27 +15,29 @@ class Renderer {
     this.renderer.outputEncoding = THREE.sRGBEncoding;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;*/
 
-    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+    this.renderer = new THREE.WebGLRenderer( { antialias: true});
+    this.renderer.domElement.setAttribute("id", 'canvas');
     this.renderer.setPixelRatio( window.devicePixelRatio );
-    this.renderer.setSize( sketch.sizes.width, sketch.sizes.height );
+    this.renderer.setSize( this.sketch.sizes.width, this.sketch.sizes.height );
 
-    this.renderer.update = this.update.bind(sketch);
+    this.renderer.update = this.update.bind(this.sketch);
 
     return this.renderer;
   }
   update() {
+    
     //this.renderer.render(this.fxsceneA, this.camera);
 
-    console.log('transition',sketch.params.transition);
+    //console.log('transition',sketch.paramsFxScene.transition);
 
     //this.renderer.render( sketch.fxSceneB.scene, sketch.fxSceneB.camera );
     
     // Prevent render both scenes when it's not necessary
-    if ( sketch.params.transition === 0 ) {
+    if ( sketch.paramsFxScene.transition === 0 ) {
 
       this.renderer.render( sketch.fxSceneA.scene, sketch.fxSceneA.camera );
 
-    } else if ( sketch.params.transition === 1 ) {
+    } else if ( sketch.paramsFxScene.transition === 1 ) {
 
        this.renderer.render( sketch.fxSceneB.scene, sketch.fxSceneB.camera );
 

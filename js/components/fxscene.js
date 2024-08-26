@@ -1,54 +1,45 @@
 import * as THREE from "three";
 
-class FxScene {
-  constructor(sketch, backgroundColor) {
-    this.sketch = sketch;
-    //this.settings = { ...settings };
+// import Controls from "./../components/controls";
 
-    this.camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 100 );
+
+class FxScene {
+  constructor(sketch, backgroundColor, activated) {
+    this.sketch = sketch;
+    this.delta = this.sketch.clock.getDelta();
+    this.activated = activated;
+
+    // Camera
+    this.camera = new THREE.PerspectiveCamera(
+      50,
+      this.sketch.sizes.width / this.sketch.sizes.height,
+      0.1,
+      15000
+    );
     this.camera.position.z = 20;
 
-    // Setup scene
+    // Scene
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color( backgroundColor );
-    this.scene.add( new THREE.AmbientLight( 0xaaaaaa, 3 ) );
+    this.scene.background = backgroundColor;
 
-    /*
-    this.light = new THREE.DirectionalLight( 0xffffff, 3 );
-    this.light.position.set( 0, 1, 4 );
-    this.scene.add( this.light );
-*/
-    //this.rotationSpeed = rotationSpeed;
-/*
-    const color = geometry.type === 'BoxGeometry' ? 0x0000ff : 0xff0000;
-    const material = new THREE.MeshPhongMaterial( { color: color, flatShading: true } );
-    const mesh = generateInstancedMesh( geometry, material, 500 );
-    scene.add( mesh );
-*/
-    /*this.scene = scene;
-    this.camera = camera;*/
-    // this.mesh = mesh;
+    //console.log(this.scene);
 
-    this.update = function ( delta ) {
-/*
-        if ( params.sceneAnimate ) {
+    //Controls
+    //this.controls = new Controls(this.sketch, this.camera, this.sketch.renderer, this.scene.uuid);
 
-            mesh.rotation.x += this.rotationSpeed.x * delta;
-            mesh.rotation.y += this.rotationSpeed.y * delta;
-            mesh.rotation.z += this.rotationSpeed.z * delta;
 
-        }
-*/
-    };
+    //console.log(document.body);
+    
+    // this.controls.movementSpeed = 2500;
 
-    this.resize = function () {
 
-        this.sketch.camera.aspect = window.innerWidth / window.innerHeight;
-        this.sketch.camera.updateProjectionMatrix();
-
-    };
+    //
+    this.sketch.animator.add( () => this.update( this.delta ) );
 
     //return this.scene;
+  }
+  update( delta ) {
+
   }
 }
 export default FxScene;

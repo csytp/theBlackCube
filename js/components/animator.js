@@ -3,7 +3,12 @@ class Animator {
     this.sketch = sketch;
     this.settings = { ...settings };
 
-    this.tasks = [];
+    this.tasks = [
+/*
+      () => this.sketch.fxSceneA.update(this.sketch.clock.getDelta()),
+      () => this.sketch.fxSceneB.update(this.sketch.clock.getDelta()),
+*/
+    ];
 
     //this.frame = 0;
   }
@@ -14,9 +19,6 @@ class Animator {
     requestAnimationFrame(this.animate.bind(this));
 
     const delta = this.sketch.clock.getDelta();
-
-    this.sketch.fxSceneA.update(delta);
-    this.sketch.fxSceneB.update(delta);
 
     this.tasks.forEach((task) => task());
     //this.frame++;
