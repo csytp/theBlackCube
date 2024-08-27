@@ -1,5 +1,7 @@
 import * as THREE from "three";
 
+import FaceRecognition from '../face-recognition/face-recognition.js'
+
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { FlyControls } from 'three/addons/controls/FlyControls.js';
 import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
@@ -14,6 +16,8 @@ class BoxesWorld extends FxScene {
       new THREE.Color().setHSL(0.51, 0.4, 0.01, THREE.SRGBColorSpace),
       false
     );
+
+    this.fr = new FaceRecognition();
 
     this.rotationSpeed = new THREE.Vector3(0, -0.4, 0);
 
