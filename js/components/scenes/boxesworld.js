@@ -1,13 +1,12 @@
 import * as THREE from "three";
 
-import FaceRecognition from '../face-recognition/face-recognition.js'
+import FaceRecognition from "../face-recognition/face-recognition.js";
 
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { FlyControls } from 'three/addons/controls/FlyControls.js';
+import { FlyControls } from "three/addons/controls/FlyControls.js";
 import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
 
 import FxScene from "../fxscene.js";
-
 
 class BoxesWorld extends FxScene {
   constructor(sketch) {
@@ -17,7 +16,8 @@ class BoxesWorld extends FxScene {
       false
     );
 
-    this.fr = new FaceRecognition();
+    // Face Recognition
+    //this.fr = new FaceRecognition();
 
     this.rotationSpeed = new THREE.Vector3(0, -0.4, 0);
 
@@ -61,7 +61,7 @@ class BoxesWorld extends FxScene {
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.15);
     dirLight.position.set(0, -1, 0).normalize();
     dirLight.color.setHSL(0.1, 0.7, 0.5);
-    this.scene.add( dirLight );
+    this.scene.add(dirLight);
 
     // lensflares
     const textureLoader = new THREE.TextureLoader();
@@ -76,14 +76,12 @@ class BoxesWorld extends FxScene {
     this.addLight(0.55, 0.9, 0.5, 5000, 0, -1000);
     this.addLight(0.08, 0.8, 0.5, 0, 0, -1000);
     this.addLight(0.995, 0.5, 0.9, 5000, 5000, -1000);
-    console.log(this.sketch);
+
     //Controls
     this.controls = new FlyControls(
       this.camera,
       this.sketch.renderer.domElement
     );
-
-    
     this.controls.movementSpeed = 2500;
     this.controls.domElement = this.sketch.renderer.domElement;
     this.controls.rollSpeed = Math.PI / 6;
@@ -93,7 +91,7 @@ class BoxesWorld extends FxScene {
     //return this.scene;
   }
   update(delta) {
-    this.controls.update(delta*10);
+    this.controls.update(delta * 10);
     //console.log('UPDATE', this.sketch.paramsFxScene.sceneAnimate);
     if (this.sketch.paramsFxScene.sceneAnimate) {
       // this.scene.rotation.x += this.rotationSpeed.x * delta;

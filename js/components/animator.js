@@ -4,7 +4,7 @@ class Animator {
     this.settings = { ...settings };
 
     this.tasks = [
-/*
+      /*
       () => this.sketch.fxSceneA.update(this.sketch.clock.getDelta()),
       () => this.sketch.fxSceneB.update(this.sketch.clock.getDelta()),
 */
@@ -23,7 +23,6 @@ class Animator {
     this.tasks.forEach((task) => task());
     //this.frame++;
     this.sketch.renderer.update();
-    
   }
 }
 export default Animator;

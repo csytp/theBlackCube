@@ -1,16 +1,12 @@
 import * as THREE from "three";
-import Stats from 'three/addons/libs/stats.module.js';
-
-
+import Stats from "three/addons/libs/stats.module.js";
 
 import Scene from "./components/scene";
 import Renderer from "./components/renderer";
 import Camera from "./components/camera";
 import Lights from "./components/lights";
 
-import Events from "./components/events";
 import Animator from "./components/animator";
-// import FxScene from "./components/fxscene.js";
 import Vacuum from "./components/scenes/vacuum.js";
 import SpaceScene from "./components/scenes/space.js";
 import BoxesWorld from "./components/scenes/boxesworld.js";
@@ -35,12 +31,11 @@ class Sketch {
 
     this.stats = new Stats();
     document.body.appendChild(this.stats.dom);
-    this.events = new Events(this);
-    this.renderer = new Renderer(this,document.getElementById('app'));
+    this.renderer = new Renderer(this, document.getElementById("app"));
     this.animator = new Animator(this, this.clock);
     this.composer = new EffectComposer(this.renderer);
 
-    this.animator.add(  () =>  this.stats.update());
+    this.animator.add(() => this.stats.update());
 
     this.clock = new THREE.Clock();
 
