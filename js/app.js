@@ -41,7 +41,7 @@ class Sketch {
 
     this.clock = new THREE.Clock();
 
-    this.textures = []; //Textures for renderTransitionPass
+    this.texturesFxScene = []; //Textures for renderTransitionPass
 
     this.paramsFxScene = {
       sceneAnimate: false,
@@ -69,7 +69,7 @@ class Sketch {
       this.fxSceneA.scene,
       this.fxSceneA.camera
     );
-    this.renderTransitionPass.setTexture(this.textures[0]);
+    this.renderTransitionPass.setTexture(this.texturesFxScene[0]);
     this.composer.addPass(this.renderTransitionPass);
 
     // this.glitchPass = new GlitchPass();
@@ -82,7 +82,9 @@ class Sketch {
     document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
   }
   init() {
+    this.initTextures(this);
     this.initGUI(this);
+
     document.body.appendChild(this.renderer.domElement);
     this.animator.animate();
   }
@@ -99,7 +101,7 @@ class Sketch {
       .listen();
 
     gui.add(this.paramsFxScene, "useTexture").onChange(function (value) {
-      this.useTexture(value);
+      sketch.renderTransitionPass.useTexture(value);
     });
 
     gui
@@ -112,7 +114,9 @@ class Sketch {
         Radial: 5,
       })
       .onChange(function (value) {
-        sketch.renderTransitionPass.setTexture(this.textures[value]);
+        console.log(value);
+        console.log(sketch.texturesFxScene[value]);
+        sketch.renderTransitionPass.setTexture(sketch.texturesFxScene[value]);
       })
       .listen();
 
@@ -123,6 +127,18 @@ class Sketch {
       .onChange(function (value) {
         sketch.renderTransitionPass.setTextureThreshold(value);
       });
+  }
+  initTextures(sketch) {
+    const loader = new THREE.TextureLoader();
+
+    for (let i = 0; i < 6; i++) {
+      sketch.texturesFxScene[i] = loader.load(
+        "./textures/transitions/transition" + (i + 1) + ".png"
+      );
+    }
+    // sketch.renderTransitionPass.setTexture(sketch.texturesFxScene[0]);
+    // sketch.composer.addPass(sketch.renderTransitionPass);
+    // sketch.composer.dispose();
   }
   onKeyPressed(event) {
     const keyName = event.key;
@@ -135,8 +151,8 @@ class Sketch {
         this.fxSceneA.scene,
         this.fxSceneA.camera
       );
-      this.composer.addPass(this.renderTransitionPass);
-    }else if (keyName === "2") {
+      // this.composer.addPass(this.renderTransitionPass);
+    } else if (keyName === "2") {
       console.log("pressed 2");
       this.fxSceneB = this.arrayScenes[2];
       this.renderTransitionPass = new RenderTransitionPass(
@@ -145,8 +161,9 @@ class Sketch {
         this.fxSceneA.scene,
         this.fxSceneA.camera
       );
-      this.composer.addPass(this.renderTransitionPass);
     }
+    this.composer.addPass(this.renderTransitionPass);
+    this.composer.dispose();
   }
 }
 
