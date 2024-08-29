@@ -24,7 +24,7 @@ class Renderer {
 
     return this.renderer;
   }
-  update() {
+  update(delta) {
     //this.renderer.render(this.fxsceneA, this.camera);
 
     //console.log('transition',sketch.paramsFxScene.transition);
@@ -38,7 +38,10 @@ class Renderer {
       this.renderer.render(sketch.fxSceneB.scene, sketch.fxSceneB.camera);
     } else {
       // When 0 < transition < 1 render transition between two scenes
-      sketch.composer.render();
+      sketch.composer.render(delta);
+      //sketch.composer.dispose();
+      // this.sk.fxSceneA.render( delta, true );
+			// this.sk.fxSceneB.render( delta, true );
     }
   }
 }

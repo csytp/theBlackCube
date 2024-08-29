@@ -5,7 +5,8 @@ import Scene from "./components/scene";
 import Renderer from "./components/renderer";
 import Camera from "./components/camera";
 import Lights from "./components/lights";
-
+import Events from "./components/events.js";
+//FxScene import
 import Animator from "./components/animator";
 import Vacuum from "./components/scenes/vacuum.js";
 import SpaceScene from "./components/scenes/space.js";
@@ -31,6 +32,7 @@ class Sketch {
 
     this.stats = new Stats();
     document.body.appendChild(this.stats.dom);
+
     this.renderer = new Renderer(this, document.getElementById("app"));
     this.animator = new Animator(this, this.clock);
     this.composer = new EffectComposer(this.renderer);
@@ -59,6 +61,7 @@ class Sketch {
 
     this.fxSceneA = this.arrayScenes[2];
     this.fxSceneB = this.arrayScenes[1];
+    this.fxSceneC = this.arrayScenes[0];
 
     this.renderTransitionPass = new RenderTransitionPass(
       this.fxSceneB.scene,
@@ -74,6 +77,9 @@ class Sketch {
 
     this.outputPass = new OutputPass();
     this.composer.addPass(this.outputPass);
+
+    // window.addEventListener("resize", this.onWindowResize.bind(this), false);
+    document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
   }
   init() {
     this.initGUI(this);
@@ -117,6 +123,30 @@ class Sketch {
       .onChange(function (value) {
         sketch.renderTransitionPass.setTextureThreshold(value);
       });
+  }
+  onKeyPressed(event) {
+    const keyName = event.key;
+    if (keyName === "1") {
+      console.log("pressed 1");
+      this.fxSceneA = this.arrayScenes[0];
+      this.renderTransitionPass = new RenderTransitionPass(
+        this.fxSceneB.scene,
+        this.fxSceneB.camera,
+        this.fxSceneA.scene,
+        this.fxSceneA.camera
+      );
+      this.composer.addPass(this.renderTransitionPass);
+    }else if (keyName === "2") {
+      console.log("pressed 2");
+      this.fxSceneB = this.arrayScenes[2];
+      this.renderTransitionPass = new RenderTransitionPass(
+        this.fxSceneB.scene,
+        this.fxSceneB.camera,
+        this.fxSceneA.scene,
+        this.fxSceneA.camera
+      );
+      this.composer.addPass(this.renderTransitionPass);
+    }
   }
 }
 

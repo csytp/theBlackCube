@@ -3,35 +3,32 @@ class Events {
     this.fxscene = fxscene;
     this.settings = { ...settings };
 
-    console.log(this.fxscene);
     this.addEvents();
   }
   addEvents() {
     window.addEventListener("resize", this.onWindowResize.bind(this), false);
   }
+  onKeyPressed() {}
   onWindowResize() {
+    // Updating Sketch window sizes
     this.fxscene.sketch.sizes = {
       width: window.innerWidth,
       height: window.innerHeight,
     };
 
-    console.log(this.fxscene);
-
+    // Updating Camera sizes
     this.fxscene.camera.aspect =
       this.fxscene.sketch.sizes.width / this.fxscene.sketch.sizes.height;
     this.fxscene.camera.updateProjectionMatrix();
-    
+
+    // Updating Render sizes
     this.fxscene.sketch.renderer.setSize(
       this.fxscene.sketch.sizes.width,
       this.fxscene.sketch.sizes.height
     );
-    this.fxscene.sketch.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio));
-    /*
-    this.sketch.fxSceneA.resize();
-    this.sketch.fxSceneB.resize();
-    this.sketch.renderer.setSize( window.innerWidth, window.innerHeight );
-    this.sketch.composer.setSize( window.innerWidth, window.innerHeight );
-    */
+    this.fxscene.sketch.renderer.setPixelRatio(
+      Math.min(2, window.devicePixelRatio)
+    );
   }
 }
 export default Events;

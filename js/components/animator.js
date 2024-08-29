@@ -22,7 +22,7 @@ class Animator {
 
     this.tasks.forEach((task) => task());
     //this.frame++;
-    this.sketch.renderer.update();
+    this.sketch.renderer.update(delta);
   }
 }
 export default Animator;
