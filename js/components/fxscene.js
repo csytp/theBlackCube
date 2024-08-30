@@ -25,10 +25,13 @@ class FxScene {
     this.scene = new THREE.Scene();
     this.scene.background = backgroundColor;
 
+    console.log(this.sketch.delta);
     this.sketch.animator.add(() => this.update(this.delta));
 
     //return this.scene;
   }
-  update(delta) {}
+  update(delta) {
+    console.log('fxscene',delta);
+  }
 }
 export default FxScene;

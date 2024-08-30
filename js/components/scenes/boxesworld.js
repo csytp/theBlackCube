@@ -17,7 +17,7 @@ class BoxesWorld extends FxScene {
     );
 
     // Face Recognition
-    //this.fr = new FaceRecognition();
+    this.fr = new FaceRecognition();
 
     this.rotationSpeed = new THREE.Vector3(0, -0.4, 0);
 
@@ -91,6 +91,7 @@ class BoxesWorld extends FxScene {
     //return this.scene;
   }
   update(delta) {
+    //console.log('bworld',delta*10000);
     this.controls.update(delta * 10);
     //console.log('UPDATE', this.sketch.paramsFxScene.sceneAnimate);
     if (this.sketch.paramsFxScene.sceneAnimate) {

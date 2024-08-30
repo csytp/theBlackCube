@@ -40,6 +40,7 @@ class Sketch {
     this.animator.add(() => this.stats.update());
 
     this.clock = new THREE.Clock();
+    this.delta = this.clock.getDelta();
 
     this.texturesFxScene = []; //Textures for renderTransitionPass
 
@@ -54,14 +55,14 @@ class Sketch {
     };
 
     this.arrayScenes = [
-      new Vacuum(this),
+      new Vacuum(this, this.clock),
       new SpaceScene(this, 20000), //params-> (this Sketch, starsCount)
       new BoxesWorld(this),
     ];
 
-    this.fxSceneA = this.arrayScenes[2];
+    this.fxSceneA = this.arrayScenes[0];
     this.fxSceneB = this.arrayScenes[1];
-    this.fxSceneC = this.arrayScenes[0];
+    this.fxSceneC = this.arrayScenes[2];
 
     this.renderTransitionPass = new RenderTransitionPass(
       this.fxSceneB.scene,

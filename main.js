@@ -1,12 +1,16 @@
-import './style.css'
+import "./style.css";
 
-import * as THREE from 'three';
-import { BoxLineGeometry, TrackballControls, Timer } from 'three/examples/jsm/Addons.js';
+import * as THREE from "three";
+import {
+  BoxLineGeometry,
+  TrackballControls,
+  Timer,
+} from "three/examples/jsm/Addons.js";
 
-import {gsap} from 'gsap'
-import {ScrollTrigger} from 'gsap/ScrollTrigger'
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import * as Tone from 'tone';
+import * as Tone from "tone";
 /*
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,17 +38,13 @@ window.addEventListener('load', () => {
 
 */
 
-
 gsap.registerPlugin(ScrollTrigger);
 ScrollTrigger.refresh(true);
 ScrollTrigger.create({
   start: 0,
-  end: "max"
+  end: "max",
 });
-ScrollTrigger.saveStyles([
-  'text-container'
-]);
-
+ScrollTrigger.saveStyles(["text-container"]);
 
 //////// THREEJS ////////
 /*three variables */
@@ -52,7 +52,12 @@ var tasksFirst = [];
 var cubeArray = [];
 let clock, timer;
 let camera, scene, renderer, controls, room, masterCubeGrp;
-let planeFrontWall, planeBackWall, planeSideWallLeft, planeSideWallRight, planeFloor, planeRoof;
+let planeFrontWall,
+  planeBackWall,
+  planeSideWallLeft,
+  planeSideWallRight,
+  planeFloor,
+  planeRoof;
 let spotLight1, spotLight2, spotLight3, spotLight4, frontLight;
 
 var valoreInizialeXRot;
@@ -66,131 +71,237 @@ var valoreZoomFinale;
 
 // Options
 const options = {
-  width: window.innerWidth/2,
-  height: window.innerHeight/2
-}
+  width: window.innerWidth / 2,
+  height: window.innerHeight / 2,
+};
 
 // Inner Cubes List
 var listInnerCubes = [
   //1st level (basso)
   //(basso-dx)
-  {x:-1, y:-1, z:1, val: false, bottom_panel:true, right_panel: true, rear_panel:true},
-  {x:-1, y:-1, z:0, val: false, bottom_panel:true, right_panel: true},
-  {x:-1, y:-1, z:-1, val: true, bottom_panel:true, right_panel: true, front_panel: true},
+  {
+    x: -1,
+    y: -1,
+    z: 1,
+    val: false,
+    bottom_panel: true,
+    right_panel: true,
+    rear_panel: true,
+  },
+  { x: -1, y: -1, z: 0, val: false, bottom_panel: true, right_panel: true },
+  {
+    x: -1,
+    y: -1,
+    z: -1,
+    val: true,
+    bottom_panel: true,
+    right_panel: true,
+    front_panel: true,
+  },
 
   //(basso-centro)
-  {x:0, y:-1, z:1, val: false, bottom_panel:true, rear_panel:true},
-  {x:0, y:-1, z:0, val: false, center: true, bottom_panel:true},
-  {x:0, y:-1, z:-1, val: false, bottom_panel:true, front_panel: true},
+  { x: 0, y: -1, z: 1, val: false, bottom_panel: true, rear_panel: true },
+  { x: 0, y: -1, z: 0, val: false, center: true, bottom_panel: true },
+  { x: 0, y: -1, z: -1, val: false, bottom_panel: true, front_panel: true },
 
-  //(basso-sx)  
-  {x:1, y:-1, z:1, val: false, bottom_panel:true, left_panel: true, rear_panel:true},
-  {x:1, y:-1, z:0, val: false, bottom_panel:true, left_panel: true},
-  {x:1, y:-1, z:-1, val: false, bottom_panel:true, left_panel: true, front_panel: true},
-  
+  //(basso-sx)
+  {
+    x: 1,
+    y: -1,
+    z: 1,
+    val: false,
+    bottom_panel: true,
+    left_panel: true,
+    rear_panel: true,
+  },
+  { x: 1, y: -1, z: 0, val: false, bottom_panel: true, left_panel: true },
+  {
+    x: 1,
+    y: -1,
+    z: -1,
+    val: false,
+    bottom_panel: true,
+    left_panel: true,
+    front_panel: true,
+  },
+
   //2nd level (medio-dx)
-  {x:-1, y:0, z:1, val: false, center: false, right_panel: true, rear_panel:true},
-  {x:-1, y:0, z:0, val: false, center: false, right_panel: true},
-  {x:-1, y:0, z:-1, val: false, center: false, right_panel: true, front_panel: true},
+  {
+    x: -1,
+    y: 0,
+    z: 1,
+    val: false,
+    center: false,
+    right_panel: true,
+    rear_panel: true,
+  },
+  { x: -1, y: 0, z: 0, val: false, center: false, right_panel: true },
+  {
+    x: -1,
+    y: 0,
+    z: -1,
+    val: false,
+    center: false,
+    right_panel: true,
+    front_panel: true,
+  },
   //(medio-centro)
-  {x:0, y:0, z:1, val: false, center: false, rear_panel:true},
-  {x:0, y:0, z:0, val: false, center: true},
-  {x:0, y:0, z:-1, val: false, center: false, front_panel: true},
+  { x: 0, y: 0, z: 1, val: false, center: false, rear_panel: true },
+  { x: 0, y: 0, z: 0, val: false, center: true },
+  { x: 0, y: 0, z: -1, val: false, center: false, front_panel: true },
   //(medio-sx)
-  {x:1, y:0, z:1, val: false, center: false, left_panel: true, rear_panel:true},
-  {x:1, y:0, z:0, val: false, center: false, left_panel: true},
-  {x:1, y:0, z:-1, val: false, center: false, left_panel: true, front_panel: true},
-  
+  {
+    x: 1,
+    y: 0,
+    z: 1,
+    val: false,
+    center: false,
+    left_panel: true,
+    rear_panel: true,
+  },
+  { x: 1, y: 0, z: 0, val: false, center: false, left_panel: true },
+  {
+    x: 1,
+    y: 0,
+    z: -1,
+    val: false,
+    center: false,
+    left_panel: true,
+    front_panel: true,
+  },
+
   //3rd level (alto)
   //(alto-dx)
-  {x:-1, y:1, z:1, val: false, top_panel:true, right_panel: true, rear_panel:true},
-  {x:-1, y:1, z:0, val: false, top_panel:true, right_panel: true},
-  {x:-1, y:1, z:-1, val: false, top_panel:true, right_panel: true, front_panel: true},
+  {
+    x: -1,
+    y: 1,
+    z: 1,
+    val: false,
+    top_panel: true,
+    right_panel: true,
+    rear_panel: true,
+  },
+  { x: -1, y: 1, z: 0, val: false, top_panel: true, right_panel: true },
+  {
+    x: -1,
+    y: 1,
+    z: -1,
+    val: false,
+    top_panel: true,
+    right_panel: true,
+    front_panel: true,
+  },
   //(alto-centro)
-  {x:0, y:1, z:1, val: false, top_panel:true, rear_panel:true},
-  {x:0, y:1, z:0, val: false, center: true, top_panel:true},
-  {x:0, y:1, z:-1, val: true, top_panel:true, front_panel: true},
+  { x: 0, y: 1, z: 1, val: false, top_panel: true, rear_panel: true },
+  { x: 0, y: 1, z: 0, val: false, center: true, top_panel: true },
+  { x: 0, y: 1, z: -1, val: true, top_panel: true, front_panel: true },
   //(alto-sx)
 
-  {x:1, y:1, z:1, val: false, top_panel:true, left_panel: true, rear_panel:true},
-  {x:1, y:1, z:0, val: false, top_panel:true, left_panel: true},
-  {x:1, y:1, z:-1, val: true, top_panel:true, left_panel: true, front_panel: true}
+  {
+    x: 1,
+    y: 1,
+    z: 1,
+    val: false,
+    top_panel: true,
+    left_panel: true,
+    rear_panel: true,
+  },
+  { x: 1, y: 1, z: 0, val: false, top_panel: true, left_panel: true },
+  {
+    x: 1,
+    y: 1,
+    z: -1,
+    val: true,
+    top_panel: true,
+    left_panel: true,
+    front_panel: true,
+  },
 ];
 
+function init() {
+  // Clock
+  //clock = new THREE.Clock();
 
-  function init(){
-  
-    // Clock
-    //clock = new THREE.Clock();
-  
-    // Scene
-    /*const*/ scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0xffffff );
+  // Scene
+  /*const*/ scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff);
 
-    //timer = new Timer();
-  
-    // Render
-    /*const*/ renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
-    renderer.setSize(options.width, options.height);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.xr.enabled = true;
-    //document.body.appendChild( VRButton.createButton( renderer ) );
-    //document.body.appendChild(renderer.domElement);
-    document.getElementById('app').appendChild(renderer.domElement);
-  
-    // Camera
-    let far = (window.innerWidth < 768 ? 60 : 50);
-    //let far = 50;
-    /*const*/ camera = new THREE.PerspectiveCamera(far, options.width / options.height, 1, 1000 );
-    camera.position.set( 0, 0, -10 );
-    //camera.lookAt(masterCubeGrp);
-    scene.add( camera ); // required when the camera has a child
+  //timer = new Timer();
 
-    camera.lookAt( scene.position );
-  }
+  // Render
+  /*const*/ renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: true,
+  });
+  renderer.setSize(options.width, options.height);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.xr.enabled = true;
+  //document.body.appendChild( VRButton.createButton( renderer ) );
+  //document.body.appendChild(renderer.domElement);
+  document.getElementById("app").appendChild(renderer.domElement);
 
-  
-  
-  function initRoom(){
-    // Room
-    room = new THREE.LineSegments(
-      new BoxLineGeometry( 20, 10, 25, 100, 100, 100 ).translate( 0, 0, 0 ),
-      new THREE.LineBasicMaterial( { color: 0x808080 } )
-    );
-    room.rotation.set(0, 0, 0);
-    room.position.set( 0, 0, -10 );
-  
-    //Room Walls
-    //const geometry = new THREE.PlaneGeometry( 20, 10 );
-    const material = new THREE.MeshLambertMaterial( {color:  0xf2f4f4 , side: THREE.DoubleSide} );
-  
-    planeFrontWall = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
-    planeBackWall = new THREE.Mesh( new THREE.PlaneGeometry( 20, 10 ), material );
-  
-    planeSideWallLeft = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), material );
-    planeSideWallRight = new THREE.Mesh( new THREE.PlaneGeometry( 25, 10 ), material );
-  
-    planeFloor = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
-    planeRoof = new THREE.Mesh( new THREE.PlaneGeometry( 20, 25 ), material );
-  
-    planeFrontWall.position.z = -12.4;
-    planeBackWall.position.z = 2;
-  
-    planeSideWallLeft.position.x = -9.9;
-    planeSideWallLeft.position.z = 0;
-    planeSideWallLeft.rotation.y = Math.PI / 2;
-  
-    planeSideWallRight.position.x = 9.9;
-    planeSideWallRight.position.z = 0;
-    planeSideWallRight.rotation.y = -Math.PI / 2;
-  
-    planeFloor.position.x = 0;
-    planeFloor.position.y = -4.9;
-    planeFloor.rotation.x = -Math.PI / 2;
-  
-    planeRoof.position.x = 0;
-    planeRoof.position.y = 4.9;
-    planeRoof.rotation.x = Math.PI / 2 ;
+  // Camera
+  let far = window.innerWidth < 768 ? 60 : 50;
+  //let far = 50;
+  /*const*/ camera = new THREE.PerspectiveCamera(
+    far,
+    options.width / options.height,
+    1,
+    1000
+  );
+  camera.position.set(0, 0, -10);
+  //camera.lookAt(masterCubeGrp);
+  scene.add(camera); // required when the camera has a child
+
+  camera.lookAt(scene.position);
+}
+
+function initRoom() {
+  // Room
+  room = new THREE.LineSegments(
+    new BoxLineGeometry(20, 10, 25, 100, 100, 100).translate(0, 0, 0),
+    new THREE.LineBasicMaterial({ color: 0x808080 })
+  );
+  room.rotation.set(0, 0, 0);
+  room.position.set(0, 0, -10);
+
+  //Room Walls
+  //const geometry = new THREE.PlaneGeometry( 20, 10 );
+  const material = new THREE.MeshLambertMaterial({
+    color: 0xf2f4f4,
+    side: THREE.DoubleSide,
+  });
+
+  planeFrontWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 10), material);
+  planeBackWall = new THREE.Mesh(new THREE.PlaneGeometry(20, 10), material);
+
+  planeSideWallLeft = new THREE.Mesh(new THREE.PlaneGeometry(25, 10), material);
+  planeSideWallRight = new THREE.Mesh(
+    new THREE.PlaneGeometry(25, 10),
+    material
+  );
+
+  planeFloor = new THREE.Mesh(new THREE.PlaneGeometry(20, 25), material);
+  planeRoof = new THREE.Mesh(new THREE.PlaneGeometry(20, 25), material);
+
+  planeFrontWall.position.z = -12.4;
+  planeBackWall.position.z = 2;
+
+  planeSideWallLeft.position.x = -9.9;
+  planeSideWallLeft.position.z = 0;
+  planeSideWallLeft.rotation.y = Math.PI / 2;
+
+  planeSideWallRight.position.x = 9.9;
+  planeSideWallRight.position.z = 0;
+  planeSideWallRight.rotation.y = -Math.PI / 2;
+
+  planeFloor.position.x = 0;
+  planeFloor.position.y = -4.9;
+  planeFloor.rotation.x = -Math.PI / 2;
+
+  planeRoof.position.x = 0;
+  planeRoof.position.y = 4.9;
+  planeRoof.rotation.x = Math.PI / 2;
   /*
     room.add( planeFrontWall );
     //room.add( planeBackWall );
@@ -199,130 +310,150 @@ var listInnerCubes = [
     room.add( planeFloor );
     room.add( planeRoof );*/
 
-    //scene.add( room );
+  //scene.add( room );
+}
+
+function displayRoom() {
+  //console.log(window.innerWidth);
+  if (window.innerWidth < 768) {
+    camera.remove(room);
+  } else {
+    // FIX ROOM (and rotate only the mastercube)
+    //scene.add( camera ); // required when the camera has a child
+    camera.add(room);
   }
+}
 
-  
-  
-  function displayRoom(){
-    //console.log(window.innerWidth);
-    if(window.innerWidth < 768)
-    {
-      camera.remove( room );
-    }
-    else{
-      // FIX ROOM (and rotate only the mastercube)
-      //scene.add( camera ); // required when the camera has a child
-      camera.add( room );
-    }
-  }  
-  
-  function initLights(){
-    spotLight1 = new THREE.SpotLight( 0xFFFFFF, 150);
-    spotLight1.position.set( 4, 3, -5 );
-    spotLight1.angle = Math.PI / 1.5; // apertura del cono luce
-    spotLight1.penumbra = 0.2;
-    spotLight1.decay = 2;
-    spotLight1.distance = 0;
-  
-    spotLight2 = new THREE.SpotLight( 0xFFFFFF, 150);
-    spotLight2.position.set( -4, 3, -5 );
-    spotLight2.angle = Math.PI / 1.5; // apertura del cono luce
-    spotLight2.penumbra = 0.2;
-    spotLight2.decay = 2;
-    spotLight2.distance = 0;
-  
-    spotLight3 = new THREE.SpotLight( 0xFFFFFF, 150);
-    spotLight3.position.set( 4, -3, -5 );
-    spotLight3.angle = Math.PI / 1.5; // apertura del cono luce
-    spotLight3.penumbra = 0.2;
-    spotLight3.decay = 2;
-    spotLight3.distance = 0;
-  
-    spotLight4 = new THREE.SpotLight( 0xFFFFFF, 150);
-    spotLight4.position.set( -4, -3, -5 );
-    spotLight4.angle = Math.PI / 1.5; // apertura del cono luce
-    spotLight4.penumbra = 0.2;
-    spotLight4.decay = 2;
-    spotLight4.distance = 0;
-  
-    frontLight = new THREE.PointLight( 0xFFFFFF, 100, 250);
-    frontLight.position.set(0,0,-3);
-  
-    camera.add( spotLight1 );
-    camera.add( spotLight2 );
-    camera.add( spotLight3 );
-    camera.add( spotLight4 );
-    camera.add( frontLight );
-  }
-  
+function initLights() {
+  spotLight1 = new THREE.SpotLight(0xffffff, 150);
+  spotLight1.position.set(4, 3, -5);
+  spotLight1.angle = Math.PI / 1.5; // apertura del cono luce
+  spotLight1.penumbra = 0.2;
+  spotLight1.decay = 2;
+  spotLight1.distance = 0;
 
-  function initMasterCube(){
-    // Master Cube
-    masterCubeGrp = new THREE.Group();
-    masterCubeGrp.position.y = 0;
-    scene.add(masterCubeGrp);
-  }
-  
+  spotLight2 = new THREE.SpotLight(0xffffff, 150);
+  spotLight2.position.set(-4, 3, -5);
+  spotLight2.angle = Math.PI / 1.5; // apertura del cono luce
+  spotLight2.penumbra = 0.2;
+  spotLight2.decay = 2;
+  spotLight2.distance = 0;
 
+  spotLight3 = new THREE.SpotLight(0xffffff, 150);
+  spotLight3.position.set(4, -3, -5);
+  spotLight3.angle = Math.PI / 1.5; // apertura del cono luce
+  spotLight3.penumbra = 0.2;
+  spotLight3.decay = 2;
+  spotLight3.distance = 0;
 
-  function createCube(color, val, center, bottom_panel, top_panel, left_panel, right_panel, front_panel, rear_panel){
-    const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const meshMaterial = new THREE.MeshPhongMaterial({color: color});  
-    const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
-    //const obj = new THREE.Object3D();
-    //obj.add(mesh);
+  spotLight4 = new THREE.SpotLight(0xffffff, 150);
+  spotLight4.position.set(-4, -3, -5);
+  spotLight4.angle = Math.PI / 1.5; // apertura del cono luce
+  spotLight4.penumbra = 0.2;
+  spotLight4.decay = 2;
+  spotLight4.distance = 0;
 
-    return {mesh, val, center, bottom_panel, top_panel, left_panel, right_panel, front_panel, rear_panel}
-  }
+  frontLight = new THREE.PointLight(0xffffff, 100, 250);
+  frontLight.position.set(0, 0, -3);
 
-  function fillMasterCube(){
-      
-    listInnerCubes.forEach(function(innerCube){
-      
-      const cube = createCube(0x000000, innerCube.val, innerCube.center, innerCube.bottom_panel, innerCube.top_panel, innerCube.left_panel, innerCube.right_panel, innerCube.front_panel, innerCube.rear_panel);
-      cubeArray.push(cube);
-      
-      cube.mesh.position.x = innerCube.x;
-      cube.mesh.position.y = innerCube.y;
-      cube.mesh.position.z = innerCube.z;
-      
-      
-      masterCubeGrp.add(cube.mesh);
-    });
-  }
-  
+  camera.add(spotLight1);
+  camera.add(spotLight2);
+  camera.add(spotLight3);
+  camera.add(spotLight4);
+  camera.add(frontLight);
+}
 
-  function initControls(){
-    // CONTROLS
-    controls = new TrackballControls(camera, renderer.domElement);
+function initMasterCube() {
+  // Master Cube
+  masterCubeGrp = new THREE.Group();
+  masterCubeGrp.position.y = 0;
+  scene.add(masterCubeGrp);
+}
 
-    controls.maxDistance = 20;
-    controls.minDistance = 3;
+function createCube(
+  color,
+  val,
+  center,
+  bottom_panel,
+  top_panel,
+  left_panel,
+  right_panel,
+  front_panel,
+  rear_panel
+) {
+  const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
+  const meshMaterial = new THREE.MeshPhongMaterial({ color: color });
+  const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
+  //const obj = new THREE.Object3D();
+  //obj.add(mesh);
 
-    // Inizializzazione valori per le interazioni
-    // Dipendeza delle variabili da camera e controls
-    valoreInizialeXRot = camera.rotation.x;
-    valoreFinaleXRot = valoreInizialeXRot;
-    valoreInizialeYRot = camera.rotation.y;
-    valoreFinaleYRot = valoreInizialeYRot;
-    valoreInizialeZRot = camera.rotation.z;
-    valoreFinaleZRot = valoreFinaleZRot;
-    valoreZoomIniziale = controls.target.distanceTo( controls.object.position );
-    valoreZoomFinale = valoreZoomIniziale;
+  return {
+    mesh,
+    val,
+    center,
+    bottom_panel,
+    top_panel,
+    left_panel,
+    right_panel,
+    front_panel,
+    rear_panel,
+  };
+}
 
+function fillMasterCube() {
+  listInnerCubes.forEach(function (innerCube) {
+    const cube = createCube(
+      0x000000,
+      innerCube.val,
+      innerCube.center,
+      innerCube.bottom_panel,
+      innerCube.top_panel,
+      innerCube.left_panel,
+      innerCube.right_panel,
+      innerCube.front_panel,
+      innerCube.rear_panel
+    );
+    cubeArray.push(cube);
 
-    controls.addEventListener('change',function(){
-      readRotationValues();
-      readZoomValue();
-    });
-  }
+    cube.mesh.position.x = innerCube.x;
+    cube.mesh.position.y = innerCube.y;
+    cube.mesh.position.z = innerCube.z;
 
-  function initRaycaster(){
-    // EVENT LISTENERS
-  window.addEventListener('pointermove', (e) => {
+    masterCubeGrp.add(cube.mesh);
+  });
+}
 
-    mouse.set((e.clientX / options.width) * 2 - 1, -(e.clientY / options.height) * 2 + 1);
+function initControls() {
+  // CONTROLS
+  controls = new TrackballControls(camera, renderer.domElement);
+
+  controls.maxDistance = 20;
+  controls.minDistance = 3;
+
+  // Inizializzazione valori per le interazioni
+  // Dipendeza delle variabili da camera e controls
+  valoreInizialeXRot = camera.rotation.x;
+  valoreFinaleXRot = valoreInizialeXRot;
+  valoreInizialeYRot = camera.rotation.y;
+  valoreFinaleYRot = valoreInizialeYRot;
+  valoreInizialeZRot = camera.rotation.z;
+  valoreFinaleZRot = valoreFinaleZRot;
+  valoreZoomIniziale = controls.target.distanceTo(controls.object.position);
+  valoreZoomFinale = valoreZoomIniziale;
+
+  controls.addEventListener("change", function () {
+    readRotationValues();
+    readZoomValue();
+  });
+}
+
+function initRaycaster() {
+  // EVENT LISTENERS
+  window.addEventListener("pointermove", (e) => {
+    mouse.set(
+      (e.clientX / options.width) * 2 - 1,
+      -(e.clientY / options.height) * 2 + 1
+    );
     raycaster.setFromCamera(mouse, camera);
     //intersects = raycaster.intersectObjects(scene.children, true);
     intersects = raycaster.intersectObjects(masterCubeGrp.children, true);
@@ -336,204 +467,208 @@ var listInnerCubes = [
           delete hovered[key]
         }
       });*/
-      randomCubeAnimation( e );
-    });
+    randomCubeAnimation(e);
+  });
 
-    window.addEventListener("resize", onWindowResize);
-    window.addEventListener( 'click', onMouseClick, false );
+  window.addEventListener("resize", onWindowResize);
+  window.addEventListener("click", onMouseClick, false);
 
-    /* MOUSE LISTENERS */
-    const raycaster = new THREE.Raycaster();
-    var raycaster2 = new THREE.Raycaster();
-    var mouse = new THREE.Vector2();
-    let intersects = []
-    let hovered = {}
+  /* MOUSE LISTENERS */
+  const raycaster = new THREE.Raycaster();
+  var raycaster2 = new THREE.Raycaster();
+  var mouse = new THREE.Vector2();
+  let intersects = [];
+  let hovered = {};
 
-    function onMouseClick( event ) {
-      
-      raycaster2.setFromCamera( mouse, camera );
-      var isIntersected = raycaster2.intersectObjects(masterCubeGrp.children, true);
+  function onMouseClick(event) {
+    raycaster2.setFromCamera(mouse, camera);
+    var isIntersected = raycaster2.intersectObjects(
+      masterCubeGrp.children,
+      true
+    );
 
-      if (isIntersected) {
-          console.log('Mesh clicked!');
-      }
+    if (isIntersected) {
+      console.log("Mesh clicked!");
     }
+  }
 
-    function onMouseMove( event ) {
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  function onMouseMove(event) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        /*
+    /*
         console.log(mouse.x);
         console.log(mouse.y);
         console.log(event);*/
-        //return event;
-    }
+    //return event;
   }
-  
+}
 
-  function animate(){
-    requestAnimationFrame( animate );
-    controls.update();
-    //timer.update();
-    renderer.render(scene, camera);
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  //timer.update();
+  renderer.render(scene, camera);
 
-    tasksFirst.forEach((task) => task());
-  }
-  
+  tasksFirst.forEach((task) => task());
+}
 
-  /* ******************************* ANIMATIONS ******************************* */
-  function animationsLoops(){
-    //Fluttuare  
-    tasksFirst.push(()=>{
-      
-      room.rotation.y = Date.now()*0.0001;
-      room.rotation.x = Math.sin(Date.now()*0.0001)*0.2;
-      /*
+/* ******************************* ANIMATIONS ******************************* */
+function animationsLoops() {
+  //Fluttuare
+  tasksFirst.push(() => {
+    room.rotation.y = Date.now() * 0.0001;
+    room.rotation.x = Math.sin(Date.now() * 0.0001) * 0.2;
+    /*
       masterCubeGrp.position.y = Math.sin(Date.now()*0.001)*0.5;
       masterCubeGrp.rotation.y = Math.sin(Date.now()*0.001)*0.1;*/
-    });   
-  }
-  animationsLoops();
+  });
+}
+animationsLoops();
 
-  var bottom_lim = 1.5;
-  var top_lim = 1.5;
-  var left_lim = 1.5;
-  var right_lim = 1.5;
-  var front_lim = 1.5;
-  var rear_lim = 1.5;
+var bottom_lim = 1.5;
+var top_lim = 1.5;
+var left_lim = 1.5;
+var right_lim = 1.5;
+var front_lim = 1.5;
+var rear_lim = 1.5;
 
+function aperturaMastercube() {
+  cubeArray.forEach((cube, index) => {
+    if (cube.bottom_panel)
+      gsap.to(cube.mesh.position, {
+        duration: 1,
+        y: -bottom_lim,
+        ease: "none",
+      });
 
-  function aperturaMastercube(){
-    cubeArray.forEach((cube, index)=>{
+    if (cube.top_panel)
+      gsap.to(cube.mesh.position, { duration: 1, y: top_lim, ease: "none" });
 
-      if(cube.bottom_panel)
-        gsap.to(cube.mesh.position, {duration:1, y: -bottom_lim, ease: 'none'});
+    if (cube.left_panel)
+      gsap.to(cube.mesh.position, { duration: 1, x: left_lim, ease: "none" });
 
-      if(cube.top_panel)
-        gsap.to(cube.mesh.position, {duration:1, y: top_lim, ease: 'none'});
+    if (cube.right_panel)
+      gsap.to(cube.mesh.position, { duration: 1, x: -right_lim, ease: "none" });
 
-      if(cube.left_panel)
-        gsap.to(cube.mesh.position, {duration:1, x: left_lim, ease: 'none'});
+    if (cube.rear_panel)
+      gsap.to(cube.mesh.position, { duration: 1, z: rear_lim, ease: "none" });
 
-      if(cube.right_panel)
-        gsap.to(cube.mesh.position, {duration:1, x: -right_lim, ease: 'none'});
+    if (cube.front_panel)
+      gsap.to(cube.mesh.position, { duration: 1, z: -front_lim, ease: "none" });
+  });
+}
 
-      if(cube.rear_panel)
-        gsap.to(cube.mesh.position, {duration:1, z: rear_lim, ease: 'none'});
+function getRandomColor() {
+  let r = Math.floor(Math.random() * 255);
+  let g = Math.floor(Math.random() * 255);
+  let b = Math.floor(Math.random() * 255);
+  //let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
+  let color = new THREE.Color("rgb(" + r + ", " + g + ", " + b + ")");
 
-      if(cube.front_panel)
-        gsap.to(cube.mesh.position, {duration:1, z: -front_lim, ease: 'none'});
+  return color;
+}
 
-    });
-  }
+function detectBrowser() {
+  console.log(navigator.userAgent);
+  console.log(navigator);
+  // Opera 8.0+
+  var isOpera =
+    (!!window.opr && !!opr.addons) ||
+    !!window.opera ||
+    navigator.userAgent.indexOf(" OPR/") >= 0;
 
-  function getRandomColor()
-  {
-    let r = Math.floor(Math.random()*255);
-    let g = Math.floor(Math.random()*255);
-    let b = Math.floor(Math.random()*255);
-    //let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
-    let color = new THREE.Color("rgb("+r+", "+g+", "+b+")");
+  // Firefox 1.0+
+  var isFirefox = typeof InstallTrigger !== "undefined";
 
-    return color;
-  }
+  // Safari 3.0+ "[object HTMLElementConstructor]"
+  var isSafari =
+    /constructor/i.test(window.HTMLElement) ||
+    (function (p) {
+      return p.toString() === "[object SafariRemoteNotification]";
+    })(
+      !window["safari"] ||
+        (typeof safari !== "undefined" && window["safari"].pushNotification)
+    );
 
+  // Internet Explorer 6-11
+  var isIE = /*@cc_on!@*/ false || !!document.documentMode;
 
-  function detectBrowser(){
-    console.log(navigator.userAgent);
-    console.log(navigator);
-    // Opera 8.0+
-    var isOpera = (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+  // Edge 20+
+  var isEdge = !isIE && !!window.StyleMedia;
 
-    // Firefox 1.0+
-    var isFirefox = typeof InstallTrigger !== 'undefined';
+  // Chrome 1 - 79
+  var isChrome =
+    !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
 
-    // Safari 3.0+ "[object HTMLElementConstructor]" 
-    var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
+  // Edge (based on chromium) detection
+  var isEdgeChromium = isChrome && navigator.userAgent.indexOf("Edg") != -1;
 
-    // Internet Explorer 6-11
-    var isIE = /*@cc_on!@*/false || !!document.documentMode;
+  // Blink engine detection
+  var isBlink = (isChrome || isOpera) && !!window.CSS;
 
-    // Edge 20+
-    var isEdge = !isIE && !!window.StyleMedia;
+  var output = "Detecting browsers by ducktyping:\n";
+  output += "isFirefox: " + isFirefox + "\n";
+  output += "isChrome: " + isChrome + "\n";
+  output += "isSafari: " + isSafari + "\n";
+  output += "isOpera: " + isOpera + "\n";
+  output += "isIE: " + isIE + "\n";
+  output += "isEdge: " + isEdge + "\n";
+  output += "isEdgeChromium: " + isEdgeChromium + "\n";
+  output += "isBlink: " + isBlink + "\n";
+  console.log(output);
+}
 
-    // Chrome 1 - 79
-    var isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+/* ******************************* EVENTS LISTENERS ******************************* */
 
-    // Edge (based on chromium) detection
-    var isEdgeChromium = isChrome && (navigator.userAgent.indexOf("Edg") != -1);
+function randomCubeAnimation() {
+  //let bankSelected = Math.round(Math.random() * bankClusterCubes + 1 );
 
-    // Blink engine detection
-    var isBlink = (isChrome || isOpera) && !!window.CSS;
+  // Random Cubes Rotation
+  let cubeIndex = Math.floor(Math.random() * 26);
 
+  // Rotation Properties
+  let myDurationRotation = Math.random() * 3;
+  let myDelayRotation = Math.random() * 1.5;
+  let myRepeatRotation = Math.floor(Math.random() * 3);
+  const degreeRotation = 360;
 
-    var output = 'Detecting browsers by ducktyping:\n';
-    output += 'isFirefox: ' + isFirefox + '\n';
-    output += 'isChrome: ' + isChrome + '\n';
-    output += 'isSafari: ' + isSafari + '\n';
-    output += 'isOpera: ' + isOpera + '\n';
-    output += 'isIE: ' + isIE + '\n';
-    output += 'isEdge: ' + isEdge + '\n';
-    output += 'isEdgeChromium: ' + isEdgeChromium + '\n';
-    output += 'isBlink: ' + isBlink + '\n';
-    console.log(output);
-  }
+  let myAxis = ["x", "y", "z"];
+  let myAxisIndex = Math.floor(Math.random() * 2);
 
+  var animPropRotation = {
+    duration: myDurationRotation,
+    delay: myDelayRotation,
+    repeat: myRepeatRotation,
+    ease: "sine",
 
+    x: myAxis[myAxisIndex] == "x" ? (degreeRotation * Math.PI) / 180 : 0,
+    y: myAxis[myAxisIndex] == "y" ? (degreeRotation * Math.PI) / 180 : 0,
+    z: myAxis[myAxisIndex] == "z" ? (degreeRotation * Math.PI) / 180 : 0,
 
-  /* ******************************* EVENTS LISTENERS ******************************* */
-
-  
- 
-  function randomCubeAnimation(){
-
-      //let bankSelected = Math.round(Math.random() * bankClusterCubes + 1 );
-
-    // Random Cubes Rotation
-      let cubeIndex = Math.floor(Math.random() * 26);
-
-    // Rotation Properties  
-      let myDurationRotation = Math.random() * 3;
-      let myDelayRotation = Math.random() * 1.5;
-      let myRepeatRotation = Math.floor(Math.random() * 3);
-      const degreeRotation = 360;
-
-      let myAxis = ['x', 'y', 'z'];
-      let myAxisIndex = Math.floor(Math.random()*2);
-
-      var animPropRotation = {
-        duration: myDurationRotation,
-        delay: myDelayRotation,
-        repeat: myRepeatRotation,
-        ease:'sine',
-
-        x: (myAxis[myAxisIndex] == 'x' ? degreeRotation*Math.PI/180 : 0),
-        y: (myAxis[myAxisIndex] == 'y' ? degreeRotation*Math.PI/180 : 0),
-        z: (myAxis[myAxisIndex] == 'z' ? degreeRotation*Math.PI/180 : 0),
-
-        onComplete: function(){
-          if(!myRepeatRotation){
-            myTween.shift().kill();
-            //console.log('shift!!');
-          }
-          
-          // Limiting Glitch Rotation (?)
-          if(myAxis[myAxisIndex] == 'x')
-            masterCubeGrp.children[cubeIndex].rotation.x = 0;
-          if(myAxis[myAxisIndex] == 'y')
-            masterCubeGrp.children[cubeIndex].rotation.y = 0;
-          if(myAxis[myAxisIndex] == 'z')
-            masterCubeGrp.children[cubeIndex].rotation.z = 0;
-        }
+    onComplete: function () {
+      if (!myRepeatRotation) {
+        myTween.shift().kill();
+        //console.log('shift!!');
       }
 
-      myTween.push(gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)); // Rotation  
-  }
+      // Limiting Glitch Rotation (?)
+      if (myAxis[myAxisIndex] == "x")
+        masterCubeGrp.children[cubeIndex].rotation.x = 0;
+      if (myAxis[myAxisIndex] == "y")
+        masterCubeGrp.children[cubeIndex].rotation.y = 0;
+      if (myAxis[myAxisIndex] == "z")
+        masterCubeGrp.children[cubeIndex].rotation.z = 0;
+    },
+  };
 
+  myTween.push(
+    gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)
+  ); // Rotation
+}
 
-  //Promise to fetch data from php file (JSON)
-  /*
+//Promise to fetch data from php file (JSON)
+/*
   var html_lines = Array(); // p elements array
   function readFileAJAX(){  
 
@@ -579,274 +714,258 @@ var listInnerCubes = [
   }
   */
 
+ScrollTrigger.addEventListener("scrollStart", function () {});
+ScrollTrigger.addEventListener("scrollEnd", function () {
+  initTextScrolling();
+  launchTextScrolling();
+});
 
-  
+var myTween = [];
+var needle;
+var masterCubeOpened = false;
+var onMouseMove = false;
+var onTouchMove = false;
 
-  ScrollTrigger.addEventListener("scrollStart", function() {
-      
-  });
-  ScrollTrigger.addEventListener("scrollEnd", function() {
+document.getElementById("app").addEventListener("mousedown", () => {
+  if (!masterCubeOpened) {
+    aperturaMastercube();
+    masterCubeOpened = true;
+  }
+});
+
+document.getElementById("app").addEventListener("touchstart", () => {
+  if (!masterCubeOpened) {
+    aperturaMastercube();
+    masterCubeOpened = true;
+  }
+});
+
+window.addEventListener("mousedown", function () {
+  onMouseMove = true;
+
+  needle = setInterval(() => {
+    if (onMouseMove) {
+      initTextScrolling();
+      launchTextScrolling();
+    }
+  }, 1200);
+});
+
+window.addEventListener("mouseup", function () {
+  onMouseMove = false;
+  clearInterval(needle);
+});
+window.addEventListener("click", function (e) {
+  if (!onMouseMove) {
     initTextScrolling();
     launchTextScrolling();
-  });
-  
+  }
+});
 
-  var myTween= [];
-  var needle;
-  var masterCubeOpened = false;
-  var onMouseMove = false;
-  var onTouchMove = false;
+window.addEventListener("touchstart", function () {
+  if (!onTouchMove) {
+    initTextScrolling();
+    launchTextScrolling();
+  }
 
-  document.getElementById('app').addEventListener('mousedown', () => {
-    if(!masterCubeOpened)
-      {
-        aperturaMastercube();
-        masterCubeOpened = true; 
-      }
-  });
-
-  document.getElementById('app').addEventListener('touchstart', () => {
-    if(!masterCubeOpened)
-      {
-        aperturaMastercube();
-        masterCubeOpened = true; 
-      }
-  });
- 
-  window.addEventListener('mousedown', function(){
-
-    onMouseMove = true;
-    
-    needle = setInterval(()=>{
-      if(onMouseMove){
-        initTextScrolling();
-        launchTextScrolling();
-      }
-    },1200);
-  });
-
-  window.addEventListener('mouseup', function(){
-    onMouseMove = false;
-    clearInterval(needle);
-  });
-  window.addEventListener('click', function(e){
-    if(!onMouseMove){
+  needle = setInterval(() => {
+    if (onTouchMove) {
       initTextScrolling();
       launchTextScrolling();
     }
-  });
-  
+  }, 2000);
+});
 
+window.addEventListener("touchmove", function () {
+  onTouchMove = true;
+});
 
-  window.addEventListener('touchstart', function(){
+window.addEventListener("touchend", function () {
+  onTouchMove = false;
+  clearInterval(needle);
+});
 
-    if(!onTouchMove){
-      initTextScrolling();
-      launchTextScrolling();
-    }
+function readRotationValues() {
+  valoreFinaleXRot = camera.rotation.x;
+  valoreFinaleYRot = camera.rotation.y;
+  valoreFinaleZRot = camera.rotation.z;
+}
 
-    
-    needle = setInterval(()=>{
-      if(onTouchMove){
-        initTextScrolling();
-        launchTextScrolling();
-      }
-    },2000);
-  });
+function readZoomValue() {
+  valoreZoomFinale = controls.target.distanceTo(controls.object.position);
+}
 
-  window.addEventListener('touchmove', function(){
-    onTouchMove = true;
-  });
+function initTextScrolling() {
+  // Assegno un id ad ogni div.text
+  let idvalue = "text-1";
+  if (document.querySelectorAll(".text").length > 0)
+    idvalue = "text-" + (document.querySelectorAll(".text").length + 1);
 
-  window.addEventListener('touchend', function(){
-    onTouchMove = false;
-    clearInterval(needle);
-  });
-
-  
-  function readRotationValues(){
-    valoreFinaleXRot = camera.rotation.x;
-    valoreFinaleYRot = camera.rotation.y;
-    valoreFinaleZRot = camera.rotation.z;
-  }
-
-  function readZoomValue(){
-    valoreZoomFinale = controls.target.distanceTo( controls.object.position );
-  }
-  
-  
-  function initTextScrolling(){
-     // Assegno un id ad ogni div.text
-     let idvalue = 'text-1';    
-     if(document.querySelectorAll('.text').length > 0)
-       idvalue = 'text-' + (document.querySelectorAll('.text').length + 1);
-     
-     // Assegno la classe last all'ultimo div creato
-     // prima rimuovo l'ultimo last inserito
-     if(document.querySelectorAll('.last').length > 0)
-       document.querySelectorAll('.last').forEach((div)=>{ div.classList.remove('last') });
-     
-     // Creo il nuovo div.text.last
-     let scrollerDIV = document.createElement("div");
-     scrollerDIV.classList.add('text');
-     scrollerDIV.classList.add('last');
-     scrollerDIV.setAttribute('id', idvalue);
-     document.getElementById('text-container').appendChild(scrollerDIV);
-  }
-
-  function launchTextScrolling(){
-    let degreeXRot = (valoreFinaleXRot - valoreInizialeXRot) * (180/Math.PI);
-    let degreeYRot = (valoreFinaleYRot- valoreInizialeYRot) * (180/Math.PI);
-    let degreeZRot = (valoreFinaleZRot - valoreInizialeZRot) * (180/Math.PI);
-    let zoomValue = valoreZoomFinale - valoreZoomIniziale;
-    degreeXRot = degreeXRot.toFixed(2);
-    degreeYRot = degreeYRot.toFixed(2);
-    degreeZRot = degreeZRot.toFixed(2);
-    zoomValue = zoomValue.toFixed(2);
-    degreeXRot = (degreeXRot > 0 ? '+'+degreeXRot+'°' : degreeXRot+'°');
-    degreeYRot = (degreeYRot > 0 ? '+'+degreeYRot+'°' : degreeYRot+'°');
-    degreeZRot = (degreeZRot > 0 ? '+'+degreeZRot+'°' : degreeZRot+'°');
-
-    let pElemXRot = document.createElement("p");
-    let pElemYRot = document.createElement("p");
-    let pElemZRot = document.createElement("p");
-    let pElemZoom = document.createElement("p");
-    let contentX = document.createTextNode('<x-rotation>'+(degreeXRot)+'</x-rotation>');
-    let contentY = document.createTextNode('<y-rotation>'+(degreeYRot)+'</y-rotation>');
-    let contentZ = document.createTextNode('<z-rotation>'+(degreeZRot)+'</z-rotation>');
-
-    let contentZoom;
-
-    if(zoomValue == 0){
-      contentZoom = document.createTextNode('<zoom>'+(zoomValue)+'</zoom>');
-    }
-    else if(zoomValue > 0){
-      contentZoom = document.createTextNode('<zoom-out>'+(zoomValue)+'</zoom-out>');
-    }
-    else{
-      contentZoom = document.createTextNode('<zoom-in>'+(zoomValue)+'</zoom-in>');
-    }    
-
-    pElemXRot.classList.add('text-line-code');
-    pElemYRot.classList.add('text-line-code');
-    pElemZRot.classList.add('text-line-code');
-    pElemZoom.classList.add('text-line-code');
-    pElemXRot.appendChild(contentX);
-    pElemYRot.appendChild(contentY);
-    pElemZRot.appendChild(contentZ);
-    pElemZoom.appendChild(contentZoom);
-
-    if(Math.random() > 0.7)
-      pElemXRot.classList.add('text-blink-it');
-    if(Math.random() > 0.7)
-      pElemYRot.classList.add('text-blink-it');
-    if(Math.random() > 0.7)
-      pElemZRot.classList.add('text-blink-it');
-    if(Math.random() > 0.7)
-      pElemZoom.classList.add('text-blink-it');
-
-    if(document.querySelector('.last')){
-      document.querySelector('.last').appendChild(pElemXRot);
-      document.querySelector('.last').appendChild(pElemYRot);
-      document.querySelector('.last').appendChild(pElemZRot);
-      document.querySelector('.last').appendChild(pElemZoom);
-      addScrollTextTimeLine(document.querySelector('.last'));
-    }
-
-    valoreInizialeXRot = valoreFinaleXRot;
-    valoreInizialeYRot = valoreFinaleYRot;
-    valoreInizialeZRot = valoreFinaleZRot;
-    valoreZoomIniziale = valoreZoomFinale;
-  }
-
-  function addScrollTextTimeLine(container){
-    
-    let tl = gsap.timeline();
-
-    tl.to(container, {
-      duration: 6,
-      opacity: 0.5,
-      delay: 0.4,
-      y: -window.innerHeight - document.querySelector('.last').clientHeight,
-      ease: "power2.out",
-      onStart: function() {
-      },
-      onUpdate: function() {
-      },
-      onComplete: function(){
-        container.remove();
-      }
+  // Assegno la classe last all'ultimo div creato
+  // prima rimuovo l'ultimo last inserito
+  if (document.querySelectorAll(".last").length > 0)
+    document.querySelectorAll(".last").forEach((div) => {
+      div.classList.remove("last");
     });
 
-    tl.play();
-  }
+  // Creo il nuovo div.text.last
+  let scrollerDIV = document.createElement("div");
+  scrollerDIV.classList.add("text");
+  scrollerDIV.classList.add("last");
+  scrollerDIV.setAttribute("id", idvalue);
+  document.getElementById("text-container").appendChild(scrollerDIV);
+}
 
-  document.addEventListener(
-    "keydown",
-    (event) => {
-      const keyName = event.key;
+function launchTextScrolling() {
+  let degreeXRot = (valoreFinaleXRot - valoreInizialeXRot) * (180 / Math.PI);
+  let degreeYRot = (valoreFinaleYRot - valoreInizialeYRot) * (180 / Math.PI);
+  let degreeZRot = (valoreFinaleZRot - valoreInizialeZRot) * (180 / Math.PI);
+  let zoomValue = valoreZoomFinale - valoreZoomIniziale;
+  degreeXRot = degreeXRot.toFixed(2);
+  degreeYRot = degreeYRot.toFixed(2);
+  degreeZRot = degreeZRot.toFixed(2);
+  zoomValue = zoomValue.toFixed(2);
+  degreeXRot = degreeXRot > 0 ? "+" + degreeXRot + "°" : degreeXRot + "°";
+  degreeYRot = degreeYRot > 0 ? "+" + degreeYRot + "°" : degreeYRot + "°";
+  degreeZRot = degreeZRot > 0 ? "+" + degreeZRot + "°" : degreeZRot + "°";
 
-      if (keyName === "a") {
-        aperturaMastercube();
-      }      
-    },
-    false,
+  let pElemXRot = document.createElement("p");
+  let pElemYRot = document.createElement("p");
+  let pElemZRot = document.createElement("p");
+  let pElemZoom = document.createElement("p");
+  let contentX = document.createTextNode(
+    "<x-rotation>" + degreeXRot + "</x-rotation>"
+  );
+  let contentY = document.createTextNode(
+    "<y-rotation>" + degreeYRot + "</y-rotation>"
+  );
+  let contentZ = document.createTextNode(
+    "<z-rotation>" + degreeZRot + "</z-rotation>"
   );
 
+  let contentZoom;
 
-  function touchFuncs() {
-    const el = document.getElementById("app");
-    el.addEventListener("touchstart", () => {
-      console.log('touchstart!!');
-      
-      /*
+  if (zoomValue == 0) {
+    contentZoom = document.createTextNode("<zoom>" + zoomValue + "</zoom>");
+  } else if (zoomValue > 0) {
+    contentZoom = document.createTextNode(
+      "<zoom-out>" + zoomValue + "</zoom-out>"
+    );
+  } else {
+    contentZoom = document.createTextNode(
+      "<zoom-in>" + zoomValue + "</zoom-in>"
+    );
+  }
+
+  pElemXRot.classList.add("text-line-code");
+  pElemYRot.classList.add("text-line-code");
+  pElemZRot.classList.add("text-line-code");
+  pElemZoom.classList.add("text-line-code");
+  pElemXRot.appendChild(contentX);
+  pElemYRot.appendChild(contentY);
+  pElemZRot.appendChild(contentZ);
+  pElemZoom.appendChild(contentZoom);
+
+  if (Math.random() > 0.7) pElemXRot.classList.add("text-blink-it");
+  if (Math.random() > 0.7) pElemYRot.classList.add("text-blink-it");
+  if (Math.random() > 0.7) pElemZRot.classList.add("text-blink-it");
+  if (Math.random() > 0.7) pElemZoom.classList.add("text-blink-it");
+
+  if (document.querySelector(".last")) {
+    document.querySelector(".last").appendChild(pElemXRot);
+    document.querySelector(".last").appendChild(pElemYRot);
+    document.querySelector(".last").appendChild(pElemZRot);
+    document.querySelector(".last").appendChild(pElemZoom);
+    addScrollTextTimeLine(document.querySelector(".last"));
+  }
+
+  valoreInizialeXRot = valoreFinaleXRot;
+  valoreInizialeYRot = valoreFinaleYRot;
+  valoreInizialeZRot = valoreFinaleZRot;
+  valoreZoomIniziale = valoreZoomFinale;
+}
+
+function addScrollTextTimeLine(container) {
+  let tl = gsap.timeline();
+
+  tl.to(container, {
+    duration: 6,
+    opacity: 0.5,
+    delay: 0.4,
+    y: -window.innerHeight - document.querySelector(".last").clientHeight,
+    ease: "power2.out",
+    onStart: function () {},
+    onUpdate: function () {},
+    onComplete: function () {
+      container.remove();
+    },
+  });
+
+  tl.play();
+}
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+    const keyName = event.key;
+
+    if (keyName === "a") {
+      aperturaMastercube();
+    }
+  },
+  false
+);
+
+function touchFuncs() {
+  const el = document.getElementById("app");
+  el.addEventListener("touchstart", () => {
+    console.log("touchstart!!");
+
+    /*
       flash();*/
-      //toggleText(1, document.getElementById('text-container'));
-    });
-    el.addEventListener("touchend", () => {
-      console.log('touchend!!');
-      //toggleText(0, document.getElementById('text-container'));
-      
-      /*
+    //toggleText(1, document.getElementById('text-container'));
+  });
+  el.addEventListener("touchend", () => {
+    console.log("touchend!!");
+    //toggleText(0, document.getElementById('text-container'));
+
+    /*
       clearInterval(removeFlash,100);
       clearInterval(goFlash,100);*/
-    });
-    el.addEventListener("touchcancel", () => {
-      console.log('touchcancel!!');
-    });
-    el.addEventListener("touchmove", () => {
-      console.log('touchmove!!');
+  });
+  el.addEventListener("touchcancel", () => {
+    console.log("touchcancel!!");
+  });
+  el.addEventListener("touchmove", () => {
+    console.log("touchmove!!");
 
-      /*
+    /*
       console.log(camera.rotation.x);
       console.log(camera.rotation.y);
       console.log(camera.rotation.z);
   */
-      
-      
-    });
-    console.log("Initialized.");
-  }
-  document.addEventListener("DOMContentLoaded", touchFuncs);
+  });
+  console.log("Initialized.");
+}
+document.addEventListener("DOMContentLoaded", touchFuncs);
 
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  //displayRoom();
+}
+// end if app container exist
 
-
-  function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    //displayRoom();
-  }
- // end if app container exist
-
- //////// AUDIO ////////
- // VARIABILI TONEJS
- var elem = document.documentElement;
- // AudioPlayer
- function audio(){
+//////// AUDIO ////////
+// VARIABILI TONEJS
+var elem = document.documentElement;
+// AudioPlayer
+function audio() {
   /* AUDIO */
-  let urlFile = "https://raw.githubusercontent.com/csytp/file_audio_web_box/main/Nastro_Web_Box_OK.aac";
-  
+  let urlFile =
+    "https://raw.githubusercontent.com/csytp/file_audio_web_box/main/Nastro_Web_Box_OK.aac";
+
   const meter = new Tone.Meter();
   // Create a new player instance without autostart
   var player = new Tone.Player({
@@ -870,21 +989,17 @@ var listInnerCubes = [
   }).toDestination();
 }
 
-
 // FUNZIONI GRAFICHE
 // rimuove bottone
 function removeButton() {
-
   var buttonContainer = document.getElementById("hideButton");
   //buttonContainer.style.display = "none";
   buttonContainer.remove();
-  
-  if(document.getElementById('app'))
-    start();
+
+  if (document.getElementById("app")) start();
 }
 
-function start(){
-
+function start() {
   //create a synth and connect it to the main output (your speakers)
   const debug = new Tone.Synth().toDestination();
 
@@ -906,7 +1021,7 @@ function start(){
   initRoom();
   displayRoom();
   initLights();
-  initMasterCube();  
+  initMasterCube();
   fillMasterCube();
   initControls();
   animate();
@@ -916,29 +1031,28 @@ function start(){
   console.log(scene);
 }
 
-document.getElementById('startButton').addEventListener('click', function(event){
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  removeButton();
-});
+document
+  .getElementById("startButton")
+  .addEventListener("click", function (event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    removeButton();
+  });
 
 function changeBackgroundColor(e) {
   //document.body.style.backgroundColor = "black";
-  scene.background = new THREE.Color( 0x000000 );
+  scene.background = new THREE.Color(0x000000);
   setTimeout(() => {
     //document.body.style.backgroundColor = "white";
-    scene.background = new THREE.Color( 0xffffff );
+    scene.background = new THREE.Color(0xffffff);
     setTimeout(() => {
       //document.body.style.backgroundColor = "black";
-      scene.background = new THREE.Color( 0x000000 );
+      scene.background = new THREE.Color(0x000000);
 
       setTimeout(() => {
         //document.body.style.backgroundColor = "white";
-        scene.background = new THREE.Color( 0xffffff );
-
+        scene.background = new THREE.Color(0xffffff);
       }, 100);
     }, 100); // Change back to white after 0.5 seconds
   }, 100); // Change to black after 0.5 seconds
 }
-
-
