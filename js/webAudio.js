@@ -24,69 +24,9 @@ class WebAudio {
     this.playerInit = 1;
 
     // TENTATIVI METRONOMO
-    this.intervalIdMetro, this.noise, this.envelope;
-
-    // FUNZIONI GRAFICHE
-
-    // COLORI RGB
-    function initRGBEdit(args) {
-      const targetColor = args.slice(0, 3);
-      const durationMs = args[4];
-      const startColor = window.getComputedStyle(document.body).backgroundColor;
-      const startRgba = startColor.match(/\d+/g).map(Number); // Extract RGB values
-
-      const targetRgba = targetColor.map(Number); // Target RGBA values
-
-      const startTime = performance.now();
-
-      function updateColor(timestamp) {
-        const elapsedMs = timestamp - startTime;
-        if (elapsedMs >= durationMs) {
-          document.body.style.backgroundColor = `rgba(${targetRgba.join(
-            ", "
-          )})`;
-          return;
-        }
-
-        const progress = elapsedMs / durationMs;
-        const interpolatedRgba = startRgba.map((startVal, i) =>
-          Math.round(startVal + (targetRgba[i] - startVal) * progress)
-        );
-
-        document.body.style.backgroundColor = `rgba(${interpolatedRgba.join(
-          ", "
-        )})`;
-
-        requestAnimationFrame(updateColor);
-      }
-
-      requestAnimationFrame(updateColor);
-    }
-
-    // STROBO
-    let intervalIdStrobe; // Store the interval ID outside the function
-
-    function strobeEdit(args) {
-      let swapColor = 0;
-      const getRandomColor = () => {
-        const r = args[0];
-        const g = args[1];
-        const b = args[2];
-        swapColor = 1 - swapColor;
-        return `rgba(${r * swapColor}, ${g * swapColor}, ${b * swapColor}, 1)`;
-      };
-
-      if (args[3] > 0) {
-        clearInterval(intervalIdStrobe); // Clear any existing interval before starting a new one
-        intervalIdStrobe = setInterval(() => {
-          const newColor = getRandomColor();
-          document.getElementById("superDiv").style.backgroundColor = newColor;
-        }, args[3]);
-      } else {
-        clearInterval(intervalIdStrobe);
-        // Stop the interval if ms is not positive
-      }
-    }
+    this.intervalIdMetro = null;
+    this.noise = null;
+    this.envelope = null;
   }
 
   getRandomInt(number) {
@@ -212,7 +152,7 @@ class WebAudio {
     }
 
     // Create a new player instance without autostart
-    player = new Tone.Player({
+    this.player = new Tone.Player({
       url: file,
       autostart: false, // Autostart is false to wait for onload
       loop: Number(args[2]),
@@ -287,8 +227,6 @@ class WebAudio {
 
   // rimuove bottone
   removeButton(e) {
-    console.log("event", e);
-
     let button_container = document.getElementById("hideButton");
     button_container.remove();
     //create a synth and connect it to the main output (your speakers)
