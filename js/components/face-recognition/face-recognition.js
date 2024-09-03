@@ -27,7 +27,7 @@ class FaceRecognition {
         runningMode,
         numFaces: 1,
       });
-      demosSection.classList.remove("invisible");
+      // demosSection.classList.remove("invisible");
     }
     createFaceLandmarker();
     /********************************************************************

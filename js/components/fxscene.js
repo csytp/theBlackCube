@@ -9,6 +9,16 @@ class FxScene {
     this.delta = this.sketch.clock.getDelta();
     this.activated = activated;
 
+    this.paramsFxScene = {
+      sceneAnimate: false,
+      transitionAnimate: true,
+      transition: 0,
+      useTexture: true,
+      texture: 5,
+      cycle: true,
+      threshold: 0.1,
+    };
+
     //Events
     this.events = new Events(this);
 
@@ -25,13 +35,10 @@ class FxScene {
     this.scene = new THREE.Scene();
     this.scene.background = backgroundColor;
 
-    console.log(this.sketch.delta);
     this.sketch.animator.add(() => this.update(this.delta));
 
     //return this.scene;
   }
-  update(delta) {
-    console.log('fxscene',delta);
-  }
+  update(delta) {}
 }
 export default FxScene;

@@ -1,4 +1,4 @@
-import "./style.css";
+// import "./../style.css";
 
 import * as THREE from "three";
 import {
@@ -239,6 +239,7 @@ function init() {
   //document.body.appendChild( VRButton.createButton( renderer ) );
   //document.body.appendChild(renderer.domElement);
   document.getElementById("app").appendChild(renderer.domElement);
+  console.log(document.getElementById("app"));
 
   // Camera
   let far = window.innerWidth < 768 ? 60 : 50;
@@ -993,7 +994,8 @@ function audio() {
 // rimuove bottone
 function removeButton() {
   var buttonContainer = document.getElementById("hideButton");
-  //buttonContainer.style.display = "none";
+  console.log(buttonContainer);
+  buttonContainer.style.display = "none";
   buttonContainer.remove();
 
   if (document.getElementById("app")) start();

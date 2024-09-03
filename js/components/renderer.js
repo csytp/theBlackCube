@@ -15,10 +15,13 @@ class Renderer {
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     */
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     this.renderer.domElement.setAttribute("id", "canvas");
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(this.sketch.sizes.width, this.sketch.sizes.height);
+    // this.renderer.xr.enabled = true;
+    document.body.appendChild(this.renderer.domElement);
+
 
     this.renderer.update = this.update.bind(this.sketch.delta);
 
@@ -33,16 +36,17 @@ class Renderer {
     //this.renderer.render( sketch.fxSceneB.scene, sketch.fxSceneB.camera );
 
     // Prevent render both scenes when it's not necessary
-    if (sketch.paramsFxScene.transition === 0) {
+    if (sketch.transitionParams.transition === 0) {
       sketch.renderer.render(sketch.fxSceneA.scene, sketch.fxSceneA.camera);
-    } else if (sketch.paramsFxScene.transition === 1) {
+      
+    } else if (sketch.transitionParams.transition === 1) {
       sketch.renderer.render(sketch.fxSceneB.scene, sketch.fxSceneB.camera);
     } else {
       // When 0 < transition < 1 render transition between two scenes
       sketch.composer.render(delta);
       //sketch.composer.dispose();
       // this.sk.fxSceneA.render( delta, true );
-			// this.sk.fxSceneB.render( delta, true );
+      // this.sk.fxSceneB.render( delta, true );
     }
   }
 }

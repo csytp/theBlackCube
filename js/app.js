@@ -1,13 +1,10 @@
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 
-import Scene from "./components/scene";
 import Renderer from "./components/renderer";
-import Camera from "./components/camera";
-import Lights from "./components/lights";
 import Events from "./components/events.js";
-//FxScene import
 import Animator from "./components/animator";
+
 import Vacuum from "./components/scenes/vacuum.js";
 import SpaceScene from "./components/scenes/space.js";
 import BoxesWorld from "./components/scenes/boxesworld.js";
@@ -30,32 +27,26 @@ class Sketch {
       height: window.innerHeight,
     };
 
-    this.stats = new Stats();
-    document.body.appendChild(this.stats.dom);
-
-    this.renderer = new Renderer(this, document.getElementById("app"));
+    this.renderer = new Renderer(this);
     this.animator = new Animator(this, this.clock);
     this.composer = new EffectComposer(this.renderer);
 
     this.animator.add(() => this.stats.update());
 
+    this.stats = new Stats();
+    document.body.appendChild(this.stats.dom);
+
     this.clock = new THREE.Clock();
     this.delta = this.clock.getDelta();
 
-    this.texturesFxScene = []; //Textures for renderTransitionPass
-
-    this.paramsFxScene = {
-      sceneAnimate: false,
-      transitionAnimate: true,
+    this.transitionParams = {
       transition: 0,
-      useTexture: true,
-      texture: 5,
-      cycle: true,
       threshold: 0.1,
     };
+    this.texturesFxScene = []; //Textures for renderTransitionPass
 
     this.arrayScenes = [
-      new Vacuum(this, this.clock),
+      new Vacuum(this),
       new SpaceScene(this, 20000), //params-> (this Sketch, starsCount)
       new BoxesWorld(this),
     ];
@@ -70,7 +61,7 @@ class Sketch {
       this.fxSceneA.scene,
       this.fxSceneA.camera
     );
-    this.renderTransitionPass.setTexture(this.texturesFxScene[0]);
+    //this.renderTransitionPass.setTexture(this.texturesFxScene[0]);
     this.composer.addPass(this.renderTransitionPass);
 
     // this.glitchPass = new GlitchPass();
@@ -83,52 +74,51 @@ class Sketch {
     document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
   }
   init() {
-    this.initTextures(this);
+    //this.initTextures(this);
     this.initGUI(this);
 
-    document.body.appendChild(this.renderer.domElement);
     this.animator.animate();
   }
   initGUI(sketch) {
     const gui = new GUI();
 
-    gui.add(this.paramsFxScene, "sceneAnimate").name("Animate scene");
-    gui.add(this.paramsFxScene, "transitionAnimate").name("Animate transition");
+    // gui.add(this.paramsFxScene, "sceneAnimate").name("Animate scene");
+    // gui.add(this.paramsFxScene, "transitionAnimate").name("Animate transition");
     gui
-      .add(this.paramsFxScene, "transition", 0, 1, 0.01)
+      .add(this.transitionParams, "transition", 0, 1, 0.01)
       .onChange(function (value) {
         sketch.renderTransitionPass.setTransition(value * 0.5);
       })
       .listen();
 
-    gui.add(this.paramsFxScene, "useTexture").onChange(function (value) {
-      sketch.renderTransitionPass.useTexture(value);
-    });
+    // gui.add(this.paramsFxScene, "useTexture").onChange(function (value) {
+    //   sketch.renderTransitionPass.useTexture(value);
+    // });
+
+    // gui
+    //   .add(this.paramsFxScene, "texture", {
+    //     Perlin: 0,
+    //     Squares: 1,
+    //     Cells: 2,
+    //     Distort: 3,
+    //     Gradient: 4,
+    //     Radial: 5,
+    //   })
+    //   .onChange(function (value) {
+    //     console.log(value);
+    //     console.log(sketch.texturesFxScene[value]);
+    //     sketch.renderTransitionPass.setTexture(sketch.texturesFxScene[value]);
+    //   })
+    //   .listen();
+
+    // gui.add(this.paramsFxScene, "cycle");
 
     gui
-      .add(this.paramsFxScene, "texture", {
-        Perlin: 0,
-        Squares: 1,
-        Cells: 2,
-        Distort: 3,
-        Gradient: 4,
-        Radial: 5,
-      })
-      .onChange(function (value) {
-        console.log(value);
-        console.log(sketch.texturesFxScene[value]);
-        sketch.renderTransitionPass.setTexture(sketch.texturesFxScene[value]);
-      })
-      .listen();
-
-    gui.add(this.paramsFxScene, "cycle");
-
-    gui
-      .add(this.paramsFxScene, "threshold", 0, 1, 0.01)
+      .add(this.transitionParams, "threshold", 0, 1, 0.01)
       .onChange(function (value) {
         sketch.renderTransitionPass.setTextureThreshold(value);
       });
-  }
+  } /*
   initTextures(sketch) {
     const loader = new THREE.TextureLoader();
 
@@ -140,7 +130,7 @@ class Sketch {
     // sketch.renderTransitionPass.setTexture(sketch.texturesFxScene[0]);
     // sketch.composer.addPass(sketch.renderTransitionPass);
     // sketch.composer.dispose();
-  }
+  }*/
   onKeyPressed(event) {
     const keyName = event.key;
     if (keyName === "1") {
@@ -152,7 +142,6 @@ class Sketch {
         this.fxSceneA.scene,
         this.fxSceneA.camera
       );
-      // this.composer.addPass(this.renderTransitionPass);
     } else if (keyName === "2") {
       console.log("pressed 2");
       this.fxSceneB = this.arrayScenes[2];

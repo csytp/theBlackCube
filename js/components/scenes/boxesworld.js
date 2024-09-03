@@ -1,7 +1,5 @@
 import * as THREE from "three";
 
-import FaceRecognition from "../face-recognition/face-recognition.js";
-
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { FlyControls } from "three/addons/controls/FlyControls.js";
 import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
@@ -16,15 +14,21 @@ class BoxesWorld extends FxScene {
       false
     );
 
-    // Face Recognition
-    this.fr = new FaceRecognition();
+    this.paramsFxScene = {
+      sceneAnimate: false,
+      transitionAnimate: true,
+      transition: 0,
+      useTexture: true,
+      texture: 5,
+      cycle: true,
+      threshold: 0.1,
+    };
 
     this.rotationSpeed = new THREE.Vector3(0, -0.4, 0);
 
     // Camera
     this.camera.fov = 40;
     this.camera.near = 1;
-    //this.camera.far = 15000;
     this.camera.position.z = 250;
 
     // Scene
@@ -56,14 +60,14 @@ class BoxesWorld extends FxScene {
       this.scene.add(mesh);
     }
 
-    // lights
+    // Lights
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 0.15);
     dirLight.position.set(0, -1, 0).normalize();
     dirLight.color.setHSL(0.1, 0.7, 0.5);
     this.scene.add(dirLight);
 
-    // lensflares
+    // Lensflares
     const textureLoader = new THREE.TextureLoader();
 
     this.textureFlare0 = textureLoader.load(
@@ -94,7 +98,7 @@ class BoxesWorld extends FxScene {
     //console.log('bworld',delta*10000);
     this.controls.update(delta * 10);
     //console.log('UPDATE', this.sketch.paramsFxScene.sceneAnimate);
-    if (this.sketch.paramsFxScene.sceneAnimate) {
+    if (this.paramsFxScene.sceneAnimate) {
       // this.scene.rotation.x += this.rotationSpeed.x * delta;
       this.scene.rotation.y += this.rotationSpeed.y * delta * 10;
       // this.scene.rotation.z += this.rotationSpeed.z * delta;
@@ -115,6 +119,18 @@ class BoxesWorld extends FxScene {
     lensflare.addElement(new LensflareElement(this.textureFlare3, 120, 0.9));
     lensflare.addElement(new LensflareElement(this.textureFlare3, 70, 1));
     light.add(lensflare);
+  }
+  initTextures(sketch) {
+    const loader = new THREE.TextureLoader();
+
+    for (let i = 0; i < 6; i++) {
+      sketch.texturesFxScene[i] = loader.load(
+        "./textures/transitions/transition" + (i + 1) + ".png"
+      );
+    }
+    // sketch.renderTransitionPass.setTexture(sketch.texturesFxScene[0]);
+    // sketch.composer.addPass(sketch.renderTransitionPass);
+    // sketch.composer.dispose();
   }
 }
 export default BoxesWorld;
