@@ -94,7 +94,7 @@ class Sketch {
   }
   init() {
     //this.initTextures(this);
-    this.initGUI(this);
+    //this.initGUI(this);
 
     this.animator.animate();
   }
@@ -216,13 +216,10 @@ class Sketch {
     const $this = this;
     let sceneIWant = args[0];
 
-    console.log(this.renderTransitionPass.sceneA == this.fxSceneA.scene);
-
     // $this.transitionParams.transition = 1.0;
 
-
-    let activeSceneObj = this.getActiveScene(this.arrayScenes); //args[0];
-    this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant); //args[0];
+    let activeSceneObj = this.getActiveScene(this.arrayScenes);
+    this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant);
   }
 }
 
