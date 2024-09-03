@@ -5,7 +5,7 @@ import FaceRecognition from "./components/face-recognition/face-recognition.js";
 import NoSleep from "nosleep.js";
 
 // No Sleep
-var noSleep = new NoSleep();
+const noSleep = new NoSleep();
 
 // Face Recognition
 // let fr = new FaceRecognition();
@@ -25,6 +25,7 @@ document.getElementById("hideButton").addEventListener(
     e.preventDefault();
     e.stopImmediatePropagation();
     webaudio.removeButton(e);
+    noSleep.enable();
   },
   false
 );
