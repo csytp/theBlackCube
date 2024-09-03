@@ -138,6 +138,15 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Change Scene
+  socket.on("chgScn", (arg) => {
+    const messageArray = String(arg).split(/[\\s*]+/);
+    // [0]controll message [1 controll value]
+    for (const [client] of sequenceNumberByClient.entries()) {
+      client.emit("chgScn", messageArray);
+    }
+  });
+
   // Handle the 'toDevice' message
   socket.on("toDevice", (message) => {
     const messageParts = message.split("*");

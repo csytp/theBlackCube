@@ -204,7 +204,7 @@ class Sketch {
     return { scene: arrayScenes[activeScene], index: activeScene };
   }
   setActiveScene(arrayScenes, indexScene, sceneIWant) {
-    this.fxSceneA = this.arrayScenes[sceneIWant-1];
+    this.fxSceneA = this.arrayScenes[sceneIWant];
     this.renderTransitionPass = new RenderTransitionPass(
       this.fxSceneB.scene,
       this.fxSceneB.camera,
@@ -216,7 +216,10 @@ class Sketch {
     const $this = this;
     let sceneIWant = args[0];
 
-    // this.renderTransitionPass.setTransition(1);
+    console.log(this.renderTransitionPass.sceneA == this.fxSceneA.scene);
+
+    // $this.transitionParams.transition = 1.0;
+
 
     let activeSceneObj = this.getActiveScene(this.arrayScenes); //args[0];
     this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant); //args[0];
