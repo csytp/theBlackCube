@@ -1,7 +1,5 @@
 import * as Tone from "tone";
 
-// document.addEventListener('DOMContentLoaded', initAudio, false);
-// function initAudio(){
 // server ambiente socket anche per i client
 class WebAudio {
   constructor() {
@@ -227,6 +225,7 @@ class WebAudio {
 
   // rimuove bottone
   removeButton(e) {
+
     let button_container = document.getElementById("hideButton");
     button_container.remove();
     //create a synth and connect it to the main output (your speakers)
