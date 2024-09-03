@@ -1,5 +1,16 @@
  # TODO
 
+ ## required packages
+ - vite
+ - express
+ - socket.io
+ - tailwind
+ - postcss
+ - autoprefixer
+ - three@0.167.1
+ - gsap
+ - tone 
+
 /***** Transitions *****/
 1- Textures don't work.
 
