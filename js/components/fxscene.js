@@ -4,7 +4,7 @@ import Events from "./events";
 // import Controls from "./../components/controls";
 
 class FxScene {
-  constructor(sketch, backgroundColor, activated) {
+  constructor(sketch, backgroundColor, activated = false) {
     this.sketch = sketch;
     this.delta = this.sketch.clock.getDelta();
     this.activated = activated;

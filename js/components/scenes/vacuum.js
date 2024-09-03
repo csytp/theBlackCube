@@ -14,7 +14,7 @@ class Vacuum extends FxScene {
     super(sketch, new THREE.Color(0xffffff), true);
     //this.settings = { ...settings };
 
-    /* MOUSE LISTENERS */
+    // Mouse
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
     this.intersects = [];
@@ -212,6 +212,8 @@ class Vacuum extends FxScene {
         (this.masterCubeGrp.position.y = Math.sin(Date.now() * 0.001) * 0.5),
       () => (this.masterCubeGrp.rotation.y = Math.sin(Date.now() * 0.001) * 0.1)
     );
+
+    // return this.scene;
   }
   update(delta) {
     this.controls.update(delta);
@@ -395,13 +397,17 @@ class Vacuum extends FxScene {
         (e.clientX / this.sketch.sizes.width) * 2 - 1,
         -(e.clientY / this.sketch.sizes.height) * 2 + 1
       );
+
+      // console.log(this.mouse);
+
       this.raycaster.setFromCamera(this.mouse, this.camera);
       //intersects = raycaster.intersectObjects(scene.children, true);
       this.intersects = this.raycaster.intersectObjects(
         this.masterCubeGrp.children,
         true
       );
-      //console.log(this.intersects);
+
+      // console.log(this.intersects);
       /*
       Object.keys(hovered).forEach((key) => {
         const hit = intersects.find((hit) => hit.object.uuid === key)
@@ -541,10 +547,10 @@ class Vacuum extends FxScene {
   }
 
   launchTextScrolling() {
-    let degreeXRot = (valoreFinaleXRot - valoreInizialeXRot) * (180 / Math.PI);
-    let degreeYRot = (valoreFinaleYRot - valoreInizialeYRot) * (180 / Math.PI);
-    let degreeZRot = (valoreFinaleZRot - valoreInizialeZRot) * (180 / Math.PI);
-    let zoomValue = valoreZoomFinale - valoreZoomIniziale;
+    let degreeXRot = (this.valoreFinaleXRot - this.valoreInizialeXRot) * (180 / Math.PI);
+    let degreeYRot = (this.valoreFinaleYRot - this.valoreInizialeYRot) * (180 / Math.PI);
+    let degreeZRot = (this.valoreFinaleZRot - this.valoreInizialeZRot) * (180 / Math.PI);
+    let zoomValue = this.valoreZoomFinale - this.valoreZoomIniziale;
     degreeXRot = degreeXRot.toFixed(2);
     degreeYRot = degreeYRot.toFixed(2);
     degreeZRot = degreeZRot.toFixed(2);
@@ -600,13 +606,13 @@ class Vacuum extends FxScene {
       document.querySelector(".last").appendChild(pElemYRot);
       document.querySelector(".last").appendChild(pElemZRot);
       document.querySelector(".last").appendChild(pElemZoom);
-      addScrollTextTimeLine(document.querySelector(".last"));
+      this.addScrollTextTimeLine(document.querySelector(".last"));
     }
 
-    valoreInizialeXRot = valoreFinaleXRot;
-    valoreInizialeYRot = valoreFinaleYRot;
-    valoreInizialeZRot = valoreFinaleZRot;
-    valoreZoomIniziale = valoreZoomFinale;
+    this.valoreInizialeXRot = this.valoreFinaleXRot;
+    this.valoreInizialeYRot = this.valoreFinaleYRot;
+    this.valoreInizialeZRot = this.valoreFinaleZRot;
+    this.valoreZoomIniziale = this.valoreZoomFinale;
   }
 
   addScrollTextTimeLine(container) {
@@ -628,9 +634,10 @@ class Vacuum extends FxScene {
     tl.play();
   }
   initEvent() {
+    const $this = this;
     this.controls.addEventListener('change',function(){
-      this.readRotationValues();
-      this.readZoomValue();
+      $this.readRotationValues();
+      $this.readZoomValue();
     });
     
     document.addEventListener("mousedown", () => {
@@ -651,8 +658,8 @@ class Vacuum extends FxScene {
 
       this.needle = setInterval(() => {
         if (this.onMouseMove) {
-          this.initTextScrolling();
-          this.launchTextScrolling();
+          $this.initTextScrolling();
+          $this.launchTextScrolling();
         }
       }, 1200);
     });
@@ -663,8 +670,8 @@ class Vacuum extends FxScene {
     });
     window.addEventListener("click", function (e) {
       if (!this.onMouseMove) {
-        this.initTextScrolling();
-        this.launchTextScrolling();
+        $this.initTextScrolling();
+        $this.launchTextScrolling();
       }
     });
 

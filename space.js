@@ -986,20 +986,7 @@ function audio() {
     },
   }).toDestination();
 }
-/*
 
-// FUNZIONI GRAFICHE
-// rimuove bottone
-function removeButton() {
-
-  var buttonContainer = document.getElementById("hideButton");
-  //buttonContainer.style.display = "none";
-  buttonContainer.remove();
-  
-  if(document.getElementById('app'))
-    start();
-}
-*/
 function start() {
   //create a synth and connect it to the main output (your speakers)
   const debug = new Tone.Synth().toDestination();
@@ -1035,13 +1022,7 @@ window.addEventListener("resize", onWindowResize, false);
 //window.addEventListener( 'click', onMouseClick, false );
 
 start();
-/*
-document.getElementById('startButton').addEventListener('click', function(event){
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  removeButton();
-});
-*/
+
 function changeBackgroundColor(e) {
   //document.body.style.backgroundColor = "black";
   scene.background = new THREE.Color(0x000000);

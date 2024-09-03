@@ -2,6 +2,7 @@ import * as THREE from "three";
 import FxScene from "../fxscene.js";
 
 import srcStarMap from "../../../img/star.png";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 class SpaceScene extends FxScene {
   constructor(sketch, starsCount) {
@@ -9,9 +10,33 @@ class SpaceScene extends FxScene {
 
     this.scene.add(new THREE.AmbientLight(0xaaaaaa, 3));
 
+    // Controls
+    this.controls = new OrbitControls(
+      this.camera,
+      this.sketch.renderer.domElement
+    );
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.05;
 
+    // Objects
+    this.space = this.cube = {};
     this.starsCount = starsCount;
 
+    // Mouse
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+    this.intersects = [];
+    this.hovered = {};
+    
+
+    this.initSpace();
+    this.initCube();
+    this.initAnimations();
+    this.initRaycaster();
+
+    // return this.scene;
+  }
+  initSpace() {
     const starGeo = new THREE.BufferGeometry();
     starGeo.setAttribute(
       "position",
@@ -58,10 +83,51 @@ class SpaceScene extends FxScene {
 
     this.stars = new THREE.Points(starGeo, starMaterial);
     this.scene.add(this.stars);
-
-    //return this.scene;
   }
-  update( delta ) {
+  initCube() {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshPhongMaterial({ color: 0x3471eb });
+    this.cube = new THREE.Mesh(geometry, material);
+    this.scene.add(this.cube);
+  }
+  initAnimations() {
+    /*
+    this.sketch.animator.add(
+      // () => (this.stars.rotation.y = Date.now() * 0.0001), //Space rotation
+      // () => (this.cube.rotation.y = -(Date.now() * 0.01)) //Cube rotation
+    );*/
+  }
+  initRaycaster() {
+    // EVENT LISTENERS
+    window.addEventListener("pointermove", (e) => {
+      this.mouse.set(
+        (e.clientX / this.sketch.sizes.width) * 2 - 1,
+        -(e.clientY / this.sketch.sizes.height) * 2 + 1
+      );
+
+      // console.log(this.mouse);
+
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      //intersects = raycaster.intersectObjects(scene.children, true);
+      this.intersects = this.raycaster.intersectObjects(
+        this.cube,
+        true
+      );
+
+      // console.log(this.intersects);
+      /*
+      Object.keys(hovered).forEach((key) => {
+        const hit = intersects.find((hit) => hit.object.uuid === key)
+        if (hit === undefined) {
+          const hoveredItem = hovered[key]
+          if (hoveredItem.object.onPointerOver) hoveredItem.object.onPointerOut(hoveredItem)
+          delete hovered[key]
+        }
+      });*/
+    });
+
+    // window.addEventListener("resize", onWindowResize);
+    //window.addEventListener("click", this.onMouseClick, false);
   }
 }
 export default SpaceScene;

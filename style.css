@@ -8,9 +8,24 @@
         @apply box-border;
         @apply m-0 p-0;
     }
+    
+    body{
+        @apply w-full h-full h-[100vh];
+    }
 
-    #app{
-        @apply absolute top-0 left-0 w-full h-full;
+    #hideButton_container{
+        @apply absolute right-0 bottom-1/2 z-30;
+    }
+    #hideButton{
+        @apply text-black bg-lime-400 px-10;
+    }
+
+    #canvas{
+        @apply absolute top-0 left-0 w-full h-full z-10;
+    }
+    #text-container{
+        @apply absolute top-0 left-0 w-full h-full z-20;
+        @apply pointer-events-none;
     }
 
     /* FACE RECOGNITION */

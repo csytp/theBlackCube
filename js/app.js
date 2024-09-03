@@ -20,6 +20,8 @@ import { RenderTransitionPass } from "three/addons/postprocessing/RenderTransiti
 import { GlitchPass } from "three/addons/postprocessing/GlitchPass.js";
 import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
+import { gsap } from "gsap";
+
 class Sketch {
   constructor() {
     this.sizes = {
@@ -31,10 +33,9 @@ class Sketch {
     this.animator = new Animator(this, this.clock);
     this.composer = new EffectComposer(this.renderer);
 
-    this.animator.add(() => this.stats.update());
-
     this.stats = new Stats();
     document.body.appendChild(this.stats.dom);
+    this.animator.add(() => this.stats.update());
 
     this.clock = new THREE.Clock();
     this.delta = this.clock.getDelta();
@@ -53,7 +54,23 @@ class Sketch {
 
     this.fxSceneA = this.arrayScenes[0];
     this.fxSceneB = this.arrayScenes[1];
-    this.fxSceneC = this.arrayScenes[2];
+    /*
+    let sceneLoaded = 0;
+    for (let i = 0; i < this.arrayScenes.length; i++) {
+      if (this.arrayScenes.activated === true) {
+        this.fxSceneA = this.arrayScenes[i];
+        sceneLoaded = i;
+        break;
+      }
+    }
+
+    if (sceneLoaded) {
+      if (sceneLoaded >= this.arrayScenes.length) {
+        this.fxSceneB = this.arrayScenes[0];
+      } else {
+        this.fxSceneB = this.arrayScenes[++sceneLoaded];
+      }
+    }*/
 
     this.renderTransitionPass = new RenderTransitionPass(
       this.fxSceneB.scene,
@@ -72,6 +89,8 @@ class Sketch {
 
     // window.addEventListener("resize", this.onWindowResize.bind(this), false);
     document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
+
+    // this.removeEvents();
   }
   init() {
     //this.initTextures(this);
@@ -154,6 +173,53 @@ class Sketch {
     }
     this.composer.addPass(this.renderTransitionPass);
     this.composer.dispose();
+  }
+  removeEvents() {
+    function removeAllEvents(node, event) {
+      if (node in _eventHandlers) {
+        var handlers = _eventHandlers[node];
+        if (event in handlers) {
+          var eventHandlers = handlers[event];
+          for (var i = eventHandlers.length; i--; ) {
+            var handler = eventHandlers[i];
+            node.removeEventListener(event, handler[0], handler[1]);
+          }
+        }
+      }
+    }
+    console.log("Window", window);
+    console.log("Document", document);
+    //removeAllEvents();
+  }
+  getActiveScene(arrayScenes) {
+    let activeScene = 0;
+    for (let i = 0; i < arrayScenes.length; i++) {
+      if (arrayScenes.activated === true) {
+        // this.fxSceneA = this.arrayScenes[i];
+        activeScene = i;
+        break;
+      }
+    }
+
+    return { scene: arrayScenes[activeScene], index: activeScene };
+  }
+  setActiveScene(arrayScenes, indexScene, sceneIWant) {
+    this.fxSceneA = this.arrayScenes[sceneIWant-1];
+    this.renderTransitionPass = new RenderTransitionPass(
+      this.fxSceneB.scene,
+      this.fxSceneB.camera,
+      this.fxSceneA.scene,
+      this.fxSceneA.camera
+    );
+  }
+  changeScene(args) {
+    const $this = this;
+    let sceneIWant = args[0];
+
+    // this.renderTransitionPass.setTransition(1);
+
+    let activeSceneObj = this.getActiveScene(this.arrayScenes); //args[0];
+    this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant); //args[0];
   }
 }
 

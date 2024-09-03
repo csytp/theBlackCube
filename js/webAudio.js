@@ -1,338 +1,311 @@
+import * as Tone from "tone";
+
+// document.addEventListener('DOMContentLoaded', initAudio, false);
+// function initAudio(){
 // server ambiente socket anche per i client
-const socket = io();
+class WebAudio {
+  constructor() {
+    this.elem = document.documentElement;
 
-var elem = document.documentElement;
+    // VARIABILI TONEJS
+    this.nois = new Tone.Noise("pink").toDestination();
+    this.noisInit = 1;
+    this.nois2 = new Tone.Noise("pink").toDestination();
+    this.nois2Init = 1;
+    this.sin = new Tone.Oscillator(440, "sine").toDestination();
+    this.sinInit = 1;
+    this.sin2 = new Tone.Oscillator(440, "sine").toDestination();
+    this.sin2Init = 1;
+    this.saws = new Tone.Oscillator(440, "sawtooth6").toDestination();
+    this.sawsInit = 1;
+    this.saws2 = new Tone.Oscillator(440, "sawtooth6").toDestination();
+    this.saws2Init = 1;
+    this.player = new Tone.Player("sound-1.wav").toMaster();
+    this.playerInit = 1;
 
-// VARIABILI TONEJS
-var nois = new Tone.Noise("pink").toDestination();
-var noisInit = 1;
-var nois2 = new Tone.Noise("pink").toDestination();
-var nois2Init = 1;
-var sin = new Tone.Oscillator(440, "sine").toDestination();
-var sinInit = 1;
-var sin2 = new Tone.Oscillator(440, "sine").toDestination();
-var sin2Init = 1;
-var saws = new Tone.Oscillator(440, "sawtooth6").toDestination();
-var sawsInit = 1;
-var saws2 = new Tone.Oscillator(440, "sawtooth6").toDestination();
-var saws2Init = 1;
-var player = new Tone.Player("sound-1.wav").toMaster();
-var playerInit = 1;
+    // TENTATIVI METRONOMO
+    this.intervalIdMetro, this.noise, this.envelope;
 
-// TENTATIVI METRONOMO
-let intervalIdMetro, noise, envelope;
+    // FUNZIONI GRAFICHE
 
-function getRandomInt(number) {
-  min = Math.ceil(-number);
-  max = Math.floor(number);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+    // COLORI RGB
+    function initRGBEdit(args) {
+      const targetColor = args.slice(0, 3);
+      const durationMs = args[4];
+      const startColor = window.getComputedStyle(document.body).backgroundColor;
+      const startRgba = startColor.match(/\d+/g).map(Number); // Extract RGB values
 
-// funzione tone js crea nota
-function pinkNoiseEdit(args) {
-  if (noisInit == 1) {
-    nois.volume.value = -Infinity; // Set initial volume to -Infinity
-    noisInit = 0;
-    nois.start();
-    nois.volume.rampTo(args[0], args[1] / 1000);
-  }
-  nois.start();
-  nois.volume.rampTo(args[0], args[1] / 1000);
-}
+      const targetRgba = targetColor.map(Number); // Target RGBA values
 
-// funzione tone js crea nota
-function sineEdit(args) {
-  if (sinInit == 1) {
-    sin.volume.value = -Infinity; // Set initial volume to -Infinity
-    sinInit = 0;
-    sin.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    sin.start();
-    sin.volume.rampTo(args[2], args[3] / 1000);
-  }
+      const startTime = performance.now();
 
-  // attack or release to avoid detunig swith on release
-  if (args[2] < -60 || args[2] === "-Infinity") {
-    sin.volume.rampTo(args[2], args[3] / 1000);
-  } else {
-    sin.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    sin.start();
-    sin.volume.rampTo(args[2], args[3] / 1000);
-  }
-}
+      function updateColor(timestamp) {
+        const elapsedMs = timestamp - startTime;
+        if (elapsedMs >= durationMs) {
+          document.body.style.backgroundColor = `rgba(${targetRgba.join(
+            ", "
+          )})`;
+          return;
+        }
 
-// funzione tone js crea nota
-function sawEdit(args) {
-  if (sawsInit == 1) {
-    saws.volume.value = -Infinity; // Set initial volume to -Infinity
-    sawsInit = 0;
-    saws.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    saws.start();
-    saws.volume.rampTo(args[2], args[3] / 1000);
-  }
+        const progress = elapsedMs / durationMs;
+        const interpolatedRgba = startRgba.map((startVal, i) =>
+          Math.round(startVal + (targetRgba[i] - startVal) * progress)
+        );
 
-  // attack or release to avoid detunig swith on release
-  if (args[2] < -60 || args[2] === "-Infinity") {
-    saws.volume.rampTo(args[2], args[3] / 1000);
-  } else {
-    saws.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    saws.start();
-    saws.volume.rampTo(args[2], args[3] / 1000);
-  }
-}
+        document.body.style.backgroundColor = `rgba(${interpolatedRgba.join(
+          ", "
+        )})`;
 
-// funzione tone js crea nota
-function pinkNoiseEdit2(args) {
-  if (nois2Init == 1) {
-    nois2.volume.value = -Infinity; // Set initial volume to -Infinity
-    nois2Init = 0;
-    nois2.start();
-    nois2.volume.rampTo(args[0], args[1] / 1000);
-  }
-  nois2.start();
-  nois2.volume.rampTo(args[0], args[1] / 1000);
-}
-// funzione tone js crea nota
-function sineEdit2(args) {
-  if (sin2Init == 1) {
-    sin2.volume.value = -Infinity; // Set initial volume to -Infinity
-    sin2Init = 0;
-    sin2.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    sin2.start();
-    sin2.volume.rampTo(args[2], args[3] / 1000);
-  }
+        requestAnimationFrame(updateColor);
+      }
 
-  // attack or release to avoid detunig swith on release
-  if (args[2] < -60 || args[2] === "-Infinity") {
-    sin2.volume.rampTo(args[2], args[3] / 1000);
-  } else {
-    sin2.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    sin2.start();
-    sin2.volume.rampTo(args[2], args[3] / 1000);
-  }
-}
-
-// funzione tone js crea nota
-function sawEdit2(args) {
-  if (saws2Init == 1) {
-    saws2.volume.value = -Infinity; // Set initial volume to -Infinity
-    saws2Init = 0;
-    saws2.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    saws2.start();
-    saws2.volume.rampTo(args[2], args[3] / 1000);
-  }
-
-  // attack or release to avoid detunig swith on release
-  if (args[2] < -60 || args[2] === "-Infinity") {
-    saws2.volume.rampTo(args[2], args[3] / 1000);
-  } else {
-    saws2.frequency.value = Number(args[0]) + getRandomInt(args[1]);
-    saws2.start();
-    saws2.volume.rampTo(args[2], args[3] / 1000);
-  }
-}
-
-// AudioPlayer
-function audioPlayerEdit(args) {
-  let text1 = "sound-";
-  let text2 = ".wav";
-  let file = text1.concat(args[0], text2);
-
-  // If a player instance exists, stop and dispose it
-  if (player) {
-    player.stop();
-    player.dispose();
-  }
-
-  // Create a new player instance without autostart
-  player = new Tone.Player({
-    url: file,
-    autostart: false, // Autostart is false to wait for onload
-    loop: Number(args[2]),
-    onload: function () {
-      // Start playback after the player has loaded the audio
-      player.start();
-      // Set the volume
-      player.volume.rampTo(args[1], 0.5);
-    },
-  }).toDestination();
-}
-
-// Function to start the metronome
-function metroEdit(args, action = "start") {
-  const volumeDb = args[0]; // Volume in dB
-  const intervalMs = args[1]; // Interval in milliseconds
-
-  // Function to stop and dispose of noise and envelope
-  const stopAndDispose = () => {
-    if (intervalIdMetro) {
-      clearInterval(intervalIdMetro);
-      intervalIdMetro = null;
+      requestAnimationFrame(updateColor);
     }
-    if (noise) {
-      noise.stop();
-      noise.dispose();
-      noise = null;
-    }
-    if (envelope) {
-      envelope.dispose();
-      envelope = null;
-    }
-  };
 
-  if (action === "stop") {
-    // If action is stop, clean up and exit
-    stopAndDispose();
-    return;
+    // STROBO
+    let intervalIdStrobe; // Store the interval ID outside the function
+
+    function strobeEdit(args) {
+      let swapColor = 0;
+      const getRandomColor = () => {
+        const r = args[0];
+        const g = args[1];
+        const b = args[2];
+        swapColor = 1 - swapColor;
+        return `rgba(${r * swapColor}, ${g * swapColor}, ${b * swapColor}, 1)`;
+      };
+
+      if (args[3] > 0) {
+        clearInterval(intervalIdStrobe); // Clear any existing interval before starting a new one
+        intervalIdStrobe = setInterval(() => {
+          const newColor = getRandomColor();
+          document.getElementById("superDiv").style.backgroundColor = newColor;
+        }, args[3]);
+      } else {
+        clearInterval(intervalIdStrobe);
+        // Stop the interval if ms is not positive
+      }
+    }
   }
 
-  // Clean up any existing noise or intervals
-  stopAndDispose();
-
-  // Resume the audio context if it's suspended
-  Tone.start();
-
-  // Create a new noise source
-  noise = new Tone.Noise("white").start();
-
-  // Create a gain node to control volume
-  const gain = new Tone.Gain(Tone.dbToGain(volumeDb)).toDestination();
-
-  // Create an envelope to control the noise
-  envelope = new Tone.AmplitudeEnvelope({
-    attack: 0.05, // Attack time
-    decay: 0.05, // Decay time (50 ms)
-    sustain: 0,
-    release: 0,
-  }).connect(gain);
-
-  // Connect the noise source to the envelope
-  noise.connect(envelope);
-
-  // Trigger the first sound immediately
-  envelope.triggerAttackRelease(0.5);
-
-  // Play the noise signal at the defined interval
-  intervalIdMetro = setInterval(() => {
-    envelope.triggerAttackRelease(0.5); // Trigger the envelope
-  }, intervalMs);
-}
-
-// FUNZIONI GRAFICHE
-// rimuove bottone
-function removeButton() {
-  var button = document.getElementById("hideButton");
-  button.remove();
-  //create a synth and connect it to the main output (your speakers)
-  const debug = new Tone.Synth().toDestination();
-
-  //play a middle 'C' for the duration of an 8th note
-  debug.triggerAttackRelease("C4", "16n");
-
-  if (elem.requestFullscreen) {
-    elem.requestFullscreen();
-  } else if (elem.webkitRequestFullscreen) {
-    /* Safari */
-    elem.webkitRequestFullscreen();
-  } else if (elem.msRequestFullscreen) {
-    /* IE11 */
-    elem.msRequestFullscreen();
+  getRandomInt(number) {
+    let min = Math.ceil(-number);
+    let max = Math.floor(number);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
-}
 
-// COLORI RGB
-function initRGBEdit(args) {
-  const targetColor = args.slice(0, 3);
-  const durationMs = args[4];
-  const startColor = window.getComputedStyle(document.body).backgroundColor;
-  const startRgba = startColor.match(/\d+/g).map(Number); // Extract RGB values
+  // funzione tone js crea nota
+  pinkNoiseEdit(args) {
+    if (this.noisInit == 1) {
+      this.nois.volume.value = -Infinity; // Set initial volume to -Infinity
+      this.noisInit = 0;
+      this.nois.start();
+      this.nois.volume.rampTo(args[0], args[1] / 1000);
+    }
+    this.nois.start();
+    this.nois.volume.rampTo(args[0], args[1] / 1000);
+  }
 
-  const targetRgba = targetColor.map(Number); // Target RGBA values
+  // funzione tone js crea nota
+  sineEdit(args) {
+    if (this.sinInit == 1) {
+      this.sin.volume.value = -Infinity; // Set initial volume to -Infinity
+      this.sinInit = 0;
+      this.sin.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.sin.start();
+      this.sin.volume.rampTo(args[2], args[3] / 1000);
+    }
 
-  const startTime = performance.now();
+    // attack or release to avoid detunig swith on release
+    if (args[2] < -60 || args[2] === "-Infinity") {
+      this.sin.volume.rampTo(args[2], args[3] / 1000);
+    } else {
+      this.sin.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.sin.start();
+      this.sin.volume.rampTo(args[2], args[3] / 1000);
+    }
+  }
 
-  function updateColor(timestamp) {
-    const elapsedMs = timestamp - startTime;
-    if (elapsedMs >= durationMs) {
-      document.body.style.backgroundColor = `rgba(${targetRgba.join(", ")})`;
+  // funzione tone js crea nota
+  sawEdit(args) {
+    if (this.sawsInit == 1) {
+      this.saws.volume.value = -Infinity; // Set initial volume to -Infinity
+      this.sawsInit = 0;
+      this.saws.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.saws.start();
+      this.saws.volume.rampTo(args[2], args[3] / 1000);
+    }
+
+    // attack or release to avoid detunig swith on release
+    if (args[2] < -60 || args[2] === "-Infinity") {
+      this.saws.volume.rampTo(args[2], args[3] / 1000);
+    } else {
+      this.saws.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.saws.start();
+      this.saws.volume.rampTo(args[2], args[3] / 1000);
+    }
+  }
+
+  // funzione tone js crea nota
+  pinkNoiseEdit2(args) {
+    if (this.nois2Init == 1) {
+      this.nois2.volume.value = -Infinity; // Set initial volume to -Infinity
+      this.nois2Init = 0;
+      this.nois2.start();
+      this.nois2.volume.rampTo(args[0], args[1] / 1000);
+    }
+    this.nois2.start();
+    this.nois2.volume.rampTo(args[0], args[1] / 1000);
+  }
+  // funzione tone js crea nota
+  sineEdit2(args) {
+    if (this.sin2Init == 1) {
+      this.sin2.volume.value = -Infinity; // Set initial volume to -Infinity
+      this.sin2Init = 0;
+      this.sin2.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.sin2.start();
+      this.sin2.volume.rampTo(args[2], args[3] / 1000);
+    }
+
+    // attack or release to avoid detunig swith on release
+    if (args[2] < -60 || args[2] === "-Infinity") {
+      this.sin2.volume.rampTo(args[2], args[3] / 1000);
+    } else {
+      this.sin2.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.sin2.start();
+      this.sin2.volume.rampTo(args[2], args[3] / 1000);
+    }
+  }
+
+  // funzione tone js crea nota
+  sawEdit2(args) {
+    if (this.saws2Init == 1) {
+      this.saws2.volume.value = -Infinity; // Set initial volume to -Infinity
+      this.saws2Init = 0;
+      this.saws2.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.saws2.start();
+      this.saws2.volume.rampTo(args[2], args[3] / 1000);
+    }
+
+    // attack or release to avoid detunig swith on release
+    if (args[2] < -60 || args[2] === "-Infinity") {
+      this.saws2.volume.rampTo(args[2], args[3] / 1000);
+    } else {
+      this.saws2.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
+      this.saws2.start();
+      this.saws2.volume.rampTo(args[2], args[3] / 1000);
+    }
+  }
+
+  // AudioPlayer
+  audioPlayerEdit(args) {
+    const $this = this;
+    let text1 = "sound-";
+    let text2 = ".wav";
+    let file = text1.concat(args[0], text2);
+
+    // If a player instance exists, stop and dispose it
+    if (this.player) {
+      this.player.stop();
+      this.player.dispose();
+    }
+
+    // Create a new player instance without autostart
+    player = new Tone.Player({
+      url: file,
+      autostart: false, // Autostart is false to wait for onload
+      loop: Number(args[2]),
+      onload: function () {
+        // Start playback after the player has loaded the audio
+        $this.player.start();
+        // Set the volume
+        $this.player.volume.rampTo(args[1], 0.5);
+      },
+    }).toDestination();
+  }
+
+  // Function to start the metronome
+  metroEdit(args, action = "start") {
+    const volumeDb = args[0]; // Volume in dB
+    const intervalMs = args[1]; // Interval in milliseconds
+
+    // Function to stop and dispose of noise and envelope
+    const stopAndDispose = () => {
+      if (this.intervalIdMetro) {
+        clearInterval(this.intervalIdMetro);
+        this.intervalIdMetro = null;
+      }
+      if (this.noise) {
+        this.noise.stop();
+        this.noise.dispose();
+        this.noise = null;
+      }
+      if (this.envelope) {
+        this.envelope.dispose();
+        this.envelope = null;
+      }
+    };
+
+    if (action === "stop") {
+      // If action is stop, clean up and exit
+      stopAndDispose();
       return;
     }
 
-    const progress = elapsedMs / durationMs;
-    const interpolatedRgba = startRgba.map((startVal, i) =>
-      Math.round(startVal + (targetRgba[i] - startVal) * progress)
-    );
+    // Clean up any existing noise or intervals
+    stopAndDispose();
 
-    document.body.style.backgroundColor = `rgba(${interpolatedRgba.join(
-      ", "
-    )})`;
+    // Resume the audio context if it's suspended
+    Tone.start();
 
-    requestAnimationFrame(updateColor);
+    // Create a new noise source
+    this.noise = new Tone.Noise("white").start();
+
+    // Create a gain node to control volume
+    const gain = new Tone.Gain(Tone.dbToGain(volumeDb)).toDestination();
+
+    // Create an envelope to control the noise
+    this.envelope = new Tone.AmplitudeEnvelope({
+      attack: 0.05, // Attack time
+      decay: 0.05, // Decay time (50 ms)
+      sustain: 0,
+      release: 0,
+    }).connect(gain);
+
+    // Connect the noise source to the envelope
+    this.noise.connect(this.envelope);
+
+    // Trigger the first sound immediately
+    this.envelope.triggerAttackRelease(0.5);
+
+    // Play the noise signal at the defined interval
+    this.intervalIdMetro = setInterval(() => {
+      this.envelope.triggerAttackRelease(0.5); // Trigger the envelope
+    }, intervalMs);
   }
 
-  requestAnimationFrame(updateColor);
-}
+  // rimuove bottone
+  removeButton(e) {
+    console.log("event", e);
 
-// STROBO
-let intervalIdStrobe; // Store the interval ID outside the function
+    let button_container = document.getElementById("hideButton");
+    button_container.remove();
+    //create a synth and connect it to the main output (your speakers)
+    const debug = new Tone.Synth().toDestination();
 
-function strobeEdit(args) {
-  let swapColor = 0;
-  const getRandomColor = () => {
-    const r = args[0];
-    const g = args[1];
-    const b = args[2];
-    swapColor = 1 - swapColor;
-    return `rgba(${r * swapColor}, ${g * swapColor}, ${b * swapColor}, 1)`;
-  };
+    //play a middle 'C' for the duration of an 8th note
+    debug.triggerAttackRelease("C4", "16n");
 
-  if (args[3] > 0) {
-    clearInterval(intervalIdStrobe); // Clear any existing interval before starting a new one
-    intervalIdStrobe = setInterval(() => {
-      const newColor = getRandomColor();
-      document.body.style.backgroundColor = newColor;
-    }, args[3]);
-  } else {
-    clearInterval(intervalIdStrobe); // Stop the interval if ms is not positive
+    if (this.elem.requestFullscreen) {
+      this.elem.requestFullscreen();
+    } else if (this.elem.webkitRequestFullscreen) {
+      /* Safari */
+      this.elem.webkitRequestFullscreen();
+    } else if (this.elem.msRequestFullscreen) {
+      /* IE11 */
+      this.elem.msRequestFullscreen();
+    }
   }
 }
-
-// MESSAGGI SOCKET IO
-socket.on("pink", (ctrlValue) => {
-  pinkNoiseEdit(ctrlValue);
-});
-
-socket.on("sine", (ctrlValue) => {
-  sineEdit(ctrlValue);
-});
-
-socket.on("saw", (ctrlValue) => {
-  sawEdit(ctrlValue);
-});
-
-socket.on("pink2", (ctrlValue) => {
-  pinkNoiseEdit2(ctrlValue);
-});
-
-socket.on("sine2", (ctrlValue) => {
-  sineEdit2(ctrlValue);
-});
-
-socket.on("saw2", (ctrlValue) => {
-  sawEdit2(ctrlValue);
-});
-
-socket.on("audioPlayer", (ctrlValue) => {
-  audioPlayerEdit(ctrlValue);
-});
-
-socket.on("initRGB", (ctrlValue) => {
-  initRGBEdit(ctrlValue);
-});
-
-socket.on("strobe", (ctrlValue) => {
-  strobeEdit(ctrlValue);
-});
-
-socket.on("metro", (ctrlValue) => {
-  metroEdit(ctrlValue);
-});
+export default WebAudio;

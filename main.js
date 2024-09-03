@@ -992,14 +992,14 @@ function audio() {
 
 // FUNZIONI GRAFICHE
 // rimuove bottone
-function removeButton() {
-  var buttonContainer = document.getElementById("hideButton");
-  console.log(buttonContainer);
-  buttonContainer.style.display = "none";
-  buttonContainer.remove();
+// function removeButton() {
+//   var buttonContainer = document.getElementById("hideButton");
+//   console.log(buttonContainer);
+//   buttonContainer.style.display = "none";
+//   buttonContainer.remove();
 
-  if (document.getElementById("app")) start();
-}
+//   if (document.getElementById("app")) start();
+// }
 
 function start() {
   //create a synth and connect it to the main output (your speakers)
