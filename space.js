@@ -1,7 +1,5 @@
 import "./style.css";
 
-import NoSleep from "nosleep.js";
-
 import * as THREE from "three";
 import {
   BoxLineGeometry,
@@ -25,8 +23,7 @@ ScrollTrigger.create({
 });
 ScrollTrigger.saveStyles(["text-container"]);
 
-// No Sleep import
-var noSleep = new NoSleep();
+
 
 //////// THREEJS ////////
 /*three variables */

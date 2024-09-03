@@ -139,7 +139,7 @@ class WebAudio {
   // AudioPlayer
   audioPlayerEdit(args) {
     const $this = this;
-    let text1 = "sound-";
+    let text1 = "https://raw.githubusercontent.com/csytp/fileAudio/main/sound-";
     let text2 = ".wav";
     let file = text1.concat(args[0], text2);
 

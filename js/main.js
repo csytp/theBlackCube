@@ -2,6 +2,10 @@
 import WebAudio from "./webAudio.js";
 import Sketch from "./app.js";
 import FaceRecognition from "./components/face-recognition/face-recognition.js";
+import NoSleep from "nosleep.js";
+
+// No Sleep
+var noSleep = new NoSleep();
 
 // Face Recognition
 // let fr = new FaceRecognition();
