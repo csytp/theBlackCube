@@ -25,6 +25,9 @@ class WebAudio {
     this.intervalIdMetro = null;
     this.noise = null;
     this.envelope = null;
+
+    //strobeEdit method
+    this.intervalIdStrobe = null;
   }
 
   getRandomInt(number) {
@@ -222,10 +225,87 @@ class WebAudio {
       this.envelope.triggerAttackRelease(0.5); // Trigger the envelope
     }, intervalMs);
   }
+  // STROBO
+  initRGBEdit(args) {
+    const targetColor = args.slice(0, 3);
+    const durationMs = args[4];
+    // VERSIONE VECCHIA
+    //const startColor = window.getComputedStyle(document.body).backgroundColor;
+    // VERSIONE NUOVA
+    const superDiv = document.getElementById("superDiv");
+    const startColor = window.getComputedStyle(superDiv).backgroundColor;
+    document.getElementById("superDiv").classList.remove("hidden");
+    //const startColor = window.getComputedStyle(document.body.getElementById("superDiv")).backgroundColor;
+
+    const startRgba = startColor.match(/\d+/g).map(Number); // Extract RGB values
+
+    const targetRgba = targetColor.map(Number); // Target RGBA values
+
+    const startTime = performance.now();
+
+    function updateColor(timestamp) {
+      const elapsedMs = timestamp - startTime;
+      if (elapsedMs >= durationMs) {
+        // OLD
+        //document.body.style.backgroundColor = `rgba(${targetRgba.join(", ")})`;
+        // NUOVA
+        document.getElementById(
+          "superDiv"
+        ).style.backgroundColor = `rgba(${targetRgba.join(", ")})`;
+        if (args[3] == -1) {
+          document.getElementById("superDiv").classList.add("hidden");
+        }
+        return;
+      }
+
+      const progress = elapsedMs / durationMs;
+      const interpolatedRgba = startRgba.map((startVal, i) =>
+        Math.round(startVal + (targetRgba[i] - startVal) * progress)
+      );
+      //OLD
+      // document.body.style.backgroundColor = `rgba(${interpolatedRgba.join(", ")})`;
+      // NUOVO
+      document.getElementById(
+        "superDiv"
+      ).style.backgroundColor = `rgba(${interpolatedRgba.join(", ")})`;
+
+      requestAnimationFrame(updateColor);
+    }
+
+    requestAnimationFrame(updateColor);
+  }
+
+  strobeEdit(args) {
+    //let intervalIdStrobe; // Store the interval ID outside the function
+
+    console.log(args[3]);
+
+    if (args[3] > 0) {
+      clearInterval(this.intervalIdStrobe); // Clear any existing interval before starting a new one
+
+      let swapColor = 0;
+      const getRandomColor = () => {
+        const r = args[0];
+        const g = args[1];
+        const b = args[2];
+        swapColor = 1 - swapColor;
+        return `rgba(${r * swapColor}, ${g * swapColor}, ${b * swapColor}, 1)`;
+      };
+
+      this.intervalIdStrobe = setInterval(() => {
+        const newColor = getRandomColor();
+        document.getElementById("superDiv").classList.remove("hidden");
+        document.getElementById("superDiv").style.backgroundColor = newColor;
+      }, args[3]);
+    }
+    if (args[3] == -1) {
+      clearInterval(this.intervalIdStrobe);
+      document.getElementById("superDiv").classList.add("hidden");
+    }
+  }
 
   // rimuove bottone
   removeButton(e) {
-
     let button_container = document.getElementById("hideButton");
     button_container.remove();
     //create a synth and connect it to the main output (your speakers)

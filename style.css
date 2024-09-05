@@ -27,6 +27,9 @@
         @apply absolute top-0 left-0 w-full h-full z-20;
         @apply pointer-events-none;
     }
+    #superDiv{
+        @apply absolute top-0 left-0 w-full h-[100vh] z-30;
+    }
 
     /* FACE RECOGNITION */
     #webcam{
