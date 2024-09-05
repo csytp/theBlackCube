@@ -1,4 +1,5 @@
 // vite.config.js
+import glsl from 'vite-plugin-glsl';
 import { defineConfig } from "vite";
 import dns from "node:dns";
 
@@ -198,4 +199,5 @@ export default defineConfig({
       },
     },
   },
+  plugins: [ glsl() ]
 });
