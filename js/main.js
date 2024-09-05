@@ -30,16 +30,17 @@ document.getElementById("hideButton").addEventListener(
   false
 );
 
-/****************** SOCKET IO ******************/
+/****************** SOCKET-IO ******************/
 
-// MESSAGGI SOCKET IO THREEJS
+// SOCKET-IO -> THREEJS
 
 socket.on("chgScn", (ctrlValue) => {
   console.log(ctrlValue);
   sketch.changeScene(ctrlValue);
 });
 
-// MESSAGGI SOCKET IO WEB AUDIO
+// SOCKET-IO -> WEB AUDIO
+
 socket.on("pink", (ctrlValue) => {
   webaudio.pinkNoiseEdit(ctrlValue);
 });

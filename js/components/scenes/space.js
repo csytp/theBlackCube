@@ -1,8 +1,11 @@
 import * as THREE from "three";
 import FxScene from "../fxscene.js";
-
-import srcStarMap from "../../../img/star.png";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
+
+// import vertexShader from "./pippo/vertex.txt";
+import vertexShader from "./shaders/vertex.glsl";
+import fragmentShader from "./shaders/fragment.glsl";
+import srcStarMap from "../../../img/star.png";
 
 class SpaceScene extends FxScene {
   constructor(sketch, starsCount) {
@@ -19,7 +22,7 @@ class SpaceScene extends FxScene {
     this.controls.dampingFactor = 0.05;
 
     // Objects
-    this.space = this.cube = {};
+    this.space = this.cube = this.ico = {};
     this.starsCount = starsCount;
 
     // Mouse
@@ -27,10 +30,10 @@ class SpaceScene extends FxScene {
     this.mouse = new THREE.Vector2();
     this.intersects = [];
     this.hovered = {};
-    
 
     this.initSpace();
-    this.initCube();
+    // this.initCube();
+    this.initIcosahedron();
     this.initAnimations();
     this.initRaycaster();
 
@@ -86,9 +89,19 @@ class SpaceScene extends FxScene {
   }
   initCube() {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshPhongMaterial({ color: 0x3471eb });
+    const material = new THREE.MeshStandardMaterial({ color: 0x3471eb });
+
     this.cube = new THREE.Mesh(geometry, material);
     this.scene.add(this.cube);
+  }
+  initIcosahedron() {
+    const geometry = new THREE.IcosahedronGeometry(1, 5);
+    const material = new THREE.ShaderMaterial({
+      vertexShader: vertexShader,
+      fragmentShader: fragmentShader
+    });
+    this.ico = new THREE.Mesh(geometry, material);
+    this.scene.add(this.ico);
   }
   initAnimations() {
     /*
@@ -109,10 +122,7 @@ class SpaceScene extends FxScene {
 
       this.raycaster.setFromCamera(this.mouse, this.camera);
       //intersects = raycaster.intersectObjects(scene.children, true);
-      this.intersects = this.raycaster.intersectObjects(
-        this.cube,
-        true
-      );
+      this.intersects = this.raycaster.intersectObjects(this.cube, true);
 
       // console.log(this.intersects);
       /*
