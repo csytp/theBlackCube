@@ -6,27 +6,32 @@ class WebAudio {
     this.elem = document.documentElement;
 
     // VARIABILI TONEJS
+    //pinkNoiseEdit
     this.nois = new Tone.Noise("pink").toDestination();
     this.noisInit = 1;
+    //pinkNoiseEdit2
     this.nois2 = new Tone.Noise("pink").toDestination();
     this.nois2Init = 1;
+    //sineEdit
     this.sin = new Tone.Oscillator(440, "sine").toDestination();
     this.sinInit = 1;
+    //sineEdit2
     this.sin2 = new Tone.Oscillator(440, "sine").toDestination();
     this.sin2Init = 1;
+    //sawEdit
     this.saws = new Tone.Oscillator(440, "sawtooth6").toDestination();
     this.sawsInit = 1;
+    //sawEdit2
     this.saws2 = new Tone.Oscillator(440, "sawtooth6").toDestination();
     this.saws2Init = 1;
+    //audioPlayerEdit
     this.player = new Tone.Player("sound-1.wav").toMaster();
     this.playerInit = 1;
-
-    // TENTATIVI METRONOMO
+    //metroEdit
     this.intervalIdMetro = null;
     this.noise = null;
     this.envelope = null;
-
-    //strobeEdit method
+    //strobeEdit
     this.intervalIdStrobe = null;
   }
 
@@ -36,7 +41,6 @@ class WebAudio {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  // funzione tone js crea nota
   pinkNoiseEdit(args) {
     if (this.noisInit == 1) {
       this.nois.volume.value = -Infinity; // Set initial volume to -Infinity
