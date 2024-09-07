@@ -31,12 +31,12 @@ class WebAudio {
     this.saws2.volume.value = -Infinity;
 
     //audioPlayerEdit
-    this.player = new Tone.Player("sound-1.wav").toMaster();
+    this.player = new Tone.Player("sound-1.wav").toDestination();
     this.playerInit = 1;
     this.player.volume.value = -Infinity;
 
     //audioPlayerEdit2
-    this.player2 = new Tone.Player("sound-1.wav").toMaster();
+    this.player2 = new Tone.Player("sound-1.wav").toDestination();
     this.playerInit2 = 1;
     this.player2.volume.value = -Infinity;
 

@@ -29,9 +29,9 @@ class Vacuum extends FxScene {
     // Camera
     this.camera.position.set(0, 0, -10);
     this.camera.lookAt(this.scene.position);
-
+    
     this.scene.add(this.camera);
-
+    
     // Controls
     this.controls = new TrackballControls(
       this.camera,
@@ -40,7 +40,8 @@ class Vacuum extends FxScene {
     this.controls.enabled = true;
     this.controls.rotateSpeed = 1.0;
     this.controls.zoomSpeed = 1.2;
-    this.controls.panSpeed = 0.8;
+    this.controls.noPan = true;
+  
 
     this.cubeArray = [];
     this.bottom_lim = 1.5;

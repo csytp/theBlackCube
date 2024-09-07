@@ -54,23 +54,6 @@ class Sketch {
 
     this.fxSceneA = this.arrayScenes[0];
     this.fxSceneB = this.arrayScenes[1];
-    /*
-    let sceneLoaded = 0;
-    for (let i = 0; i < this.arrayScenes.length; i++) {
-      if (this.arrayScenes.activated === true) {
-        this.fxSceneA = this.arrayScenes[i];
-        sceneLoaded = i;
-        break;
-      }
-    }
-
-    if (sceneLoaded) {
-      if (sceneLoaded >= this.arrayScenes.length) {
-        this.fxSceneB = this.arrayScenes[0];
-      } else {
-        this.fxSceneB = this.arrayScenes[++sceneLoaded];
-      }
-    }*/
 
     this.renderTransitionPass = new RenderTransitionPass(
       this.fxSceneB.scene,
@@ -227,8 +210,10 @@ class Sketch {
       this.renderTransitionPass = new RenderTransitionPass(
         this.fxSceneB.scene,
         this.fxSceneB.camera,
+        this.fxSceneB.controls.reset,
         this.fxSceneA.scene,
-        this.fxSceneA.camera
+        this.fxSceneA.camera,
+        this.fxSceneA.controls.reset
       );
       this.transitionParams.transition = 1;
     } else {
@@ -236,8 +221,10 @@ class Sketch {
       this.renderTransitionPass = new RenderTransitionPass(
         this.fxSceneA.scene,
         this.fxSceneA.camera,
+        this.fxSceneA.controls.reset,
         this.fxSceneB.scene,
-        this.fxSceneB.camera
+        this.fxSceneB.camera,
+        this.fxSceneB.controls.reset
       );
       this.transitionParams.transition = 0;
     }
@@ -250,14 +237,6 @@ class Sketch {
 
     let activeSceneObj = this.getActiveScene(this.arrayScenes);
     this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant);
-  }
-  _showEvents(events) {
-    for (let evt of Object.keys(events)) {
-      console.log(evt + " ----------------> " + events[evt].length);
-      for (let i = 0; i < events[evt].length; i++) {
-        console.log(events[evt][i].listener.toString());
-      }
-    }
   }
 }
 
