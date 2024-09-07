@@ -4,6 +4,7 @@ export default {
     "./index.html",
     "./input.css",
     "./js/*.js",
+    "./js/**/*.js",
     "./js/components/*.js",
     "./elements/*.js",
   ],

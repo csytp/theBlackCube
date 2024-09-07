@@ -1,7 +1,8 @@
 import vision from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";
+import * as THREE from "three";
 
 class FaceRecognition {
-  constructor() {
+  constructor(sketch) {
     const { FaceLandmarker, FilesetResolver, DrawingUtils } = vision;
     const demosSection = document.getElementById("demos");
     const imageBlendShapes = document.getElementById("image-blend-shapes");
@@ -11,6 +12,14 @@ class FaceRecognition {
     let enableWebcamButton;
     let webcamRunning = false;
     const videoWidth = 480;
+
+    this.faceDetected = false;
+
+    this.scene = new THREE.Scene();
+    this.scene.background = 0xff0000;
+
+    this.initFace();
+
     // Before we can use HandLandmarker class we must wait for it to finish
     // loading. Machine Learning models can be large and take a moment to
     // get everything needed to run.
@@ -30,19 +39,17 @@ class FaceRecognition {
       // demosSection.classList.remove("invisible");
     }
     createFaceLandmarker();
-    /********************************************************************
-// Demo 2: Continuously grab image from webcam stream and detect it.
-********************************************************************/
+
     const video = document.getElementById("webcam");
     const canvasElement = document.getElementById("output_canvas");
     const canvasCtx = canvasElement.getContext("2d");
     // Check if webcam access is supported.
-    function hasGetUserMedia() {
-      return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
-    }
+    // function hasGetUserMedia() {
+    //   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+    // }
     // If webcam supported, add event listener to button for when user
     // wants to activate it.
-    if (hasGetUserMedia()) {
+    if (this.hasGetUserMedia()) {
       enableWebcamButton = document.getElementById("webcamButton");
       enableWebcamButton.addEventListener("click", enableCam);
     } else {
@@ -73,8 +80,10 @@ class FaceRecognition {
     }
     let lastVideoTime = -1;
     let results = undefined;
-    
-    const drawingUtils = new DrawingUtils(canvasCtx);
+
+    let $this = this;
+
+    //const drawingUtils = new DrawingUtils(canvasCtx);
     async function predictWebcam() {
       /*
       const radio = video.videoHeight / video.videoWidth;
@@ -144,7 +153,10 @@ class FaceRecognition {
           );
         }
       }*/
+
+      // console.log('NO FACE!');
       drawBlendShapes(videoBlendShapes, results.faceBlendshapes);
+
       // Call this function again to keep predicting when the browser is ready.
       if (webcamRunning === true) {
         window.requestAnimationFrame(predictWebcam);
@@ -152,11 +164,22 @@ class FaceRecognition {
     }
     function drawBlendShapes(el, blendShapes) {
       if (!blendShapes.length) {
+        //Riconosce No Face -> Togli mesh busto
+        $this.faceDetected = false;
+        $this.showFace($this.faceDetected);
         return;
       }
-      //console.log(blendShapes[0]);
+
+      //Riconosce Face -> Metti mesh
+      if ($this.faceDetected === false) {
+        $this.faceDetected = true;
+        $this.showFace($this.faceDetected);
+      }
+
       let htmlMaker = "";
+      /*
       blendShapes[0].categories.map((shape) => {
+        //console.log(shape);
         htmlMaker += `
       <li class="blend-shapes-item">
         <span class="blend-shapes-label">${
@@ -167,10 +190,27 @@ class FaceRecognition {
         }% - 120px)">${(+shape.score).toFixed(4)}</span>
       </li>
     `;
-      });
+      });*/
       //console.log(htmlMaker);
       el.innerHTML = htmlMaker;
     }
   }
+  hasGetUserMedia() {
+    return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+  }
+
+  initFace() {}
+  showFace(face_flag) {
+    const $this = this;
+
+    if (face_flag === true) {
+      // document.getElementById("show_face").classList.remove("bg-green-500");
+      document.getElementById("show_face").classList.add("bg-red-500");
+    } else {
+      document.getElementById("show_face").classList.remove("bg-red-500");
+      // document.getElementById("show_face").classList.add("bg-green-500");
+    }
+  }
+  
 }
 export default FaceRecognition;

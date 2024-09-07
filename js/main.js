@@ -1,14 +1,21 @@
-// import "./style.css";
+// import "style.css";
 import WebAudio from "./webAudio.js";
 import Sketch from "./app.js";
 import FaceRecognition from "./face-recognition/face-recognition.js";
 import NoSleep from "nosleep.js";
 
+//Page Reload
+/*
+document.addEventListener("visibilitychange", function () {
+  if (document.visibilityState === "visible") {
+    location.reload();
+  }
+});*/
 // No Sleep
 const noSleep = new NoSleep();
 
 // Face Recognition
-// let fr = new FaceRecognition();
+const fr = new FaceRecognition();
 
 const socket = io();
 
@@ -41,6 +48,10 @@ socket.on("chgScn", (ctrlValue) => {
 });
 
 // SOCKET-IO -> WEB AUDIO
+
+socket.on("csound", (ctrlValue) => {
+  webaudio.play(ctrlValue);
+});
 
 socket.on("pink", (ctrlValue) => {
   webaudio.pinkNoiseEdit(ctrlValue);

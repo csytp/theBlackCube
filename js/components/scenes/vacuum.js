@@ -12,7 +12,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 class Vacuum extends FxScene {
   constructor(sketch) {
-    super(sketch, new THREE.Color(0xffffff), true);
+    super(sketch, new THREE.Color(0x000000), true);
     //this.settings = { ...settings };
 
     //GSAP
@@ -29,6 +29,7 @@ class Vacuum extends FxScene {
     // Camera
     this.camera.position.set(0, 0, -10);
     this.camera.lookAt(this.scene.position);
+
     
     this.scene.add(this.camera);
     
@@ -41,6 +42,8 @@ class Vacuum extends FxScene {
     this.controls.rotateSpeed = 1.0;
     this.controls.zoomSpeed = 1.2;
     this.controls.noPan = true;
+    this.controls.minDistance = 2;
+    this.controls.maxDistance = 20;
   
 
     this.cubeArray = [];
@@ -652,69 +655,69 @@ class Vacuum extends FxScene {
   }
   initEvent() {
     
-    // const $this = this;
-    // this.controls.addEventListener("change", function () {
-    //   $this.readRotationValues();
-    //   $this.readZoomValue();
-    // });
+    const $this = this;
+    this.controls.addEventListener("change", function () {
+      $this.readRotationValues();
+      $this.readZoomValue();
+    });
 
-    // document.addEventListener("mousedown", () => {
-    //   if (!this.masterCubeOpened) {
-    //     this.aperturaMastercube();
-    //     this.masterCubeOpened = true;
-    //   }
-    // });
+    document.addEventListener("mousedown", () => {
+      if (!this.masterCubeOpened) {
+        this.aperturaMastercube();
+        this.masterCubeOpened = true;
+      }
+    });
 
-    // document.addEventListener("touchstart", () => {
-    //   if (!this.masterCubeOpened) {
-    //     this.aperturaMastercube();
-    //     this.masterCubeOpened = true;
-    //   }
-    // });
-    // window.addEventListener("mousedown", function () {
-    //   this.onMouseMove = true;
+    document.addEventListener("touchstart", () => {
+      if (!this.masterCubeOpened) {
+        this.aperturaMastercube();
+        this.masterCubeOpened = true;
+      }
+    });
+    window.addEventListener("mousedown", function () {
+      this.onMouseMove = true;
 
-    //   this.needle = setInterval(() => {
-    //     if (this.onMouseMove) {
-    //       $this.initTextScrolling();
-    //       $this.launchTextScrolling();
-    //     }
-    //   }, 1200);
-    // });
+      this.needle = setInterval(() => {
+        if (this.onMouseMove) {
+          $this.initTextScrolling();
+          $this.launchTextScrolling();
+        }
+      }, 1200);
+    });
 
-    // window.addEventListener("mouseup", function () {
-    //   this.onMouseMove = false;
-    //   clearInterval(this.needle);
-    // });
-    // window.addEventListener("click", function (e) {
-    //   if (!this.onMouseMove) {
-    //     $this.initTextScrolling();
-    //     $this.launchTextScrolling();
-    //   }
-    // });
+    window.addEventListener("mouseup", function () {
+      this.onMouseMove = false;
+      clearInterval(this.needle);
+    });
+    window.addEventListener("click", function (e) {
+      if (!this.onMouseMove) {
+        $this.initTextScrolling();
+        $this.launchTextScrolling();
+      }
+    });
 
-    // window.addEventListener("touchstart", function () {
-    //   if (!this.onTouchMove) {
-    //     this.initTextScrolling();
-    //     this.launchTextScrolling();
-    //   }
+    window.addEventListener("touchstart", function () {
+      if (!this.onTouchMove) {
+        this.initTextScrolling();
+        this.launchTextScrolling();
+      }
 
-    //   this.needle = setInterval(() => {
-    //     if (this.onTouchMove) {
-    //       this.initTextScrolling();
-    //       this.launchTextScrolling();
-    //     }
-    //   }, 2000);
-    // });
+      this.needle = setInterval(() => {
+        if (this.onTouchMove) {
+          this.initTextScrolling();
+          this.launchTextScrolling();
+        }
+      }, 2000);
+    });
 
-    // window.addEventListener("touchmove", function () {
-    //   this.onTouchMove = true;
-    // });
+    window.addEventListener("touchmove", function () {
+      this.onTouchMove = true;
+    });
 
-    // window.addEventListener("touchend", function () {
-    //   this.onTouchMove = false;
-    //   clearInterval(this.needle);
-    // });
+    window.addEventListener("touchend", function () {
+      this.onTouchMove = false;
+      clearInterval(this.needle);
+    });
   }
 }
 export default Vacuum;

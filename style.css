@@ -12,20 +12,38 @@
     body{
         @apply w-full h-full h-[100vh];
     }
+/*
+    #app,
+    #face-recognition{
+        @apply border-red-500 border-2;  
+    }*/
+    #app{
+        @apply relative;
+        /*transform: translateY(150px);*/
+    }
+
+    #show_face{
+        @apply absolute top-0 left-0 w-full h-full z-20;
+        @apply pointer-events-none;
+    }
 
     #hideButton_container{
         @apply absolute right-0 bottom-1/2 z-30;
+        /*@apply hidden;*/
     }
+    #text_container{
+        @apply absolute top-0 left-0 w-full h-full z-20;
+        @apply pointer-events-none;
+        @apply hidden;
+    }
+
+
     #hideButton{
         @apply text-black bg-lime-400 px-10;
     }
 
     #canvas{
         @apply absolute top-0 left-0 w-full h-full z-10;
-    }
-    #text_container{
-        @apply absolute top-0 left-0 w-full h-full z-20;
-        @apply pointer-events-none;
     }
     #strobe_container{
         @apply absolute top-0 left-0 w-full h-[100vh] z-30;

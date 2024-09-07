@@ -50,6 +50,15 @@ io.on("connection", (socket) => {
     }
   });
 
+  // csound
+  socket.on("csound", (arg) => {
+    const messageArray = String(arg).split(/[\\s*]+/);
+    // [0]controll message [1 controll value]
+    for (const [client] of sequenceNumberByClient.entries()) {
+      client.emit("csound", messageArray);
+    }
+  });
+
   // PINK
   socket.on("pink", (arg) => {
     const messageArray = String(arg).split(/[\\s*]+/);

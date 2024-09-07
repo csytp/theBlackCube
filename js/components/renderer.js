@@ -20,7 +20,7 @@ class Renderer {
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(this.sketch.sizes.width, this.sketch.sizes.height);
     // this.renderer.xr.enabled = true;
-    document.body.appendChild(this.renderer.domElement);
+    document.getElementById('app').appendChild(this.renderer.domElement);
 
 
     this.renderer.update = this.update.bind(this.sketch.delta);
