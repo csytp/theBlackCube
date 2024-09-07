@@ -4,8 +4,24 @@ import Sketch from "./app.js";
 import FaceRecognition from "./components/face-recognition/face-recognition.js";
 import NoSleep from "nosleep.js";
 
+EventTarget.prototype._addEventListener = EventTarget.prototype.addEventListener;
+
+EventTarget.prototype.addEventListener = function(a, b, c) {
+   if (c==undefined) c=false;
+   this._addEventListener(a,b,c);
+   if (! this.eventListenerList) this.eventListenerList = {};
+   if (! this.eventListenerList[a]) this.eventListenerList[a] = [];
+   this.eventListenerList[a].push({listener:b,options:c});
+};
+
+EventTarget.prototype._getEventListeners = function(a) {
+  if (! this.eventListenerList) this.eventListenerList = {};
+  if (a==undefined)  { return this.eventListenerList; }
+  return this.eventListenerList[a];
+};
+
 // No Sleep
-var noSleep = new NoSleep();
+const noSleep = new NoSleep();
 
 // Face Recognition
 // let fr = new FaceRecognition();
@@ -19,7 +35,7 @@ const webaudio = new WebAudio();
 window.sketch = new Sketch();
 sketch.init();
 
-// Event to start Audio Engine - and remove 
+// Event to start Audio Engine - and remove
 document.getElementById("hideButton").addEventListener(
   "click",
   (e) => {

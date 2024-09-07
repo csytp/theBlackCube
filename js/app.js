@@ -90,11 +90,25 @@ class Sketch {
     // window.addEventListener("resize", this.onWindowResize.bind(this), false);
     document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
 
+    // console.log(window);
+    // console.log(document);
+    // console.log(Array.prototype.slice);
+
+    // let wevents = window._getEventListeners();
+    // this._showEvents(wevents);
+
+    // this.dv = document.getElementsByClassName("js-toc-wrap")[0];
+    // let dvevents = this.dv._getEventListeners();
+    // this._showEvents(dvevents);
+
     // this.removeEvents();
   }
   init() {
     //this.initTextures(this);
     //this.initGUI(this);
+
+    this.events = new Events(this);
+    //addEventListener("change", this.events.onWindowResize.bind(this), false);
 
     this.animator.animate();
   }
@@ -194,7 +208,7 @@ class Sketch {
   getActiveScene(arrayScenes) {
     let activeScene = 0;
     for (let i = 0; i < arrayScenes.length; i++) {
-      if (arrayScenes.activated === true) {
+      if (arrayScenes[i].visible === true) {
         // this.fxSceneA = this.arrayScenes[i];
         activeScene = i;
         break;
@@ -204,22 +218,46 @@ class Sketch {
     return { scene: arrayScenes[activeScene], index: activeScene };
   }
   setActiveScene(arrayScenes, indexScene, sceneIWant) {
-    this.fxSceneA = this.arrayScenes[sceneIWant];
-    this.renderTransitionPass = new RenderTransitionPass(
-      this.fxSceneB.scene,
-      this.fxSceneB.camera,
-      this.fxSceneA.scene,
-      this.fxSceneA.camera
-    );
+    this.arrayScenes.forEach((scene) => {
+      scene.visible = false;
+    });
+
+    if (this.transitionParams.transition == 0) {
+      this.fxSceneB = this.arrayScenes[sceneIWant];
+      this.renderTransitionPass = new RenderTransitionPass(
+        this.fxSceneB.scene,
+        this.fxSceneB.camera,
+        this.fxSceneA.scene,
+        this.fxSceneA.camera
+      );
+      this.transitionParams.transition = 1;
+    } else {
+      this.fxSceneA = this.arrayScenes[sceneIWant];
+      this.renderTransitionPass = new RenderTransitionPass(
+        this.fxSceneA.scene,
+        this.fxSceneA.camera,
+        this.fxSceneB.scene,
+        this.fxSceneB.camera
+      );
+      this.transitionParams.transition = 0;
+    }
+
+    this.arrayScenes[sceneIWant].visible = true;
   }
   changeScene(args) {
     const $this = this;
     let sceneIWant = args[0];
 
-    // $this.transitionParams.transition = 1.0;
-
     let activeSceneObj = this.getActiveScene(this.arrayScenes);
     this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant);
+  }
+  _showEvents(events) {
+    for (let evt of Object.keys(events)) {
+      console.log(evt + " ----------------> " + events[evt].length);
+      for (let i = 0; i < events[evt].length; i++) {
+        console.log(events[evt][i].listener.toString());
+      }
+    }
   }
 }
 

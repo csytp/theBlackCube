@@ -1,13 +1,13 @@
 import * as THREE from "three";
 
-import Events from "./events";
+import FxSceneEvents from "./fxscene_events.js";
 // import Controls from "./../components/controls";
 
 class FxScene {
-  constructor(sketch, backgroundColor, activated = false) {
+  constructor(sketch, backgroundColor, visible = false) {
     this.sketch = sketch;
     this.delta = this.sketch.clock.getDelta();
-    this.activated = activated;
+    this.visible = visible;
 
     this.paramsFxScene = {
       sceneAnimate: false,
@@ -54,7 +54,7 @@ class FxScene {
   }
 
   setupEvents() {
-    this.events = new Events(this);
+    this.events = new FxSceneEvents(this);
   }
 }
 export default FxScene;

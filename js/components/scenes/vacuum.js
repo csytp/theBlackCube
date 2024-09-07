@@ -650,69 +650,70 @@ class Vacuum extends FxScene {
     tl.play();
   }
   initEvent() {
-    const $this = this;
-    this.controls.addEventListener("change", function () {
-      $this.readRotationValues();
-      $this.readZoomValue();
-    });
+    
+    // const $this = this;
+    // this.controls.addEventListener("change", function () {
+    //   $this.readRotationValues();
+    //   $this.readZoomValue();
+    // });
 
-    document.addEventListener("mousedown", () => {
-      if (!this.masterCubeOpened) {
-        this.aperturaMastercube();
-        this.masterCubeOpened = true;
-      }
-    });
+    // document.addEventListener("mousedown", () => {
+    //   if (!this.masterCubeOpened) {
+    //     this.aperturaMastercube();
+    //     this.masterCubeOpened = true;
+    //   }
+    // });
 
-    document.addEventListener("touchstart", () => {
-      if (!this.masterCubeOpened) {
-        this.aperturaMastercube();
-        this.masterCubeOpened = true;
-      }
-    });
-    window.addEventListener("mousedown", function () {
-      this.onMouseMove = true;
+    // document.addEventListener("touchstart", () => {
+    //   if (!this.masterCubeOpened) {
+    //     this.aperturaMastercube();
+    //     this.masterCubeOpened = true;
+    //   }
+    // });
+    // window.addEventListener("mousedown", function () {
+    //   this.onMouseMove = true;
 
-      this.needle = setInterval(() => {
-        if (this.onMouseMove) {
-          $this.initTextScrolling();
-          $this.launchTextScrolling();
-        }
-      }, 1200);
-    });
+    //   this.needle = setInterval(() => {
+    //     if (this.onMouseMove) {
+    //       $this.initTextScrolling();
+    //       $this.launchTextScrolling();
+    //     }
+    //   }, 1200);
+    // });
 
-    window.addEventListener("mouseup", function () {
-      this.onMouseMove = false;
-      clearInterval(this.needle);
-    });
-    window.addEventListener("click", function (e) {
-      if (!this.onMouseMove) {
-        $this.initTextScrolling();
-        $this.launchTextScrolling();
-      }
-    });
+    // window.addEventListener("mouseup", function () {
+    //   this.onMouseMove = false;
+    //   clearInterval(this.needle);
+    // });
+    // window.addEventListener("click", function (e) {
+    //   if (!this.onMouseMove) {
+    //     $this.initTextScrolling();
+    //     $this.launchTextScrolling();
+    //   }
+    // });
 
-    window.addEventListener("touchstart", function () {
-      if (!this.onTouchMove) {
-        this.initTextScrolling();
-        this.launchTextScrolling();
-      }
+    // window.addEventListener("touchstart", function () {
+    //   if (!this.onTouchMove) {
+    //     this.initTextScrolling();
+    //     this.launchTextScrolling();
+    //   }
 
-      this.needle = setInterval(() => {
-        if (this.onTouchMove) {
-          this.initTextScrolling();
-          this.launchTextScrolling();
-        }
-      }, 2000);
-    });
+    //   this.needle = setInterval(() => {
+    //     if (this.onTouchMove) {
+    //       this.initTextScrolling();
+    //       this.launchTextScrolling();
+    //     }
+    //   }, 2000);
+    // });
 
-    window.addEventListener("touchmove", function () {
-      this.onTouchMove = true;
-    });
+    // window.addEventListener("touchmove", function () {
+    //   this.onTouchMove = true;
+    // });
 
-    window.addEventListener("touchend", function () {
-      this.onTouchMove = false;
-      clearInterval(this.needle);
-    });
+    // window.addEventListener("touchend", function () {
+    //   this.onTouchMove = false;
+    //   clearInterval(this.needle);
+    // });
   }
 }
 export default Vacuum;
