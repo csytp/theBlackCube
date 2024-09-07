@@ -19,6 +19,7 @@ const webaudio = new WebAudio();
 window.sketch = new Sketch();
 sketch.init();
 
+// Event to start Audio Engine - and remove 
 document.getElementById("hideButton").addEventListener(
   "click",
   (e) => {

@@ -23,13 +23,14 @@ class FxScene {
     this.events = new Events(this);
 
     // Camera
-    this.camera = new THREE.PerspectiveCamera(
-      50,
-      this.sketch.sizes.width / this.sketch.sizes.height,
-      0.1,
-      15000
-    );
-    this.camera.position.z = 20;
+    this.setupCamera();
+    // this.camera = new THREE.PerspectiveCamera(
+    //   50,
+    //   this.sketch.sizes.width / this.sketch.sizes.height,
+    //   0.1,
+    //   15000
+    // );
+    // this.camera.position.z = 20;
 
     // Scene
     this.scene = new THREE.Scene();
@@ -40,5 +41,16 @@ class FxScene {
     //return this.scene;
   }
   update(delta) {}
+
+  setupCamera() {
+    // Camera
+    this.camera = new THREE.PerspectiveCamera(
+      50,
+      this.sketch.sizes.width / this.sketch.sizes.height,
+      0.1,
+      15000
+    );
+    this.camera.position.z = 20;
+  }
 }
 export default FxScene;

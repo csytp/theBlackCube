@@ -543,7 +543,7 @@ class Vacuum extends FxScene {
     scrollerDIV.classList.add("text");
     scrollerDIV.classList.add("last");
     scrollerDIV.setAttribute("id", idvalue);
-    document.getElementById("text-container").appendChild(scrollerDIV);
+    document.getElementById("text_container").appendChild(scrollerDIV);
   }
 
   launchTextScrolling() {

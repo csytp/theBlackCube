@@ -41,7 +41,7 @@ class Sketch {
     this.delta = this.clock.getDelta();
 
     this.transitionParams = {
-      transition: 1,
+      transition: 0,
       threshold: 0.1,
     };
     this.texturesFxScene = []; //Textures for renderTransitionPass

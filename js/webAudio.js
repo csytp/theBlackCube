@@ -298,19 +298,19 @@ class WebAudio {
 
       this.intervalIdStrobe = setInterval(() => {
         const newColor = getRandomColor();
-        document.getElementById("superDiv").classList.remove("hidden");
-        document.getElementById("superDiv").style.backgroundColor = newColor;
+        document.getElementById("strobe_container").classList.remove("hidden");
+        document.getElementById("strobe_container").style.backgroundColor = newColor;
       }, args[3]);
     }
     if (args[3] == -1) {
       clearInterval(this.intervalIdStrobe);
-      document.getElementById("superDiv").classList.add("hidden");
+      document.getElementById("strobe_container").classList.add("hidden");
     }
   }
 
   // rimuove bottone
   removeButton(e) {
-    let button_container = document.getElementById("hideButton");
+    let button_container = document.getElementById("hideButton_container");
     button_container.remove();
     //create a synth and connect it to the main output (your speakers)
     const debug = new Tone.Synth().toDestination();

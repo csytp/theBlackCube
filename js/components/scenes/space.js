@@ -13,6 +13,9 @@ class SpaceScene extends FxScene {
 
     this.scene.add(new THREE.AmbientLight(0xaaaaaa, 3));
 
+    // this.camera.near = ;
+    this.camera.position.set(0, 0, -5);
+    
     // Controls
     this.controls = new OrbitControls(
       this.camera,
@@ -36,6 +39,8 @@ class SpaceScene extends FxScene {
     this.initIcosahedron();
     this.initAnimations();
     this.initRaycaster();
+
+    this.camera.lookAt(this.ico.position);
 
     // return this.scene;
   }
@@ -98,7 +103,7 @@ class SpaceScene extends FxScene {
     const geometry = new THREE.IcosahedronGeometry(1, 5);
     const material = new THREE.ShaderMaterial({
       vertexShader: vertexShader,
-      fragmentShader: fragmentShader
+      fragmentShader: fragmentShader,
     });
     this.ico = new THREE.Mesh(geometry, material);
     this.scene.add(this.ico);
