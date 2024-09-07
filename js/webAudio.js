@@ -9,36 +9,36 @@ class WebAudio {
     //pinkNoiseEdit
     this.nois = new Tone.Noise("pink").toDestination();
     this.noisInit = 1;
-    this.noisInit.volume.value = -Infinity;
+    this.nois.volume.value = -Infinity;
 
     //pinkNoiseEdit2
     this.nois2 = new Tone.Noise("pink").toDestination();
     this.nois2Init = 1;
-    this.nois2Init.volume.value = -Infinity;
+    this.nois2.volume.value = -Infinity;
 
     //sineEdit
     this.sin = new Tone.Oscillator(440, "sine").toDestination();
-
+    this.sin.volume.value = -Infinity;
     //sineEdit2
     this.sin2 = new Tone.Oscillator(440, "sine").toDestination();
-
+    this.sin2.volume.value = -Infinity;
     //sawEdit
     this.saws = new Tone.Oscillator(440, "sawtooth6").toDestination();
-    this.sawsInit.volume.value = -Infinity;
+    this.saws.volume.value = -Infinity;
 
     //sawEdit2
     this.saws2 = new Tone.Oscillator(440, "sawtooth6").toDestination();
-    this.saws2Init.volume.value = -Infinity;
+    this.saws2.volume.value = -Infinity;
 
     //audioPlayerEdit
     this.player = new Tone.Player("sound-1.wav").toMaster();
     this.playerInit = 1;
-    this.playerInit.volume.value = -Infinity;
+    this.player.volume.value = -Infinity;
 
     //audioPlayerEdit2
     this.player2 = new Tone.Player("sound-1.wav").toMaster();
     this.playerInit2 = 1;
-    this.playerInit2.volume.value = -Infinity;
+    this.player2.volume.value = -Infinity;
 
     //metroEdit
     this.intervalIdMetro = null;
@@ -325,7 +325,7 @@ class WebAudio {
     button_container.remove();
     //create a synth and connect it to the main output (your speakers)
     const debug = new Tone.Synth().toDestination();
-
+    debug.volume.value = -Infinity;
     //play a middle 'C' for the duration of an 8th note
     debug.triggerAttackRelease("C4", "16n");
 
