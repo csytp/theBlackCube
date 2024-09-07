@@ -14,7 +14,7 @@ class WebAudio {
     this.nois2Init = 1;
     //sineEdit
     this.sin = new Tone.Oscillator(440, "sine").toDestination();
-    this.sinInit = 1;
+    // this.sinInit = 1;
     //sineEdit2
     this.sin2 = new Tone.Oscillator(440, "sine").toDestination();
     this.sin2Init = 1;
@@ -57,6 +57,7 @@ class WebAudio {
 
   // funzione tone js crea nota
   sineEdit(args) {
+    /*
     if (this.sinInit == 1) {
       this.sin.volume.value = -Infinity; // Set initial volume to -Infinity
       this.sinInit = 0;
@@ -64,7 +65,7 @@ class WebAudio {
       this.sin.start();
       this.sin.volume.rampTo(args[2], args[3] / 1000);
     }
-
+*/
     // attack or release to avoid detunig swith on release
     if (args[2] < -60 || args[2] === "-Infinity") {
       this.sin.volume.rampTo(args[2], args[3] / 1000);
