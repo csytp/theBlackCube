@@ -14,6 +14,8 @@ class Vacuum extends FxScene {
     super(sketch, new THREE.Color(0xffffff), true);
     //this.settings = { ...settings };
 
+    //GSAP
+
     // Mouse
     this.raycaster = new THREE.Raycaster();
     this.mouse = new THREE.Vector2();
@@ -368,6 +370,15 @@ class Vacuum extends FxScene {
     };
   }
 
+  setupGSAP() {
+    gsap.registerPlugin(ScrollTrigger);
+    ScrollTrigger.refresh(true);
+    ScrollTrigger.create({
+      start: 0,
+      end: "max",
+    });
+    ScrollTrigger.saveStyles(["text-container"]);
+  }
   fillMasterCube(thiz_fxscene) {
     this.listInnerCubes.forEach(function (innerCube) {
       const cube = thiz_fxscene.createCube(
@@ -547,9 +558,12 @@ class Vacuum extends FxScene {
   }
 
   launchTextScrolling() {
-    let degreeXRot = (this.valoreFinaleXRot - this.valoreInizialeXRot) * (180 / Math.PI);
-    let degreeYRot = (this.valoreFinaleYRot - this.valoreInizialeYRot) * (180 / Math.PI);
-    let degreeZRot = (this.valoreFinaleZRot - this.valoreInizialeZRot) * (180 / Math.PI);
+    let degreeXRot =
+      (this.valoreFinaleXRot - this.valoreInizialeXRot) * (180 / Math.PI);
+    let degreeYRot =
+      (this.valoreFinaleYRot - this.valoreInizialeYRot) * (180 / Math.PI);
+    let degreeZRot =
+      (this.valoreFinaleZRot - this.valoreInizialeZRot) * (180 / Math.PI);
     let zoomValue = this.valoreZoomFinale - this.valoreZoomIniziale;
     degreeXRot = degreeXRot.toFixed(2);
     degreeYRot = degreeYRot.toFixed(2);
@@ -635,11 +649,11 @@ class Vacuum extends FxScene {
   }
   initEvent() {
     const $this = this;
-    this.controls.addEventListener('change',function(){
+    this.controls.addEventListener("change", function () {
       $this.readRotationValues();
       $this.readZoomValue();
     });
-    
+
     document.addEventListener("mousedown", () => {
       if (!this.masterCubeOpened) {
         this.aperturaMastercube();

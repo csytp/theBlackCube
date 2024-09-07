@@ -1,5 +1,5 @@
 // vite.config.js
-import glsl from 'vite-plugin-glsl';
+import glsl from "vite-plugin-glsl";
 import { defineConfig } from "vite";
 import dns from "node:dns";
 
@@ -112,6 +112,15 @@ io.on("connection", (socket) => {
     }
   });
 
+  // audioPlayer2
+  socket.on("audioPlayer2", (arg) => {
+    const messageArray = String(arg).split(/[\\s*]+/);
+    // [0]controll message [1 controll value]
+    for (const [client] of sequenceNumberByClient.entries()) {
+      client.emit("audioPlayer2", messageArray);
+    }
+  });
+
   // initRGB
   socket.on("initRGB", (arg) => {
     const messageArray = String(arg).split(/[\\s*]+/);
@@ -199,5 +208,5 @@ export default defineConfig({
       },
     },
   },
-  plugins: [ glsl() ]
+  plugins: [glsl()],
 });

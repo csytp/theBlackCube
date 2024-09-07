@@ -70,6 +70,10 @@ socket.on("audioPlayer", (ctrlValue) => {
   webaudio.audioPlayerEdit(ctrlValue);
 });
 
+socket.on("audioPlayer2", (ctrlValue) => {
+  webaudio.audioPlayerEdit2(ctrlValue);
+});
+
 socket.on("initRGB", (ctrlValue) => {
   webaudio.initRGBEdit(ctrlValue);
 });

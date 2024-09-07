@@ -27,6 +27,9 @@ class WebAudio {
     //audioPlayerEdit
     this.player = new Tone.Player("sound-1.wav").toMaster();
     this.playerInit = 1;
+    //audioPlayerEdit2
+    this.player2 = new Tone.Player("sound-1.wav").toMaster();
+    this.playerInit2 = 1;
     //metroEdit
     this.intervalIdMetro = null;
     this.noise = null;
@@ -170,6 +173,32 @@ class WebAudio {
     }).toDestination();
   }
 
+  audioPlayerEdit2(args) {
+    const $this = this;
+    let text1 = "https://raw.githubusercontent.com/csytp/fileAudio/main/sound-";
+    let text2 = ".wav";
+    let file = text1.concat(args[0], text2);
+
+    // If a player instance exists, stop and dispose it
+    if (this.player2) {
+      this.player2.stop();
+      this.player2.dispose();
+    }
+
+    // Create a new player instance without autostart
+    this.player2 = new Tone.Player({
+      url: file,
+      autostart: false, // Autostart is false to wait for onload
+      loop: Number(args[2]),
+      onload: function () {
+        // Start playback after the player has loaded the audio
+        $this.player2.start();
+        // Set the volume
+        $this.player2.volume.rampTo(args[1], 0.5);
+      },
+    }).toDestination();
+  }
+
   // Function to start the metronome
   metroEdit(args, action = "start") {
     const volumeDb = args[0]; // Volume in dB
@@ -299,7 +328,8 @@ class WebAudio {
       this.intervalIdStrobe = setInterval(() => {
         const newColor = getRandomColor();
         document.getElementById("strobe_container").classList.remove("hidden");
-        document.getElementById("strobe_container").style.backgroundColor = newColor;
+        document.getElementById("strobe_container").style.backgroundColor =
+          newColor;
       }, args[3]);
     }
     if (args[3] == -1) {
