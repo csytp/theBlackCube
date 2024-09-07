@@ -9,31 +9,42 @@ class WebAudio {
     //pinkNoiseEdit
     this.nois = new Tone.Noise("pink").toDestination();
     this.noisInit = 1;
+    this.noisInit.volume.value = -Infinity;
+
     //pinkNoiseEdit2
     this.nois2 = new Tone.Noise("pink").toDestination();
     this.nois2Init = 1;
+    this.nois2Init.volume.value = -Infinity;
+
     //sineEdit
     this.sin = new Tone.Oscillator(440, "sine").toDestination();
-    // this.sinInit = 1;
+
     //sineEdit2
     this.sin2 = new Tone.Oscillator(440, "sine").toDestination();
-    this.sin2Init = 1;
+
     //sawEdit
     this.saws = new Tone.Oscillator(440, "sawtooth6").toDestination();
-    this.sawsInit = 1;
+    this.sawsInit.volume.value = -Infinity;
+
     //sawEdit2
     this.saws2 = new Tone.Oscillator(440, "sawtooth6").toDestination();
-    this.saws2Init = 1;
+    this.saws2Init.volume.value = -Infinity;
+
     //audioPlayerEdit
     this.player = new Tone.Player("sound-1.wav").toMaster();
     this.playerInit = 1;
+    this.playerInit.volume.value = -Infinity;
+
     //audioPlayerEdit2
     this.player2 = new Tone.Player("sound-1.wav").toMaster();
     this.playerInit2 = 1;
+    this.playerInit2.volume.value = -Infinity;
+
     //metroEdit
     this.intervalIdMetro = null;
     this.noise = null;
     this.envelope = null;
+
     //strobeEdit
     this.intervalIdStrobe = null;
   }
@@ -57,15 +68,6 @@ class WebAudio {
 
   // funzione tone js crea nota
   sineEdit(args) {
-    /*
-    if (this.sinInit == 1) {
-      this.sin.volume.value = -Infinity; // Set initial volume to -Infinity
-      this.sinInit = 0;
-      this.sin.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
-      this.sin.start();
-      this.sin.volume.rampTo(args[2], args[3] / 1000);
-    }
-*/
     // attack or release to avoid detunig swith on release
     if (args[2] < -60 || args[2] === "-Infinity") {
       this.sin.volume.rampTo(args[2], args[3] / 1000);
@@ -78,14 +80,6 @@ class WebAudio {
 
   // funzione tone js crea nota
   sawEdit(args) {
-    if (this.sawsInit == 1) {
-      this.saws.volume.value = -Infinity; // Set initial volume to -Infinity
-      this.sawsInit = 0;
-      this.saws.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
-      this.saws.start();
-      this.saws.volume.rampTo(args[2], args[3] / 1000);
-    }
-
     // attack or release to avoid detunig swith on release
     if (args[2] < -60 || args[2] === "-Infinity") {
       this.saws.volume.rampTo(args[2], args[3] / 1000);
@@ -109,14 +103,6 @@ class WebAudio {
   }
   // funzione tone js crea nota
   sineEdit2(args) {
-    if (this.sin2Init == 1) {
-      this.sin2.volume.value = -Infinity; // Set initial volume to -Infinity
-      this.sin2Init = 0;
-      this.sin2.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
-      this.sin2.start();
-      this.sin2.volume.rampTo(args[2], args[3] / 1000);
-    }
-
     // attack or release to avoid detunig swith on release
     if (args[2] < -60 || args[2] === "-Infinity") {
       this.sin2.volume.rampTo(args[2], args[3] / 1000);
@@ -129,14 +115,6 @@ class WebAudio {
 
   // funzione tone js crea nota
   sawEdit2(args) {
-    if (this.saws2Init == 1) {
-      this.saws2.volume.value = -Infinity; // Set initial volume to -Infinity
-      this.saws2Init = 0;
-      this.saws2.frequency.value = Number(args[0]) + this.getRandomInt(args[1]);
-      this.saws2.start();
-      this.saws2.volume.rampTo(args[2], args[3] / 1000);
-    }
-
     // attack or release to avoid detunig swith on release
     if (args[2] < -60 || args[2] === "-Infinity") {
       this.saws2.volume.rampTo(args[2], args[3] / 1000);
@@ -150,7 +128,8 @@ class WebAudio {
   // AudioPlayer
   audioPlayerEdit(args) {
     const $this = this;
-    let text1 = "https://raw.githubusercontent.com/csytp/file_audio_icsc/main/sound-";
+    let text1 =
+      "https://raw.githubusercontent.com/csytp/file_audio_icsc/main/sound-";
     let text2 = ".mp3";
     let file = text1.concat(args[0], text2);
 
@@ -176,7 +155,8 @@ class WebAudio {
 
   audioPlayerEdit2(args) {
     const $this = this;
-    let text1 = "https://raw.githubusercontent.com/csytp/file_audio_icsc/main/sound-";
+    let text1 =
+      "https://raw.githubusercontent.com/csytp/file_audio_icsc/main/sound-";
     let text2 = ".mp3";
     let file = text1.concat(args[0], text2);
 
