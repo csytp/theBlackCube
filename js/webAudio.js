@@ -150,8 +150,8 @@ class WebAudio {
   // AudioPlayer
   audioPlayerEdit(args) {
     const $this = this;
-    let text1 = "https://raw.githubusercontent.com/csytp/fileAudio/main/sound-";
-    let text2 = ".wav";
+    let text1 = "https://raw.githubusercontent.com/csytp/file_audio_icsc/main/sound-";
+    let text2 = ".mp3";
     let file = text1.concat(args[0], text2);
 
     // If a player instance exists, stop and dispose it
@@ -176,8 +176,8 @@ class WebAudio {
 
   audioPlayerEdit2(args) {
     const $this = this;
-    let text1 = "https://raw.githubusercontent.com/csytp/fileAudio/main/sound-";
-    let text2 = ".wav";
+    let text1 = "https://raw.githubusercontent.com/csytp/file_audio_icsc/main/sound-";
+    let text2 = ".mp3";
     let file = text1.concat(args[0], text2);
 
     // If a player instance exists, stop and dispose it
