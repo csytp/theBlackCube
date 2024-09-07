@@ -1,8 +1,15 @@
 import * as Tone from "tone";
 
+import * as Csnd from "@csound/browser";
+
 // server ambiente socket anche per i client
 class WebAudio {
   constructor() {
+    this.csound = null;
+
+    // Initialize Csound asynchronously
+    this.initCsound();
+
     this.elem = document.documentElement;
 
     // VARIABILI TONEJS
@@ -47,6 +54,37 @@ class WebAudio {
 
     //strobeEdit
     this.intervalIdStrobe = null;
+  }
+
+  async initCsound() {
+    try {
+      // Create Csound instance
+      this.csound = await Csnd.Csound();
+
+      // Define the orchestra code
+      const code = `
+      instr 1
+      kamp = ampdbfs(p4)
+      kcps = p5
+        aSig poscil3 kamp, kcps 
+        out aSig
+      endin
+      `;
+
+      // Set audio output option
+      this.csound.setOption("-odac");
+
+      // Compile the orchestra code
+      await this.csound.compileOrc(code);
+
+      // Start Csound
+      await this.csound.start();
+
+      console.log("Csound started successfully");
+
+    } catch (error) {
+      console.error("Error initializing Csound:", error);
+    }
   }
 
   getRandomInt(number) {
@@ -338,6 +376,11 @@ class WebAudio {
       /* IE11 */
       this.elem.msRequestFullscreen();
     }
+  }
+  // this is the JS function to run Csound
+  play(args) {
+    this.note = `i1 0 ${args[0]} ${args[1]} ${args[2]}`;
+    this.csound.inputMessage(String(this.note));
   }
 }
 export default WebAudio;

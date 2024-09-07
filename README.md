@@ -14,6 +14,7 @@
  - three@0.167.1
  - gsap
  - tone 
+ - @csound/browser
 
 /***** Transitions *****/
 1- Textures don't work.
