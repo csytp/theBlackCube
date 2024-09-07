@@ -1,7 +1,7 @@
 // import "./style.css";
 import WebAudio from "./webAudio.js";
 import Sketch from "./app.js";
-import FaceRecognition from "./components/face-recognition/face-recognition.js";
+import FaceRecognition from "./face-recognition/face-recognition.js";
 import NoSleep from "nosleep.js";
 
 EventTarget.prototype._addEventListener = EventTarget.prototype.addEventListener;
