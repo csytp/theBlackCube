@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import FxScene from "../fxscene.js";
+
 import {
   BoxLineGeometry,
   OrbitControls,
@@ -15,6 +16,7 @@ class Vacuum extends FxScene {
     //this.settings = { ...settings };
 
     //GSAP
+    this.setupGSAP();
 
     // Mouse
     this.raycaster = new THREE.Raycaster();

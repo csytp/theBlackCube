@@ -20,7 +20,7 @@ class FxScene {
     };
 
     //Events
-    this.events = new Events(this);
+    this.setupEvents();
 
     // Camera
     this.setupCamera();
@@ -51,6 +51,10 @@ class FxScene {
       15000
     );
     this.camera.position.z = 20;
+  }
+
+  setupEvents() {
+    this.events = new Events(this);
   }
 }
 export default FxScene;
