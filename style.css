@@ -22,15 +22,7 @@
         /*transform: translateY(150px);*/
     }
 
-    #show_face{
-        @apply absolute top-0 left-0 w-full h-full z-20;
-        @apply pointer-events-none;
-    }
-
-    #hideButton_container{
-        @apply absolute right-0 bottom-1/2 z-30;
-        /*@apply hidden;*/
-    }
+    
     #text_container{
         @apply absolute top-0 left-0 w-full h-full z-20;
         @apply pointer-events-none;
@@ -51,8 +43,72 @@
     #text_container .text-blink-it{}
 
 
+    #hideButton_container{
+        @apply absolute left-0 top-0 w-full h-[100vh] z-30;
+        @apply bg-white flex flex-col items-center;
+        /*@apply hidden;*/
+    }
     #hideButton{
         @apply text-black bg-lime-400 px-10;
+    }
+
+    #hideButton_container .cube_container{
+        width: 200px;
+        height: 200px;
+        perspective: 500px;
+        margin: 100px;
+    }
+    #hideButton_container .cube {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        transform-style: preserve-3d;
+        transform: rotate3d(1, 1, 0, 45deg);
+        animation: turn 5s linear infinite;
+    }
+    #hideButton_container .cube .face{}
+    #hideButton_container .cube .front {
+        transform: translateZ(100px);
+    }
+    #hideButton_container .cube .back {
+        transform: translateZ(-100px) rotateY(180deg);
+    }
+    #hideButton_container .cube .left {
+        transform: translateX(-100px) rotateY(-90deg);
+    }    
+    #hideButton_container .cube .right {
+        transform: translateX(100px) rotateY(90deg);
+    }
+    #hideButton_container .cube .top {
+        transform: translateY(-100px) rotateX(90deg);
+    }      
+    #hideButton_container .cube .bottom {
+        transform: translateY(100px) rotateX(-90deg);
+    }
+
+    @keyframes turn {
+        from { transform: rotate3d(0, 0, 0, 0); }
+        to { transform: rotate3d(1, 1, 0, 360deg); }
+      }
+      
+      
+          
+
+      
+
+    
+    #hideButton_container .face {
+        width: 200px;
+        height: 200px;
+        background: skyblue;
+        border: 2px solid black;
+        position: absolute;
+        opacity: 0.5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-size: 2rem;
     }
 
     #canvas{

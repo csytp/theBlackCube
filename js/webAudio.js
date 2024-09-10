@@ -66,7 +66,22 @@ class WebAudio {
         icps = p5
         irand = p6
         iband random -irand, irand
-        aSig poscil3 iamp, icps + iband
+        ifade = p7
+
+        kFadout   init      1
+        kFadein   init      1
+
+        krel      release  
+        
+        if krel == 1 && p3 < 0 then
+          xtratim   ifade      
+          kFadout   linseg    1, ifade, 0
+        endif
+        
+        kFadein   linseg    0, ifade, 1
+        
+        aSig poscil3 iamp * kFadout *kFadein, icps + int(iband)
+        
         out aSig
       endin
       
@@ -405,7 +420,7 @@ class WebAudio {
 
   // this is the JS function to run Csound
   play(args) {
-    this.note = `i1 0 ${args[0]} ${args[1]} ${args[2]}`;
+    this.note = `i${args[0]} 0 ${args[1]} ${args[2]} ${args[3]} ${args[4]} ${args[5]}`;
     this.csound.inputMessage(String(this.note));
   }
 
