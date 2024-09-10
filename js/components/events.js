@@ -1,14 +1,11 @@
 class Events {
-  constructor(sketch, settings) {
+  constructor(sketch) {
     this.sketch = sketch;
-    this.settings = { ...settings };
 
     this.addEvents();
   }
   addEvents() {
     window.addEventListener("resize", this.onWindowResize.bind(this), false);
-
-    
   }
   onKeyPressed() {}
   onWindowResize() {
@@ -23,7 +20,7 @@ class Events {
     // Updating Camera sizes
     enabledScene.camera.aspect =
       this.sketch.sizes.width / this.sketch.sizes.height;
-      enabledScene.camera.updateProjectionMatrix();
+    enabledScene.camera.updateProjectionMatrix();
 
     // Updating Render sizes
     this.sketch.renderer.setSize(

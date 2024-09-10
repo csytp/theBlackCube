@@ -316,16 +316,19 @@ class Sketch {
     this.outputPass = new OutputPass();
     this.composer.addPass(this.outputPass);
 
-    // window.addEventListener("resize", this.onWindowResize.bind(this), false);
-    document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
+    this.events = new Events(this);
 
-    // this.removeEvents();
+    // window.addEventListener("resize", this.events.onWindowResize.bind(this), false);
+    // document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
+
+    let myscene = [1];
+    this.changeScene(myscene);
   }
   init() {
     //this.initTextures(this);
     //this.initGUI(this);
 
-    this.events = new Events(this);
+    // this.events = new Events(this);
     //addEventListener("change", this.events.onWindowResize.bind(this), false);
 
     this.animator.animate();
@@ -427,12 +430,10 @@ class Sketch {
     let activeScene = 0;
     for (let i = 0; i < arrayScenes.length; i++) {
       if (arrayScenes[i].visible === true) {
-        // this.fxSceneA = this.arrayScenes[i];
         activeScene = i;
         break;
       }
     }
-
     return { scene: arrayScenes[activeScene], index: activeScene };
   }
   setActiveScene(arrayScenes, indexScene, sceneIWant) {

@@ -49,7 +49,6 @@ class FaceRecognition {
     // If webcam supported, add event listener to button for when user
     // wants to activate it.
 
-
     if (this.hasGetUserMedia()) {
       enableWebcamButton = document.getElementById("webcamButton");
       enableWebcamButton.addEventListener("click", enableCam);
@@ -218,8 +217,10 @@ class FaceRecognition {
   hasGetUserMedia() {
     return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
   }
-  startFR(){
-    document.getElementById("webcamButton").dispatchEvent(new MouseEvent('click'));
+  startFR() {
+    document
+      .getElementById("webcamButton")
+      .dispatchEvent(new MouseEvent("click"));
   }
 }
 export default FaceRecognition;

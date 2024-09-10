@@ -34,8 +34,7 @@ document.getElementById("hideButton").addEventListener(
     e.stopImmediatePropagation();
     webaudio.removeButton(e);
     noSleep.enable();
-    // Initialize Csound asynchronously
-    webaudio.initCsound();
+    webaudio.initCsound(); // Initialize Csound asynchronously
     fr.startFR();
   },
   false
