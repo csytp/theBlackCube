@@ -419,8 +419,6 @@ class WebAudio {
     //play a middle 'C' for the duration of an 8th note
     debug.triggerAttackRelease("C4", "16n");
 
-    // console.log('MATCH MEDIA',window.matchMedia("(max-width: 480px)").matches)
-
     if (window.matchMedia("(max-width: 768px)").matches) {
       if (this.elem.requestFullscreen) {
         this.elem.requestFullscreen();
@@ -432,7 +430,6 @@ class WebAudio {
         this.elem.msRequestFullscreen();
       }
     }
-
   }
 }
 export default WebAudio;
