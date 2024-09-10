@@ -7,9 +7,6 @@ class WebAudio {
   constructor() {
     this.csound = null;
 
-    // Initialize Csound asynchronously
-    this.initCsound();
-
     this.elem = document.documentElement;
 
     // VARIABILI TONEJS
@@ -81,7 +78,6 @@ class WebAudio {
       await this.csound.start();
 
       console.log("Csound started successfully");
-
     } catch (error) {
       console.error("Error initializing Csound:", error);
     }

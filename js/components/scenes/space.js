@@ -1,11 +1,13 @@
 import * as THREE from "three";
 import FxScene from "../fxscene.js";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { TrackballControls } from "three/examples/jsm/Addons.js";
 
 // import vertexShader from "./pippo/vertex.txt";
 import vertexShader from "./shaders/vertex.glsl";
 import fragmentShader from "./shaders/fragment.glsl";
 import srcStarMap from "../../../img/star.png";
+
+import spaceTexture from "../../../public/img/space.jpg";
 
 class SpaceScene extends FxScene {
   constructor(sketch, starsCount) {
@@ -13,11 +15,10 @@ class SpaceScene extends FxScene {
 
     this.scene.add(new THREE.AmbientLight(0xaaaaaa, 3));
 
-    // this.camera.near = ;
-    this.camera.position.set(0, 0, -5);
-    
+    this.camera.position.set(0, 0, -2);
+
     // Controls
-    this.controls = new OrbitControls(
+    this.controls = new TrackballControls(
       this.camera,
       this.sketch.renderer.domElement
     );
@@ -43,6 +44,9 @@ class SpaceScene extends FxScene {
     this.camera.lookAt(this.ico.position);
 
     // return this.scene;
+  }
+  update(delta) {
+    this.controls.update(delta);
   }
   initSpace() {
     const starGeo = new THREE.BufferGeometry();
@@ -100,13 +104,22 @@ class SpaceScene extends FxScene {
     this.scene.add(this.cube);
   }
   initIcosahedron() {
-    const geometry = new THREE.IcosahedronGeometry(1, 5);
+    // const geometry = new THREE.IcosahedronGeometry(1, 5);
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    console.log(geometry.attributes);
     const material = new THREE.ShaderMaterial({
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
     });
+
+    material.uniforms.uTime = { value: 0 };
+    material.uniforms.uRadius = { value: 0.1 };
+    material.uniforms.uTexture = { value: new THREE.TextureLoader().load(spaceTexture) };
+
     this.ico = new THREE.Mesh(geometry, material);
     this.scene.add(this.ico);
+
+    this.ico.rotation.y = Math.PI;
   }
   initAnimations() {
     /*
@@ -143,6 +156,20 @@ class SpaceScene extends FxScene {
 
     // window.addEventListener("resize", onWindowResize);
     //window.addEventListener("click", this.onMouseClick, false);
+  }
+  enableControls(flag) {
+    // -> linked to Face Recognition
+    if (flag === true || flag === false) this.controls.enabled = flag;
+
+    console.log(this.controls.enabled);
+
+    if (flag === false) {
+      if (this.sketch.fxSceneA.visible === true) {
+        this.sketch.fxSceneA.controls.reset();
+      } else if ($this.sketch.fxSceneB.visible === true) {
+        this.sketch.fxSceneB.controls.reset();
+      }
+    }
   }
 }
 export default SpaceScene;

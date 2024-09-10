@@ -14,9 +14,6 @@ document.addEventListener("visibilitychange", function () {
 // No Sleep
 const noSleep = new NoSleep();
 
-// Face Recognition
-const fr = new FaceRecognition();
-
 const socket = io();
 
 // WebAudio obj
@@ -26,6 +23,9 @@ const webaudio = new WebAudio();
 window.sketch = new Sketch();
 sketch.init();
 
+// Face Recognition
+const fr = new FaceRecognition(sketch);
+
 // Event to start Audio Engine - and remove
 document.getElementById("hideButton").addEventListener(
   "click",
@@ -34,6 +34,9 @@ document.getElementById("hideButton").addEventListener(
     e.stopImmediatePropagation();
     webaudio.removeButton(e);
     noSleep.enable();
+    // Initialize Csound asynchronously
+    webaudio.initCsound();
+    fr.startFR(e);
   },
   false
 );

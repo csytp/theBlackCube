@@ -12,7 +12,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 class Vacuum extends FxScene {
   constructor(sketch) {
-    super(sketch, new THREE.Color(0x000000), true);
+    super(sketch, new THREE.Color(0xcfcccc), true);
     //this.settings = { ...settings };
 
     //GSAP
@@ -30,9 +30,8 @@ class Vacuum extends FxScene {
     this.camera.position.set(0, 0, -10);
     this.camera.lookAt(this.scene.position);
 
-    
     this.scene.add(this.camera);
-    
+
     // Controls
     this.controls = new TrackballControls(
       this.camera,
@@ -44,7 +43,6 @@ class Vacuum extends FxScene {
     this.controls.noPan = true;
     this.controls.minDistance = 2;
     this.controls.maxDistance = 20;
-  
 
     this.cubeArray = [];
     this.bottom_lim = 1.5;
@@ -55,6 +53,11 @@ class Vacuum extends FxScene {
     this.rear_lim = 1.5;
 
     this.myTween = [];
+
+    this.needle = null;
+    this.masterCubeOpened = false;
+    this.onMouseMove = false;
+    this.onTouchMove = false;
 
     // Inner Cubes List
     this.listInnerCubes = [
@@ -209,19 +212,16 @@ class Vacuum extends FxScene {
     //this.initMasterCube();
     this.fillMasterCube(this);
     this.initLights();
-    this.initRoom();
+    // this.initRoom();
     this.initControls();
     this.initRaycaster();
     this.initEvent();
 
-    // Correggere fluttuazione -> far fluttuare il contenitore del masterCube
     this.sketch.animator.add(
       () =>
         (this.masterCubeGrp.position.y = Math.sin(Date.now() * 0.001) * 0.5),
       () => (this.masterCubeGrp.rotation.y = Math.sin(Date.now() * 0.001) * 0.1)
     );
-
-    // return this.scene;
   }
   update(delta) {
     this.controls.update(delta);
@@ -346,35 +346,6 @@ class Vacuum extends FxScene {
     );
     this.valoreZoomFinale = this.valoreZoomIniziale;
   }
-  createCube(
-    color,
-    val,
-    center,
-    bottom_panel,
-    top_panel,
-    left_panel,
-    right_panel,
-    front_panel,
-    rear_panel
-  ) {
-    const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const meshMaterial = new THREE.MeshPhongMaterial({ color: color });
-    const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
-    //const obj = new THREE.Object3D();
-    //obj.add(mesh);
-
-    return {
-      mesh,
-      val,
-      center,
-      bottom_panel,
-      top_panel,
-      left_panel,
-      right_panel,
-      front_panel,
-      rear_panel,
-    };
-  }
 
   setupGSAP() {
     gsap.registerPlugin(ScrollTrigger);
@@ -386,8 +357,36 @@ class Vacuum extends FxScene {
     ScrollTrigger.saveStyles(["text-container"]);
   }
   fillMasterCube(thiz_fxscene) {
+    function createCube(
+      color,
+      val,
+      center,
+      bottom_panel,
+      top_panel,
+      left_panel,
+      right_panel,
+      front_panel,
+      rear_panel
+    ) {
+      const meshGeometry = new THREE.BoxGeometry(1, 1, 1);
+      const meshMaterial = new THREE.MeshPhongMaterial({ color: color });
+      const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
+
+      return {
+        mesh,
+        val,
+        center,
+        bottom_panel,
+        top_panel,
+        left_panel,
+        right_panel,
+        front_panel,
+        rear_panel,
+      };
+    }
+
     this.listInnerCubes.forEach(function (innerCube) {
-      const cube = thiz_fxscene.createCube(
+      const cube = createCube(
         0x000000,
         innerCube.val,
         innerCube.center,
@@ -434,7 +433,7 @@ class Vacuum extends FxScene {
           delete hovered[key]
         }
       });*/
-      this.randomCubeAnimation(this.myTween, this.masterCubeGrp);
+      this.randomCubeRotation(this.myTween, this.masterCubeGrp);
     });
 
     // window.addEventListener("resize", onWindowResize);
@@ -485,7 +484,7 @@ class Vacuum extends FxScene {
         });
     });
   }
-  randomCubeAnimation(myTween, masterCubeGrp) {
+  randomCubeRotation(myTween, masterCubeGrp) {
     //let bankSelected = Math.round(Math.random() * bankClusterCubes + 1 );
 
     // Random Cubes Rotation
@@ -530,18 +529,60 @@ class Vacuum extends FxScene {
       gsap.to(masterCubeGrp.children[cubeIndex].rotation, animPropRotation)
     ); // Rotation
   }
+
+  randomCubeColor() {
+    const $this = this;
+    function getRandomColor() {
+      let r = Math.floor(Math.random() * 255);
+      let g = Math.floor(Math.random() * 255);
+      let b = Math.floor(Math.random() * 255);
+      //let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
+      let color = new THREE.Color("rgb(" + r + ", " + g + ", " + b + ")");
+
+      return color;
+    }
+
+    // Random Cubes Rotation
+    const cubeIndex = Math.floor(Math.random() * 26);
+    const cube = $this.masterCubeGrp.children[cubeIndex];
+    const resetColor = "#000000";
+
+    let myRepeatColor = 0;
+
+    let animPropColor = {
+      duration: 1,
+      delay: 0,
+      repeat: myRepeatColor,
+      ease: "sine",
+
+      onStart: function () {
+        console.log("start");
+        cube.material.color = getRandomColor();
+      },
+
+      onComplete: function () {
+        console.log("complete");
+        cube.material.color = resetColor;
+        if (!myRepeatColor) {
+          $this.myTween.shift().kill();
+          //console.log('shift!!');
+        }
+      },
+    };
+
+    $this.myTween.push(gsap.to(cube, animPropColor));
+  }
+
   readRotationValues() {
     this.valoreFinaleXRot = this.camera.rotation.x;
     this.valoreFinaleYRot = this.camera.rotation.y;
     this.valoreFinaleZRot = this.camera.rotation.z;
   }
-
   readZoomValue() {
     this.valoreZoomFinale = this.controls.target.distanceTo(
       this.controls.object.position
     );
   }
-
   initTextScrolling() {
     // Assegno un id ad ogni div.text
     let idvalue = "text-1";
@@ -562,8 +603,8 @@ class Vacuum extends FxScene {
     scrollerDIV.setAttribute("id", idvalue);
     document.getElementById("text_container").appendChild(scrollerDIV);
   }
-
   launchTextScrolling() {
+    const $this = this;
     let degreeXRot =
       (this.valoreFinaleXRot - this.valoreInizialeXRot) * (180 / Math.PI);
     let degreeYRot =
@@ -607,10 +648,52 @@ class Vacuum extends FxScene {
       );
     }
 
+    function getRandomColor() {
+      const r = Math.floor(Math.random() * 255);
+      const g = Math.floor(Math.random() * 255);
+      const b = Math.floor(Math.random() * 255);
+      const a = Math.floor(Math.random() * 255);
+      const randomColor =
+        "rgb(" + 209 + " + " + 250 + " + " + 229 + " / " + 0 + ")";
+      // "#" + Math.floor(Math.random() * 16777215).toString(16);
+      // 'rgb(' + Math.floor(Math.random()*255), Math.floor(Math.random()*255), Math.floor(Math.random()*255))
+
+      return randomColor;
+    }
+
+    // console.log(getFrom());
+
+    function getFrom() {
+      return "from-" + $this.sketch.getRandomTailwindColor();
+    }
+    function getVia() {
+      return "via-" + $this.sketch.getRandomTailwindColor();
+    }
+    function getTo() {
+      return "to-" + $this.sketch.getRandomTailwindColor();
+    }
+
+    // bg-gradient-to-r bg-clip-text  text-transparent from-indigo-500 via-[#14ff08] to-indigo-500 animate-text
     pElemXRot.classList.add("text-line-code");
     pElemYRot.classList.add("text-line-code");
     pElemZRot.classList.add("text-line-code");
     pElemZoom.classList.add("text-line-code");
+
+    pElemXRot.classList.add(getFrom());
+    pElemYRot.classList.add(getFrom());
+    pElemZRot.classList.add(getFrom());
+    pElemZoom.classList.add(getFrom());
+
+    pElemXRot.classList.add(getVia());
+    pElemYRot.classList.add(getVia());
+    pElemZRot.classList.add(getVia());
+    pElemZoom.classList.add(getVia());
+
+    pElemXRot.classList.add(getTo());
+    pElemYRot.classList.add(getTo());
+    pElemZRot.classList.add(getTo());
+    pElemZoom.classList.add(getTo());
+
     pElemXRot.appendChild(contentX);
     pElemYRot.appendChild(contentY);
     pElemZRot.appendChild(contentZ);
@@ -634,15 +717,16 @@ class Vacuum extends FxScene {
     this.valoreInizialeZRot = this.valoreFinaleZRot;
     this.valoreZoomIniziale = this.valoreZoomFinale;
   }
-
   addScrollTextTimeLine(container) {
-    let tl = gsap.timeline();
+    const tl = gsap.timeline();
 
     tl.to(container, {
-      duration: 6,
+      duration: 5,
       opacity: 0.5,
-      delay: 0.4,
-      y: -window.innerHeight - document.querySelector(".last").clientHeight,
+      delay: 0.33,
+      y:
+        -(window.innerHeight * 1.25) -
+        document.querySelector(".last").clientHeight,
       ease: "power2.out",
       onStart: function () {},
       onUpdate: function () {},
@@ -653,71 +737,96 @@ class Vacuum extends FxScene {
 
     tl.play();
   }
+
   initEvent() {
-    
     const $this = this;
-    this.controls.addEventListener("change", function () {
+
+    $this.controls.addEventListener("change", function () {
       $this.readRotationValues();
       $this.readZoomValue();
     });
 
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        const keyName = event.key;
+
+        if (keyName === "0") {
+          $this.randomCubeColor();
+        }
+      },
+      false
+    );
+
     document.addEventListener("mousedown", () => {
-      if (!this.masterCubeOpened) {
-        this.aperturaMastercube();
-        this.masterCubeOpened = true;
+      if (!$this.masterCubeOpened) {
+        $this.aperturaMastercube();
+        $this.masterCubeOpened = true;
       }
-    });
 
-    document.addEventListener("touchstart", () => {
-      if (!this.masterCubeOpened) {
-        this.aperturaMastercube();
-        this.masterCubeOpened = true;
-      }
-    });
-    window.addEventListener("mousedown", function () {
-      this.onMouseMove = true;
+      $this.onMouseMove = true;
 
-      this.needle = setInterval(() => {
-        if (this.onMouseMove) {
+      $this.needle = setInterval(() => {
+        if ($this.onMouseMove) {
           $this.initTextScrolling();
           $this.launchTextScrolling();
         }
       }, 1200);
     });
 
-    window.addEventListener("mouseup", function () {
-      this.onMouseMove = false;
-      clearInterval(this.needle);
+    document.addEventListener("mouseup", function () {
+      $this.onMouseMove = false;
+      clearInterval($this.needle);
     });
-    window.addEventListener("click", function (e) {
-      if (!this.onMouseMove) {
+    document.addEventListener("click", function (e) {
+      if (!$this.onMouseMove) {
         $this.initTextScrolling();
         $this.launchTextScrolling();
       }
     });
 
-    window.addEventListener("touchstart", function () {
-      if (!this.onTouchMove) {
-        this.initTextScrolling();
-        this.launchTextScrolling();
+    document.addEventListener("touchstart", function () {
+      if (!$this.masterCubeOpened) {
+        $this.aperturaMastercube();
+        $this.masterCubeOpened = true;
       }
 
-      this.needle = setInterval(() => {
-        if (this.onTouchMove) {
-          this.initTextScrolling();
-          this.launchTextScrolling();
+      if (!$this.onTouchMove) {
+        $this.initTextScrolling();
+        $this.launchTextScrolling();
+      }
+
+      $this.needle = setInterval(() => {
+        if ($this.onTouchMove) {
+          $this.initTextScrolling();
+          $this.launchTextScrolling();
         }
       }, 2000);
     });
 
-    window.addEventListener("touchmove", function () {
-      this.onTouchMove = true;
+    document.addEventListener("touchmove", function () {
+      $this.onTouchMove = true;
     });
 
-    window.addEventListener("touchend", function () {
-      this.onTouchMove = false;
-      clearInterval(this.needle);
+    document.addEventListener("touchend", function () {
+      $this.onTouchMove = false;
+      clearInterval($this.needle);
     });
+  }
+
+  enableControls(flag) {
+    // -> linked to Face Recognition
+    if (flag === true || flag === false) this.controls.enabled = flag;
+
+    console.log(this.controls.enabled);
+
+    if (flag === false) {
+      if (this.sketch.fxSceneA.visible === true) {
+        this.sketch.fxSceneA.controls.reset();
+      } else if ($this.sketch.fxSceneB.visible === true) {
+        this.sketch.fxSceneB.controls.reset();
+      }
+    }
   }
 }
 export default Vacuum;

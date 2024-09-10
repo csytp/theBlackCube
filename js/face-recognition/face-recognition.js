@@ -3,6 +3,7 @@ import * as THREE from "three";
 
 class FaceRecognition {
   constructor(sketch) {
+    this.sketch = sketch;
     const { FaceLandmarker, FilesetResolver, DrawingUtils } = vision;
     const demosSection = document.getElementById("demos");
     const imageBlendShapes = document.getElementById("image-blend-shapes");
@@ -17,8 +18,6 @@ class FaceRecognition {
 
     this.scene = new THREE.Scene();
     this.scene.background = 0xff0000;
-
-    this.initFace();
 
     // Before we can use HandLandmarker class we must wait for it to finish
     // loading. Machine Learning models can be large and take a moment to
@@ -49,6 +48,8 @@ class FaceRecognition {
     // }
     // If webcam supported, add event listener to button for when user
     // wants to activate it.
+
+
     if (this.hasGetUserMedia()) {
       enableWebcamButton = document.getElementById("webcamButton");
       enableWebcamButton.addEventListener("click", enableCam);
@@ -166,18 +167,37 @@ class FaceRecognition {
       if (!blendShapes.length) {
         //Riconosce No Face -> Togli mesh busto
         $this.faceDetected = false;
-        $this.showFace($this.faceDetected);
+
+        if ($this.sketch.fxSceneA.visible === true) {
+          $this.sketch.fxSceneA.enableControls(true);
+          $this.sketch.fxSceneA.faceGroup.visible = false;
+        } else if ($this.sketch.fxSceneB.visible === true) {
+          $this.sketch.fxSceneB.enableControls(true);
+          $this.sketch.fxSceneB.faceGroup.visible = false;
+        }
+
+        console.log($this.faceDetected);
+
         return;
       }
 
       //Riconosce Face -> Metti mesh
       if ($this.faceDetected === false) {
         $this.faceDetected = true;
-        $this.showFace($this.faceDetected);
+
+        if ($this.sketch.fxSceneA.visible === true) {
+          $this.sketch.fxSceneA.enableControls(false);
+          $this.sketch.fxSceneA.faceGroup.visible = true;
+        } else if ($this.sketch.fxSceneB.visible === true) {
+          $this.sketch.fxSceneB.enableControls(false);
+          $this.sketch.fxSceneB.faceGroup.visible = true;
+        }
+
+        console.log($this.faceDetected);
       }
 
       let htmlMaker = "";
-      /*
+
       blendShapes[0].categories.map((shape) => {
         //console.log(shape);
         htmlMaker += `
@@ -190,7 +210,7 @@ class FaceRecognition {
         }% - 120px)">${(+shape.score).toFixed(4)}</span>
       </li>
     `;
-      });*/
+      });
       //console.log(htmlMaker);
       el.innerHTML = htmlMaker;
     }
@@ -198,19 +218,9 @@ class FaceRecognition {
   hasGetUserMedia() {
     return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
   }
-
-  initFace() {}
-  showFace(face_flag) {
-    const $this = this;
-
-    if (face_flag === true) {
-      // document.getElementById("show_face").classList.remove("bg-green-500");
-      document.getElementById("show_face").classList.add("bg-red-500");
-    } else {
-      document.getElementById("show_face").classList.remove("bg-red-500");
-      // document.getElementById("show_face").classList.add("bg-green-500");
-    }
+  startFR(e){
+    console.log(e);
+    document.getElementById("webcamButton").dispatchEvent(new MouseEvent('click'));
   }
-  
 }
 export default FaceRecognition;

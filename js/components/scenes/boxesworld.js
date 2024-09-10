@@ -132,5 +132,18 @@ class BoxesWorld extends FxScene {
     // sketch.composer.addPass(sketch.renderTransitionPass);
     // sketch.composer.dispose();
   }
+  enableControls(flag) { // -> linked to Face Recognition
+    if (flag === true || flag === false) this.controls.enabled = flag;
+
+    console.log(this.controls.enabled);
+
+    if (flag === false) {
+      if (this.sketch.fxSceneA.visible === true) {
+        this.sketch.fxSceneA.controls.reset();
+      } else if ($this.sketch.fxSceneB.visible === true) {
+        this.sketch.fxSceneB.controls.reset();
+      }
+    }
+  }
 }
 export default BoxesWorld;
