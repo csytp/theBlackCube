@@ -218,8 +218,7 @@ class FaceRecognition {
   hasGetUserMedia() {
     return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
   }
-  startFR(e){
-    console.log(e);
+  startFR(){
     document.getElementById("webcamButton").dispatchEvent(new MouseEvent('click'));
   }
 }
