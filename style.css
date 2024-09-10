@@ -5,8 +5,7 @@
 @layer base{
 
     *, html, body{
-        @apply box-border;
-        
+        @apply box-border; 
         @apply m-0 p-0;
     }
     html,body{
@@ -110,16 +109,13 @@
         @apply text-3xl;
     }
     #presentation_container #presentation .subtitle{
-        @apply text-2xl;
+        @apply text-xl lg:text-2xl;
     }
     #presentation_container .instructions_container{
         @apply max-w-lg text-lg;
     }
     #presentation_container .instructions_container ul{
-        @apply list-disc;
-    }
-    #presentation_container #presentation .names span{
-        @apply block;
+        @apply list-disc list-inside;
     }
 
     @keyframes turn {
