@@ -403,6 +403,12 @@ class WebAudio {
     }
   }
 
+  // this is the JS function to run Csound
+  play(args) {
+    this.note = `i1 0 ${args[0]} ${args[1]} ${args[2]}`;
+    this.csound.inputMessage(String(this.note));
+  }
+
   // rimuove bottone
   removeButton(e) {
     let button_container = document.getElementById("hideButton_container");
@@ -413,20 +419,20 @@ class WebAudio {
     //play a middle 'C' for the duration of an 8th note
     debug.triggerAttackRelease("C4", "16n");
 
-    if (this.elem.requestFullscreen) {
-      this.elem.requestFullscreen();
-    } else if (this.elem.webkitRequestFullscreen) {
-      /* Safari */
-      this.elem.webkitRequestFullscreen();
-    } else if (this.elem.msRequestFullscreen) {
-      /* IE11 */
-      this.elem.msRequestFullscreen();
+    // console.log('MATCH MEDIA',window.matchMedia("(max-width: 480px)").matches)
+
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      if (this.elem.requestFullscreen) {
+        this.elem.requestFullscreen();
+      } else if (this.elem.webkitRequestFullscreen) {
+        /* Safari */
+        this.elem.webkitRequestFullscreen();
+      } else if (this.elem.msRequestFullscreen) {
+        /* IE11 */
+        this.elem.msRequestFullscreen();
+      }
     }
-  }
-  // this is the JS function to run Csound
-  play(args) {
-    this.note = `i1 0 ${args[0]} ${args[1]} ${args[2]}`;
-    this.csound.inputMessage(String(this.note));
+
   }
 }
 export default WebAudio;

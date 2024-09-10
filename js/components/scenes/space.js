@@ -113,8 +113,8 @@ class SpaceScene extends FxScene {
     });
 
     material.uniforms.uTime = { value: 0 };
-    material.uniforms.uRadius = { value: 0.1 };
-    material.uniforms.uTexture = { value: new THREE.TextureLoader().load(spaceTexture) };
+    // material.uniforms.uRadius = { value: 0.1 };
+    // material.uniforms.uTexture = { value: new THREE.TextureLoader().load(spaceTexture) };
 
     this.ico = new THREE.Mesh(geometry, material);
     this.scene.add(this.ico);

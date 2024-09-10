@@ -215,7 +215,7 @@ class Vacuum extends FxScene {
     // this.initRoom();
     this.initControls();
     this.initRaycaster();
-    this.initEvent();
+    this.initEvents();
 
     this.sketch.animator.add(
       () =>
@@ -738,7 +738,7 @@ class Vacuum extends FxScene {
     tl.play();
   }
 
-  initEvent() {
+  initEvents() {
     const $this = this;
 
     $this.controls.addEventListener("change", function () {
