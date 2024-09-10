@@ -279,9 +279,9 @@ class Sketch {
     this.animator = new Animator(this, this.clock);
     this.composer = new EffectComposer(this.renderer);
 
-    this.stats = new Stats();
-    document.body.appendChild(this.stats.dom);
-    this.animator.add(() => this.stats.update());
+    // this.stats = new Stats();
+    // document.body.appendChild(this.stats.dom);
+    // this.animator.add(() => this.stats.update());
 
     this.clock = new THREE.Clock();
     this.delta = this.clock.getDelta();
