@@ -49,7 +49,7 @@
     #presentation_container{
         @apply absolute left-0 top-0 w-full h-[100vh] z-30;
         @apply p-10;
-        @apply bg-white flex flex-col items-center space-y-10;
+        @apply bg-white flex flex-col items-center space-y-4 sm:space-y-10;
         /*@apply hidden;*/
     }
     #hideButton{
@@ -59,7 +59,7 @@
     #presentation_container #cube_container{
         width: 50px;
         height: 50px;
-        perspective: 350px;
+        perspective: 150px;
         margin: 0;
     }
     #presentation_container #cube {
