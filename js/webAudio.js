@@ -60,16 +60,66 @@ class WebAudio {
 
       // Define the orchestra code
       const code = `
+      ; Sine 1
       instr 1
-      kamp = ampdbfs(p4)
-      kcps = p5
-        aSig poscil3 kamp, kcps 
+        iamp = ampdbfs(p4)
+        icps = p5
+        irand = p6
+        iband random -irand, irand
+        aSig poscil3 iamp, icps + iband
         out aSig
+      endin
+      
+      ; Sine 2
+      instr 2
+        iamp = ampdbfs(p4)
+        icps = p5
+        irand = p6
+        iband random -irand, irand
+        aSig poscil3 iamp, icps + iband
+        out aSig
+      endin
+      
+      giFt1 ftgen 1, 0, 1024, 7, 0, 512, 1, 0, -1, 512, 0	
+      ; Saw 1
+      instr 3
+        iamp = ampdbfs(p4)
+        icps = p5
+        irand = p6
+        iband random -irand, irand
+        aSig poscil3 iamp, icps + iband, giFt1
+        out aSig
+      endin
+
+      ; Saw 2
+      instr 4
+        iamp = ampdbfs(p4)
+        icps = p5
+        irand = p6
+        iband random -irand, irand
+        aSig poscil3 iamp, icps + iband, giFt1
+        out aSig
+            endin
+      
+      ;Pink 1
+      instr 5
+        awhite unirand 2.0
+        awhite = awhite - 1.0  
+        apink  pinkish awhite, 1, 0, 0, 1
+        out apink * 30000
+      endin
+      
+      ; Pink 2
+      instr 6
+        awhite unirand 2.0
+        awhite = awhite - 1.0  
+        apink  pinkish awhite, 1, 0, 0, 1
+        out apink * 30000
       endin
       `;
 
       // Set audio output option
-      this.csound.setOption("-odac");
+      this.csound.setOption("-odac -d");
 
       // Compile the orchestra code
       await this.csound.compileOrc(code);
