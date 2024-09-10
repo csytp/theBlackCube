@@ -426,7 +426,7 @@ class WebAudio {
 
   // rimuove bottone
   removeButton(e) {
-    let button_container = document.getElementById("hideButton_container");
+    let button_container = document.getElementById("presentation_container");
     button_container.remove();
     //create a synth and connect it to the main output (your speakers)
     const debug = new Tone.Synth().toDestination();

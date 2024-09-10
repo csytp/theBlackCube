@@ -43,47 +43,79 @@
     #text_container .text-blink-it{}
 
 
-    #hideButton_container{
+    #presentation_container{
         @apply absolute left-0 top-0 w-full h-[100vh] z-30;
-        @apply bg-white flex flex-col items-center;
+        @apply p-10;
+        @apply bg-white flex flex-col items-center space-y-10;
         /*@apply hidden;*/
     }
     #hideButton{
         @apply text-black bg-lime-400 px-10;
     }
 
-    #hideButton_container .cube_container{
-        width: 200px;
-        height: 200px;
-        perspective: 500px;
-        margin: 100px;
+    #presentation_container #cube_container{
+        width: 50px;
+        height: 50px;
+        perspective: 350px;
+        margin: 0;
     }
-    #hideButton_container .cube {
+    #presentation_container #cube {
         position: relative;
-        width: 200px;
-        height: 200px;
+        width: 50px;
+        height: 50px;
         transform-style: preserve-3d;
         transform: rotate3d(1, 1, 0, 45deg);
         animation: turn 5s linear infinite;
     }
-    #hideButton_container .cube .face{}
-    #hideButton_container .cube .front {
-        transform: translateZ(100px);
+    #presentation_container .face {
+        width: 50px;
+        height: 50px;
+        background: black;
+        border: 2px solid black;
+        position: absolute;
+        /* opacity: 0.5; */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: Arial, sans-serif;
+        font-size: 2rem;
     }
-    #hideButton_container .cube .back {
-        transform: translateZ(-100px) rotateY(180deg);
+    #presentation_container #cube .front {
+        transform: translateZ(25px);
     }
-    #hideButton_container .cube .left {
-        transform: translateX(-100px) rotateY(-90deg);
+    #presentation_container #cube .back {
+        transform: translateZ(-25px) rotateY(180deg);
+    }
+    #presentation_container #cube .left {
+        transform: translateX(-25px) rotateY(-90deg);
     }    
-    #hideButton_container .cube .right {
-        transform: translateX(100px) rotateY(90deg);
+    #presentation_container #cube .right {
+        transform: translateX(25px) rotateY(90deg);
     }
-    #hideButton_container .cube .top {
-        transform: translateY(-100px) rotateX(90deg);
+    #presentation_container #cube .top {
+        transform: translateY(-25px) rotateX(90deg);
     }      
-    #hideButton_container .cube .bottom {
-        transform: translateY(100px) rotateX(-90deg);
+    #presentation_container #cube .bottom {
+        transform: translateY(25px) rotateX(-90deg);
+    }
+
+    #presentation_container #presentation{
+        @apply flex flex-col items-center space-y-5 text-center;
+    }
+    #presentation_container #presentation .title{
+        @apply text-3xl;
+    }
+    #presentation_container #presentation .subtitle{
+        @apply text-2xl;
+    }
+    #presentation_container .instructions_container{
+        @apply max-w-lg text-lg;
+    }
+    #presentation_container .instructions_container ul{
+        @apply list-disc;
+    }
+    #presentation_container #presentation .names span{
+        @apply block;
     }
 
     @keyframes turn {
@@ -97,19 +129,7 @@
       
 
     
-    #hideButton_container .face {
-        width: 200px;
-        height: 200px;
-        background: skyblue;
-        border: 2px solid black;
-        position: absolute;
-        opacity: 0.5;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: Arial, sans-serif;
-        font-size: 2rem;
-    }
+    
 
     #canvas{
         @apply absolute top-0 left-0 w-full h-full z-10;
