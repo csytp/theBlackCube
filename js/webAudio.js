@@ -87,11 +87,26 @@ class WebAudio {
       
       ; Sine 2
       instr 2
-        iamp = ampdbfs(p4)
+                iamp = ampdbfs(p4)
         icps = p5
         irand = p6
         iband random -irand, irand
-        aSig poscil3 iamp, icps + iband
+        ifade = p7
+
+        kFadout   init      1
+        kFadein   init      1
+
+        krel      release  
+        
+        if krel == 1 && p3 < 0 then
+          xtratim   ifade      
+          kFadout   linseg    1, ifade, 0
+        endif
+        
+        kFadein   linseg    0, ifade, 1
+        
+        aSig poscil3 iamp * kFadout *kFadein, icps + int(iband)
+        
         out aSig
       endin
       
