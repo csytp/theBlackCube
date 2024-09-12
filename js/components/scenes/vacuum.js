@@ -14,6 +14,7 @@ class Vacuum extends FxScene {
   constructor(sketch) {
     super(sketch, new THREE.Color(0xcfcccc), true);
     //this.settings = { ...settings };
+    let $this = this;
 
     //GSAP
     this.setupGSAP();
@@ -215,13 +216,14 @@ class Vacuum extends FxScene {
     // this.initRoom();
     this.initControls();
     this.initRaycaster();
-    this.initEvents();
 
     this.sketch.animator.add(
       () =>
         (this.masterCubeGrp.position.y = Math.sin(Date.now() * 0.001) * 0.5),
       () => (this.masterCubeGrp.rotation.y = Math.sin(Date.now() * 0.001) * 0.1)
     );
+
+    this.initEvents();
   }
   update(delta) {
     this.controls.update(delta);
@@ -606,12 +608,12 @@ class Vacuum extends FxScene {
   launchTextScrolling() {
     const $this = this;
     let degreeXRot =
-      (this.valoreFinaleXRot - this.valoreInizialeXRot) * (180 / Math.PI);
+      ($this.valoreFinaleXRot - $this.valoreInizialeXRot) * (180 / Math.PI);
     let degreeYRot =
-      (this.valoreFinaleYRot - this.valoreInizialeYRot) * (180 / Math.PI);
+      ($this.valoreFinaleYRot - $this.valoreInizialeYRot) * (180 / Math.PI);
     let degreeZRot =
-      (this.valoreFinaleZRot - this.valoreInizialeZRot) * (180 / Math.PI);
-    let zoomValue = this.valoreZoomFinale - this.valoreZoomIniziale;
+      ($this.valoreFinaleZRot - $this.valoreInizialeZRot) * (180 / Math.PI);
+    let zoomValue = $this.valoreZoomFinale - $this.valoreZoomIniziale;
     degreeXRot = degreeXRot.toFixed(2);
     degreeYRot = degreeYRot.toFixed(2);
     degreeZRot = degreeZRot.toFixed(2);
@@ -739,25 +741,138 @@ class Vacuum extends FxScene {
   }
 
   initEvents() {
-    const $this = this;
+    let $this = this;
+    this.eventsArray = [
+      {
+        on: "change",
+        element: $this.controls,
+        event: (e) => {
+          const keyName = e.key;
 
+          if (keyName === "0") {
+            $this.randomCubeColor();
+          }
+        },
+      },
+      {
+        on: "keydown",
+        element: document,
+        event: (e) => {
+          const keyName = e.key;
+
+          if (keyName === "0") {
+            $this.randomCubeColor();
+          }
+        },
+      },
+      {
+        on: "mousedown",
+        element: document,
+        event: () => {
+          if (!$this.masterCubeOpened) {
+            $this.aperturaMastercube();
+            $this.masterCubeOpened = true;
+          }
+
+          $this.onMouseMove = true;
+
+          $this.needle = setInterval(() => {
+            if ($this.onMouseMove) {
+              $this.initTextScrolling();
+              $this.launchTextScrolling();
+            }
+          }, 1200);
+        },
+      },
+      {
+        on: "mouseup",
+        element: document,
+        event: () => {
+          $this.onMouseMove = false;
+          clearInterval($this.needle);
+        },
+      },
+      {
+        on: "click",
+        element: document,
+        event: () => {
+          if (!$this.onMouseMove) {
+            $this.initTextScrolling();
+            $this.launchTextScrolling();
+          }
+        },
+      },
+      {
+        on: "touchstart",
+        element: document,
+        event: () => {
+          if (!$this.masterCubeOpened) {
+            $this.aperturaMastercube();
+            $this.masterCubeOpened = true;
+          }
+
+          if (!$this.onTouchMove) {
+            $this.initTextScrolling();
+            $this.launchTextScrolling();
+          }
+
+          $this.needle = setInterval(() => {
+            if ($this.onTouchMove) {
+              $this.initTextScrolling();
+              $this.launchTextScrolling();
+            }
+          }, 2000);
+        },
+      },
+      {
+        on: "touchmove",
+        element: document,
+        event: () => {
+          $this.onTouchMove = true;
+        },
+      },
+      {
+        on: "touchend",
+        element: document,
+        event: () => {
+          $this.onTouchMove = false;
+          clearInterval($this.needle);
+        },
+      },
+
+      // document.addEventListener("touchmove", function () {
+      //   $this.onTouchMove = true;
+      // });
+
+      // document.addEventListener("touchend", function () {
+      //   $this.onTouchMove = false;
+      //   clearInterval($this.needle);
+      // });
+    ];
+
+    this.eventsArray.forEach((objEvent) => {
+      console.log(objEvent);
+      console.log(objEvent.element);
+      objEvent.element.addEventListener(objEvent.on, objEvent.event);
+    });
+    /*
     $this.controls.addEventListener("change", function () {
       $this.readRotationValues();
       $this.readZoomValue();
     });
+*/
+    // document.addEventListener(
+    //   "keydown",
+    //   (event) => {
+    //     const keyName = event.key;
 
-    document.addEventListener(
-      "keydown",
-      (event) => {
-        const keyName = event.key;
-
-        if (keyName === "0") {
-          $this.randomCubeColor();
-        }
-      },
-      false
-    );
-
+    //     if (keyName === "0") {
+    //       $this.randomCubeColor();
+    //     }
+    //   },
+    //   false
+    // );
+    /*
     document.addEventListener("mousedown", () => {
       if (!$this.masterCubeOpened) {
         $this.aperturaMastercube();
@@ -811,7 +926,7 @@ class Vacuum extends FxScene {
     document.addEventListener("touchend", function () {
       $this.onTouchMove = false;
       clearInterval($this.needle);
-    });
+    });*/
   }
 
   enableControls(flag) {

@@ -24,6 +24,7 @@ class SpaceScene extends FxScene {
     );
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
+    this.controls.noPan = true;
 
     // Objects
     this.space = this.cube = this.ico = {};
