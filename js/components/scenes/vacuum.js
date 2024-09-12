@@ -3,7 +3,6 @@ import FxScene from "../fxscene.js";
 
 import {
   BoxLineGeometry,
-  OrbitControls,
   TrackballControls,
 } from "three/examples/jsm/Addons.js";
 
@@ -416,8 +415,6 @@ class Vacuum extends FxScene {
         -(e.clientY / this.sketch.sizes.height) * 2 + 1
       );
 
-      // console.log(this.mouse);
-
       this.raycaster.setFromCamera(this.mouse, this.camera);
       //intersects = raycaster.intersectObjects(scene.children, true);
       this.intersects = this.raycaster.intersectObjects(
@@ -425,7 +422,6 @@ class Vacuum extends FxScene {
         true
       );
 
-      // console.log(this.intersects);
       /*
       Object.keys(hovered).forEach((key) => {
         const hit = intersects.find((hit) => hit.object.uuid === key)
@@ -514,7 +510,6 @@ class Vacuum extends FxScene {
       onComplete: function () {
         if (!myRepeatRotation) {
           myTween.shift().kill();
-          //console.log('shift!!');
         }
 
         // Limiting Glitch Rotation (?)
@@ -558,16 +553,13 @@ class Vacuum extends FxScene {
       ease: "sine",
 
       onStart: function () {
-        console.log("start");
         cube.material.color = getRandomColor();
       },
 
       onComplete: function () {
-        console.log("complete");
         cube.material.color = resetColor;
         if (!myRepeatColor) {
           $this.myTween.shift().kill();
-          //console.log('shift!!');
         }
       },
     };
@@ -608,13 +600,12 @@ class Vacuum extends FxScene {
   launchTextScrolling() {
     const $this = this;
     let degreeXRot =
-    ($this.valoreFinaleXRot - $this.valoreInizialeXRot) * (180 / Math.PI);
+      ($this.valoreFinaleXRot - $this.valoreInizialeXRot) * (180 / Math.PI);
     let degreeYRot =
-    ($this.valoreFinaleYRot - $this.valoreInizialeYRot) * (180 / Math.PI);
+      ($this.valoreFinaleYRot - $this.valoreInizialeYRot) * (180 / Math.PI);
     let degreeZRot =
-    ($this.valoreFinaleZRot - $this.valoreInizialeZRot) * (180 / Math.PI);
+      ($this.valoreFinaleZRot - $this.valoreInizialeZRot) * (180 / Math.PI);
     let zoomValue = $this.valoreZoomFinale - $this.valoreZoomIniziale;
-    console.log(degreeXRot);
     degreeXRot = degreeXRot.toFixed(2);
     degreeYRot = degreeYRot.toFixed(2);
     degreeZRot = degreeZRot.toFixed(2);
@@ -663,8 +654,6 @@ class Vacuum extends FxScene {
 
       return randomColor;
     }
-
-    // console.log(getFrom());
 
     function getFrom() {
       return "from-" + $this.sketch.getRandomTailwindColor();
@@ -739,6 +728,12 @@ class Vacuum extends FxScene {
     });
 
     tl.play();
+  }
+
+  removeEvents(events_array) {
+    events_array.forEach((e) => {
+      e.element.removeEventListener(e.on, e.event);
+    });
   }
 
   initEvents() {
@@ -837,15 +832,6 @@ class Vacuum extends FxScene {
           clearInterval($this.needle);
         },
       },
-
-      // document.addEventListener("touchmove", function () {
-      //   $this.onTouchMove = true;
-      // });
-
-      // document.addEventListener("touchend", function () {
-      //   $this.onTouchMove = false;
-      //   clearInterval($this.needle);
-      // });
     ];
 
     this.eventsArray.forEach((objEvent) => {
@@ -853,85 +839,11 @@ class Vacuum extends FxScene {
       console.log(objEvent.element);
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
     });
-    /*
-    $this.controls.addEventListener("change", function () {
-      $this.readRotationValues();
-      $this.readZoomValue();
-    });
-*/
-    // document.addEventListener(
-    //   "keydown",
-    //   (event) => {
-    //     const keyName = event.key;
-
-    //     if (keyName === "0") {
-    //       $this.randomCubeColor();
-    //     }
-    //   },
-    //   false
-    // );
-    /*
-    document.addEventListener("mousedown", () => {
-      if (!$this.masterCubeOpened) {
-        $this.aperturaMastercube();
-        $this.masterCubeOpened = true;
-      }
-
-      $this.onMouseMove = true;
-
-      $this.needle = setInterval(() => {
-        if ($this.onMouseMove) {
-          $this.initTextScrolling();
-          $this.launchTextScrolling();
-        }
-      }, 1200);
-    });
-
-    document.addEventListener("mouseup", function () {
-      $this.onMouseMove = false;
-      clearInterval($this.needle);
-    });
-    document.addEventListener("click", function (e) {
-      if (!$this.onMouseMove) {
-        $this.initTextScrolling();
-        $this.launchTextScrolling();
-      }
-    });
-
-    document.addEventListener("touchstart", function () {
-      if (!$this.masterCubeOpened) {
-        $this.aperturaMastercube();
-        $this.masterCubeOpened = true;
-      }
-
-      if (!$this.onTouchMove) {
-        $this.initTextScrolling();
-        $this.launchTextScrolling();
-      }
-
-      $this.needle = setInterval(() => {
-        if ($this.onTouchMove) {
-          $this.initTextScrolling();
-          $this.launchTextScrolling();
-        }
-      }, 2000);
-    });
-
-    document.addEventListener("touchmove", function () {
-      $this.onTouchMove = true;
-    });
-
-    document.addEventListener("touchend", function () {
-      $this.onTouchMove = false;
-      clearInterval($this.needle);
-    });*/
   }
 
   enableControls(flag) {
     // -> linked to Face Recognition
     if (flag === true || flag === false) this.controls.enabled = flag;
-
-    console.log(this.controls.enabled);
 
     if (flag === false) {
       if (this.sketch.fxSceneA.visible === true) {
