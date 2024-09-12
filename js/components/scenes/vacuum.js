@@ -730,8 +730,8 @@ class Vacuum extends FxScene {
     tl.play();
   }
 
-  removeEvents(events_array) {
-    events_array.forEach((e) => {
+  removeEvents() {
+    this.eventsArray.forEach((e) => {
       e.element.removeEventListener(e.on, e.event);
     });
   }

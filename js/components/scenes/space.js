@@ -53,6 +53,7 @@ class SpaceScene extends FxScene {
     const timing = this.sketch.clock.getElapsedTime() / 10;
 
     this.ico.material.uniforms.uTime = { value: timing };
+
     return delta;
   }
   initSpace() {
@@ -119,10 +120,10 @@ class SpaceScene extends FxScene {
       fragmentShader: fragmentShader,
     });
 
-    material.uniforms.uTime = { value: 0};
+    material.uniforms.uTime = { value: 0 };
     // material.uniforms.uRadius = { value: 0.1 };
     // material.uniforms.uTexture = { value: new THREE.TextureLoader().load(spaceTexture) };
-    
+
     this.ico = new THREE.Mesh(geometry, material);
     console.log(this.ico);
     this.scene.add(this.ico);
@@ -165,6 +166,24 @@ class SpaceScene extends FxScene {
     // window.addEventListener("resize", onWindowResize);
     //window.addEventListener("click", this.onMouseClick, false);
   }
+
+  initEvents() {
+    const $this = this;
+    this.eventsArray = [];
+
+    this.eventsArray.forEach((objEvent) => {
+      console.log(objEvent);
+      console.log(objEvent.element);
+      objEvent.element.addEventListener(objEvent.on, objEvent.event);
+    });
+  }
+
+  removeEvents() {
+    this.eventsArray.forEach((e) => {
+      e.element.removeEventListener(e.on, e.event);
+    });
+  }
+
   enableControls(flag) {
     // -> linked to Face Recognition
     if (flag === true || flag === false) this.controls.enabled = flag;

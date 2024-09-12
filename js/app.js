@@ -436,10 +436,12 @@ class Sketch {
     }
     return { scene: arrayScenes[activeScene], index: activeScene };
   }
-  setActiveScene(arrayScenes, indexScene, sceneIWant) {
+  setActiveScene(scene, indexScene, sceneIWant) {
+    const $this = this;
     this.arrayScenes.forEach((scene) => {
       scene.visible = false;
     });
+
 
     if (this.transitionParams.transition == 0) {
       this.fxSceneB = this.arrayScenes[sceneIWant];
@@ -451,6 +453,7 @@ class Sketch {
         this.fxSceneA.camera,
         this.fxSceneA.controls.reset
       );
+      scene.removeEvents();
       this.transitionParams.transition = 1;
     } else {
       this.fxSceneA = this.arrayScenes[sceneIWant];
@@ -462,10 +465,12 @@ class Sketch {
         this.fxSceneB.camera,
         this.fxSceneB.controls.reset
       );
+      scene.removeEvents();
       this.transitionParams.transition = 0;
     }
 
     this.arrayScenes[sceneIWant].visible = true;
+    this.arrayScenes[sceneIWant].initEvents();
   }
   changeScene(args) {
     const $this = this;
