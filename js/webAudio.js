@@ -87,7 +87,7 @@ class WebAudio {
       
       ; Sine 2
       instr 2
-                iamp = ampdbfs(p4)
+        iamp = ampdbfs(p4)
         icps = p5
         irand = p6
         iband random -irand, irand
@@ -117,9 +117,24 @@ class WebAudio {
         icps = p5
         irand = p6
         iband random -irand, irand
-        aSig poscil3 iamp, icps + iband, giFt1
+        ifade = p7
+
+        kFadout   init      1
+        kFadein   init      1
+
+        krel      release  
+        
+        if krel == 1 && p3 < 0 then
+          xtratim   ifade      
+          kFadout   linseg    1, ifade, 0
+        endif
+        
+        kFadein   linseg    0, ifade, 1
+        
+        aSig poscil3 iamp * kFadout *kFadein, icps + int(iband), giFt1
+        
         out aSig
-      endin
+        endin
 
       ; Saw 2
       instr 4
@@ -127,9 +142,25 @@ class WebAudio {
         icps = p5
         irand = p6
         iband random -irand, irand
-        aSig poscil3 iamp, icps + iband, giFt1
+        ifade = p7
+
+        kFadout   init      1
+        kFadein   init      1
+
+        krel      release  
+        
+        if krel == 1 && p3 < 0 then
+          xtratim   ifade      
+          kFadout   linseg    1, ifade, 0
+        endif
+        
+        kFadein   linseg    0, ifade, 1
+        
+        aSig poscil3 iamp * kFadout *kFadein, icps + int(iband), giFt1
+        
         out aSig
-            endin
+        
+        endin
       
       ;Pink 1
       instr 5
@@ -435,6 +466,11 @@ class WebAudio {
 
   // this is the JS function to run Csound
   play(args) {
+    if (args[0] > 4) {
+      this.note = `i${args[0]} 0 ${args[1]} ${args[2]}`;
+    } else {
+      this.note = `i${args[0]} 0 ${args[1]} ${args[2]} ${args[3]} ${args[4]} ${args[5]}`;
+    }
     this.note = `i${args[0]} 0 ${args[1]} ${args[2]} ${args[3]} ${args[4]} ${args[5]}`;
     this.csound.inputMessage(String(this.note));
   }
