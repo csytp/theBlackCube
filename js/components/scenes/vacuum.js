@@ -608,12 +608,13 @@ class Vacuum extends FxScene {
   launchTextScrolling() {
     const $this = this;
     let degreeXRot =
-      ($this.valoreFinaleXRot - $this.valoreInizialeXRot) * (180 / Math.PI);
+    ($this.valoreFinaleXRot - $this.valoreInizialeXRot) * (180 / Math.PI);
     let degreeYRot =
-      ($this.valoreFinaleYRot - $this.valoreInizialeYRot) * (180 / Math.PI);
+    ($this.valoreFinaleYRot - $this.valoreInizialeYRot) * (180 / Math.PI);
     let degreeZRot =
-      ($this.valoreFinaleZRot - $this.valoreInizialeZRot) * (180 / Math.PI);
+    ($this.valoreFinaleZRot - $this.valoreInizialeZRot) * (180 / Math.PI);
     let zoomValue = $this.valoreZoomFinale - $this.valoreZoomIniziale;
+    console.log(degreeXRot);
     degreeXRot = degreeXRot.toFixed(2);
     degreeYRot = degreeYRot.toFixed(2);
     degreeZRot = degreeZRot.toFixed(2);
@@ -741,17 +742,14 @@ class Vacuum extends FxScene {
   }
 
   initEvents() {
-    let $this = this;
+    const $this = this;
     this.eventsArray = [
       {
         on: "change",
         element: $this.controls,
         event: (e) => {
-          const keyName = e.key;
-
-          if (keyName === "0") {
-            $this.randomCubeColor();
-          }
+          $this.readRotationValues();
+          $this.readZoomValue();
         },
       },
       {
@@ -779,7 +777,7 @@ class Vacuum extends FxScene {
           $this.needle = setInterval(() => {
             if ($this.onMouseMove) {
               $this.initTextScrolling();
-              $this.launchTextScrolling();
+              $this.launchTextScrolling($this);
             }
           }, 1200);
         },

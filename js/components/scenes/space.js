@@ -25,6 +25,8 @@ class SpaceScene extends FxScene {
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.05;
     this.controls.noPan = true;
+    this.controls.minDistance = 2;
+    this.controls.maxDistance = 20;
 
     // Objects
     this.space = this.cube = this.ico = {};
@@ -43,11 +45,15 @@ class SpaceScene extends FxScene {
     this.initRaycaster();
 
     this.camera.lookAt(this.ico.position);
-
+    // console.log(this.ico.material.uniforms.uTime);
     // return this.scene;
   }
   update(delta) {
     this.controls.update(delta);
+    const timing = this.sketch.clock.getElapsedTime() / 10;
+
+    this.ico.material.uniforms.uTime = { value: timing };
+    return delta;
   }
   initSpace() {
     const starGeo = new THREE.BufferGeometry();
@@ -105,19 +111,20 @@ class SpaceScene extends FxScene {
     this.scene.add(this.cube);
   }
   initIcosahedron() {
-    // const geometry = new THREE.IcosahedronGeometry(1, 5);
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    console.log(geometry.attributes);
+    const geometry = new THREE.IcosahedronGeometry(1, 100);
+    // const geometry = new THREE.SphereGeometry(1);
+    // console.log(geometry.attributes);
     const material = new THREE.ShaderMaterial({
       vertexShader: vertexShader,
       fragmentShader: fragmentShader,
     });
 
-    material.uniforms.uTime = { value: 0 };
+    material.uniforms.uTime = { value: 0};
     // material.uniforms.uRadius = { value: 0.1 };
     // material.uniforms.uTexture = { value: new THREE.TextureLoader().load(spaceTexture) };
-
+    
     this.ico = new THREE.Mesh(geometry, material);
+    console.log(this.ico);
     this.scene.add(this.ico);
 
     this.ico.rotation.y = Math.PI;
