@@ -71,6 +71,11 @@ socket.on("chgScn", (ctrlValue) => {
   sketch.changeScene(ctrlValue);
 });
 
+
+socket.on("showFr", (ctrlValue) => {
+  sketch.showFr(ctrlValue);
+});
+
 // SOCKET-IO -> WEB AUDIO
 
 socket.on("csound", (ctrlValue) => {
