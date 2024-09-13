@@ -472,22 +472,28 @@ class Sketch {
     this.arrayScenes[sceneIWant].initEvents();
   }
   showFR(args) {
-    let scene = this.getActiveScene(this.arrayScenes);
+
+    //let indexThisScene = this.getActiveScene(this.arrayScenes).index;
     let isVisible = args[0];
 
-    // if (args[0] == 1) this.faceGroup.visible = true;
-    // else scene.faceGroup.visible = false;
-
- 
-
+    console.log('visible', isVisible);
+    
+    
     if(isVisible === 0 || isVisible === 1){
       if(isVisible){
-        scene.faceGroup.visible = true;
+        if(this.transitionParams == 1)
+          this.fxSceneA.faceGroup.visible = true;
+          else
+          this.fxSceneB.faceGroup.visible = true;
       }
       else{
-        scene.faceGroup.visible = false;
+        if(this.transitionParams == 1)
+          this.fxSceneA.faceGroup.visible = false;
+          else
+          this.fxSceneB.faceGroup.visible = false;
       }
     }
+    //console.log(this.arrayScenes[indexThisScene].faceGroup.visible);
 
   }
   changeScene(args) {

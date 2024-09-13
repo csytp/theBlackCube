@@ -164,16 +164,17 @@ class FaceRecognition {
       }
     }
     function drawBlendShapes(el, blendShapes) {
+      console.log('from FR', $this.sketch.fxSceneA.faceGroup.visible);
       if (!blendShapes.length) {
         //Riconosce No Face -> Togli mesh busto
         $this.faceDetected = false;
+        $this.sketch.fxSceneA.faceGroup.visible = false;
+
 
         if ($this.sketch.fxSceneA.visible === true) {
           $this.sketch.fxSceneA.enableControls(true);
-          $this.sketch.fxSceneA.faceGroup.visible = false;
         } else if ($this.sketch.fxSceneB.visible === true) {
           $this.sketch.fxSceneB.enableControls(true);
-          $this.sketch.fxSceneB.faceGroup.visible = false;
         }
 
         // console.log($this.faceDetected);
