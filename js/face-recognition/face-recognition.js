@@ -57,7 +57,7 @@ class FaceRecognition {
     }
     // Enable the live webcam view and start detection.
     function enableCam(event) {
-      console.log('enableCam FR');
+      console.log("enableCam FR");
       if (!faceLandmarker) {
         console.log("Wait! faceLandmarker not loaded yet.");
         return;
@@ -182,15 +182,19 @@ class FaceRecognition {
       }
 
       //Riconosce Face -> Metti mesh
-      if ($this.faceDetected === false) {
+      if (
+        $this.faceDetected === false &&
+        ($this.sketch.fxSceneA.faceGroup.visible === true ||
+          $this.sketch.fxSceneB.faceGroup.visible === true)
+      ) {
         $this.faceDetected = true;
 
         if ($this.sketch.fxSceneA.visible === true) {
           $this.sketch.fxSceneA.enableControls(false);
-          $this.sketch.fxSceneA.faceGroup.visible = true;
+          //$this.sketch.fxSceneA.faceGroup.visible = true;
         } else if ($this.sketch.fxSceneB.visible === true) {
           $this.sketch.fxSceneB.enableControls(false);
-          $this.sketch.fxSceneB.faceGroup.visible = true;
+          //$this.sketch.fxSceneB.faceGroup.visible = true;
         }
 
         // console.log($this.faceDetected);
@@ -219,7 +223,7 @@ class FaceRecognition {
     return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
   }
   startFR() {
-    console.log('startFR');
+    console.log("startFR");
     document
       .getElementById("webcamButton")
       .dispatchEvent(new MouseEvent("click"));

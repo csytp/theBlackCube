@@ -442,7 +442,6 @@ class Sketch {
       scene.visible = false;
     });
 
-
     if (this.transitionParams.transition == 0) {
       this.fxSceneB = this.arrayScenes[sceneIWant];
       this.renderTransitionPass = new RenderTransitionPass(
@@ -472,9 +471,12 @@ class Sketch {
     this.arrayScenes[sceneIWant].visible = true;
     this.arrayScenes[sceneIWant].initEvents();
   }
-  showFR(args){
+  showFR(args) {
+    if (args[0] == 1) this.faceGroup.visible = true;
+    else this.faceGroup.visible = false;
+
+    /*
     let scene = this.getActiveScene(this.arrayScenes);
-    let isVisible = args[0];
 
     if(isVisible === 0 || isVisible === 1){
       if(isVisible){
@@ -484,7 +486,7 @@ class Sketch {
         scene.faceGroup.visible = false;
       }
     }
-
+*/
   }
   changeScene(args) {
     const $this = this;
