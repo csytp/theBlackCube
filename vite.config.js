@@ -148,6 +148,15 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Face Recognition
+  socket.on("showFr", (arg) => {
+    const messageArray = String(arg).split(/[\\s*]+/);
+    // [0]controll message [1 controll value]
+    for (const [client] of sequenceNumberByClient.entries()) {
+      client.emit("showFr", messageArray);
+    }
+  });
+
   // metro
   socket.on("metro", (arg) => {
     const messageArray = String(arg).split(/[\\s*]+/);
