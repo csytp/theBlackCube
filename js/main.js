@@ -63,7 +63,7 @@ socket.on("chgScn", (ctrlValue) => {
 });
 
 socket.on("showFr", (ctrlValue) => {
-  sketch.showFr(ctrlValue);
+  sketch.showFR(ctrlValue);
 });
 
 // SOCKET-IO -> WEB AUDIO
