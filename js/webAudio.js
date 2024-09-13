@@ -391,9 +391,9 @@ class WebAudio {
     // VERSIONE VECCHIA
     //const startColor = window.getComputedStyle(document.body).backgroundColor;
     // VERSIONE NUOVA
-    const superDiv = document.getElementById("superDiv");
+    const superDiv = document.getElementById("strobe_container");
     const startColor = window.getComputedStyle(superDiv).backgroundColor;
-    document.getElementById("superDiv").classList.remove("hidden");
+    document.getElementById("strobe_container").classList.remove("hidden");
     //const startColor = window.getComputedStyle(document.body.getElementById("superDiv")).backgroundColor;
 
     const startRgba = startColor.match(/\d+/g).map(Number); // Extract RGB values
@@ -409,10 +409,10 @@ class WebAudio {
         //document.body.style.backgroundColor = `rgba(${targetRgba.join(", ")})`;
         // NUOVA
         document.getElementById(
-          "superDiv"
+          "strobe_container"
         ).style.backgroundColor = `rgba(${targetRgba.join(", ")})`;
         if (args[3] == -1) {
-          document.getElementById("superDiv").classList.add("hidden");
+          document.getElementById("strobe_container").classList.add("hidden");
         }
         return;
       }
@@ -425,7 +425,7 @@ class WebAudio {
       // document.body.style.backgroundColor = `rgba(${interpolatedRgba.join(", ")})`;
       // NUOVO
       document.getElementById(
-        "superDiv"
+        "strobe_container"
       ).style.backgroundColor = `rgba(${interpolatedRgba.join(", ")})`;
 
       requestAnimationFrame(updateColor);
