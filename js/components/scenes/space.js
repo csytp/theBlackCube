@@ -44,8 +44,8 @@ class SpaceScene extends FxScene {
     this.controls.dampingFactor = 0.5;
     this.controls.noPan = true;
     this.controls.autoRotate = true;
-    // this.controls.minDistance = 5;
-    // this.controls.maxDistance = 20;
+    this.controls.minDistance = 5;
+    this.controls.maxDistance = 3000;
 
     // Objects
     this.space = this.cube = this.ico = {};
@@ -285,34 +285,33 @@ class SpaceScene extends FxScene {
         on: "click",
         element: document,
         event: (e) => {
-
           // this.camera.position.z = -100;
           tl.to(this.camera.position, {
             z: -100,
-            duration:1,
+            duration: 1,
             ease: "power3.out",
             onUpdate: () => {
-              this.camera.lookAt(0,0,0);
-            }
+              this.camera.lookAt(0, 0, 0);
+            },
           });
           tl.to(this.camera.position, {
             z: -20,
             y: 10,
-            duration:1,
+            duration: 1,
             ease: "power3.out",
             onUpdate: () => {
-              this.camera.lookAt(0,0,0);
-            }
+              this.camera.lookAt(0, 0, 0);
+            },
           });
           tl.to(this.camera.position, {
             z: -5,
             y: 5,
             x: 30,
-            duration:1,
+            duration: 1,
             ease: "power3.out",
             onUpdate: () => {
-              this.camera.lookAt(0,0,0);
-            }
+              this.camera.lookAt(0, 0, 0);
+            },
           });
 
           // gsap.to(

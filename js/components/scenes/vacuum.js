@@ -355,7 +355,7 @@ class Vacuum extends FxScene {
       start: 0,
       end: "max",
     });
-    ScrollTrigger.saveStyles(["text-container"]);
+    ScrollTrigger.saveStyles(["text_container"]);
   }
   fillMasterCube(thiz_fxscene) {
     function createCube(

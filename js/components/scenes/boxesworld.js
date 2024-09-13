@@ -82,7 +82,7 @@ class BoxesWorld extends FxScene {
     this.addLight(0.995, 0.5, 0.9, 5000, 5000, -1000);
 
     //Controls
-    this.controls = new OrbitControls(
+    this.controls = new TrackballControls(
       this.camera,
       this.sketch.renderer.domElement
     );
@@ -97,14 +97,15 @@ class BoxesWorld extends FxScene {
   }
   update(delta) {
     this.controls.update(delta);
-
+    this.camera.lookAt(7886, 308, -4600.39);
+/*
     for (let i = 0; i < this.cubesgrp.children.length; i++) {
-      this.cubesgrp.children[i].position.x += 100;
+      // this.cubesgrp.children[i].position.x += 100;
       // console.log(this.cubesgrp.children[i].position.x);
       // this.cubesgrp.children[i].getAttribute("position").needsUpdate = true;
 
       // this.scene.rotation.x += 0.00001;
-    }
+    }*/
   }
   addLight(h, s, l, x, y, z) {
     const light = new THREE.PointLight(0xffffff, 1.5, 2000, 0);

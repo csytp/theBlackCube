@@ -321,7 +321,7 @@ class Sketch {
     // window.addEventListener("resize", this.events.onWindowResize.bind(this), false);
     // document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
 
-    let myscene = [0];
+    let myscene = [2];
     this.changeScene(myscene);
   }
   init() {
@@ -471,6 +471,20 @@ class Sketch {
 
     this.arrayScenes[sceneIWant].visible = true;
     this.arrayScenes[sceneIWant].initEvents();
+  }
+  showFR(args){
+    let scene = this.getActiveScene(this.arrayScenes);
+    let isVisible = args[0];
+
+    if(isVisible === 0 || isVisible === 1){
+      if(isVisible){
+        scene.faceGroup.visible = true;
+      }
+      else{
+        scene.faceGroup.visible = false;
+      }
+    }
+
   }
   changeScene(args) {
     const $this = this;
