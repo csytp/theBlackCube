@@ -57,6 +57,7 @@ class FaceRecognition {
     }
     // Enable the live webcam view and start detection.
     function enableCam(event) {
+      console.log('enableCam FR');
       if (!faceLandmarker) {
         console.log("Wait! faceLandmarker not loaded yet.");
         return;

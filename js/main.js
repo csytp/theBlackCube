@@ -1,8 +1,29 @@
 // import "style.css";
+
+
 import WebAudio from "./webAudio.js";
 import Sketch from "./app.js";
 import FaceRecognition from "./face-recognition/face-recognition.js";
 import NoSleep from "nosleep.js";
+
+
+// rimuove bottone
+function removePresentation(e) {
+  let button_container = document.getElementById("presentation_container");
+  button_container.remove();
+
+  // if (window.matchMedia("(max-width: 768px)").matches) {
+  //   if (this.elem.requestFullscreen) {
+  //     this.elem.requestFullscreen();
+  //   } else if (this.elem.webkitRequestFullscreen) {
+  //     /* Safari */
+  //     this.elem.webkitRequestFullscreen();
+  //   } else if (this.elem.msRequestFullscreen) {
+  //     /* IE11 */
+  //     this.elem.msRequestFullscreen();
+  //   }
+  // }
+}
 
 //Page Reload
 /*
@@ -26,16 +47,17 @@ sketch.init();
 // Face Recognition
 const fr = new FaceRecognition(sketch);
 
-// Event to start Audio Engine - and remove
+// Event to start
 document.getElementById("hideButton").addEventListener(
   "click",
   (e) => {
     e.preventDefault();
     e.stopImmediatePropagation();
-    webaudio.removeButton(e);
+    removePresentation(e);
+    webaudio.init(e);
     noSleep.enable();
     webaudio.initCsound(); // Initialize Csound asynchronously
-    // fr.startFR();
+    fr.startFR();
   },
   false
 );

@@ -476,26 +476,12 @@ class WebAudio {
   }
 
   // rimuove bottone
-  removeButton(e) {
-    let button_container = document.getElementById("presentation_container");
-    button_container.remove();
+  init(e) {
     //create a synth and connect it to the main output (your speakers)
     const debug = new Tone.Synth().toDestination();
     debug.volume.value = -Infinity;
     //play a middle 'C' for the duration of an 8th note
     debug.triggerAttackRelease("C4", "16n");
-
-    if (window.matchMedia("(max-width: 768px)").matches) {
-      if (this.elem.requestFullscreen) {
-        this.elem.requestFullscreen();
-      } else if (this.elem.webkitRequestFullscreen) {
-        /* Safari */
-        this.elem.webkitRequestFullscreen();
-      } else if (this.elem.msRequestFullscreen) {
-        /* IE11 */
-        this.elem.msRequestFullscreen();
-      }
-    }
   }
 }
 export default WebAudio;

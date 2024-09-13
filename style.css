@@ -13,28 +13,23 @@
     }
     
     body{
-        @apply w-full h-full h-[100vh];
+        @apply w-full h-[100vh];
     }
-/*
-    #app,
-    #face-recognition{
-        @apply border-red-500 border-2;  
-    }*/
+
     #app{
         @apply relative;
-        /*transform: translateY(150px);*/
     }
 
     
     #text_container{
-        /* @apply absolute top-0 left-0 w-full h-full z-20; */
-        @apply absolute bottom-0 left-0 w-full z-20;
+        @apply absolute top-0 left-0 w-full z-20;
         @apply pointer-events-none;
-        @apply grid grid-cols-2;
+        @apply grid grid-cols-1 lg:grid-cols-2;
     }
 
     #text_container p{
-        @apply border-2 border-red-500 ;
+        @apply text-xl  lg:even:text-right;
+        @apply bg-gradient-to-r bg-clip-text  text-transparent from-black via-green-400 to-black;
     }
 
     #text_container .text{
@@ -51,7 +46,7 @@
         @apply absolute left-0 top-0 w-full h-[100vh] z-30;
         @apply p-10;
         @apply bg-white flex flex-col items-center space-y-4 sm:space-y-10;
-        /* @apply hidden; */
+        @apply hidden;
     }
     #hideButton{
         @apply text-black bg-lime-400 px-10;

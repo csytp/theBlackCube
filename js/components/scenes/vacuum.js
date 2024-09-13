@@ -38,6 +38,8 @@ class Vacuum extends FxScene {
       this.sketch.renderer.domElement
     );
     this.controls.enabled = true;
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.5;
     this.controls.rotateSpeed = 1.0;
     this.controls.zoomSpeed = 1.2;
     this.controls.noPan = true;
@@ -863,13 +865,10 @@ class Vacuum extends FxScene {
   updateDIVText() {
     const text_container = document.getElementById("text_container");
 
-    let degreeXRot =
-      (this.valoreFinaleXRot - this.valoreInizialeXRot) * (180 / Math.PI);
-    let degreeYRot =
-      (this.valoreFinaleYRot - this.valoreInizialeYRot) * (180 / Math.PI);
-    let degreeZRot =
-      (this.valoreFinaleZRot - this.valoreInizialeZRot) * (180 / Math.PI);
-    let zoomValue = this.valoreZoomFinale - this.valoreZoomIniziale;
+    let degreeXRot = this.valoreFinaleXRot * (180 / Math.PI);
+    let degreeYRot = this.valoreFinaleYRot * (180 / Math.PI);
+    let degreeZRot = this.valoreFinaleZRot * (180 / Math.PI);
+    let zoomValue = this.valoreZoomFinale;
     degreeXRot = degreeXRot.toFixed(2);
     degreeYRot = degreeYRot.toFixed(2);
     degreeZRot = degreeZRot.toFixed(2);
@@ -878,45 +877,41 @@ class Vacuum extends FxScene {
     degreeYRot = degreeYRot > 0 ? "+" + degreeYRot + "°" : degreeYRot + "°";
     degreeZRot = degreeZRot > 0 ? "+" + degreeZRot + "°" : degreeZRot + "°";
 
-    let pElemXRot = document.querySelector(".x"); //document.createElement("p");
-    let pElemYRot = document.querySelector(".y"); //document.createElement("p");
-    let pElemZRot = document.querySelector(".z"); //document.createElement("p");
-    let pElemZoom = document.querySelector(".zoom"); //document.createElement("p");
-    let contentX = "<x-rotation>" + degreeXRot + "</x-rotation>";
+    let pElemXRot = document.querySelector(".x");
+    let pElemYRot = document.querySelector(".y");
+    let pElemZRot = document.querySelector(".z");
+    let pElemZoom = document.querySelector(".zoom");
 
-    let contentY = "<y-rotation>" + degreeYRot + "</y-rotation>";
-
-    let contentZ = "<z-rotation>" + degreeZRot + "</z-rotation>";
-
-    let contentZoom;
-
-    if (zoomValue == 0) {
-      contentZoom = "<zoom>" + zoomValue + "</zoom>";
-    } else if (zoomValue > 0) {
-      contentZoom = "<zoom-out>" + zoomValue + "</zoom-out>";
-    } else {
-      contentZoom = "<zoom-in>" + zoomValue + "</zoom-in>";
-    }
+    let contentX = "&lt;x-rotation&gt;" + degreeXRot + "&lt;/x-rotation&gt;";
+    let contentY = "&lt;y-rotation&gt;" + degreeYRot + "&lt;/y-rotation&gt;";
+    let contentZ = "&lt;z-rotation&gt;" + degreeZRot + "&lt;/z-rotation&gt;";
+    let contentZoom = "&lt;zoom&gt;" + zoomValue + "&lt;/zoom&gt;";
 
     pElemXRot.innerHTML = contentX;
     pElemYRot.innerHTML = contentY;
     pElemZRot.innerHTML = contentZ;
     pElemZoom.innerHTML = contentZoom;
-    // pElemYRot.appendChild(contentY);
-    // pElemZRot.appendChild(contentZ);
-    // pElemZoom.appendChild(contentZoom);
 
     if (Math.random() > 0.7) pElemXRot.classList.add("text-blink-it");
+    else pElemXRot.classList.remove("text-blink-it");
     if (Math.random() > 0.7) pElemYRot.classList.add("text-blink-it");
+    else pElemYRot.classList.remove("text-blink-it");
     if (Math.random() > 0.7) pElemZRot.classList.add("text-blink-it");
+    else pElemZRot.classList.remove("text-blink-it");
     if (Math.random() > 0.7) pElemZoom.classList.add("text-blink-it");
+    else pElemZoom.classList.remove("text-blink-it");
 
     if (text_container) {
+      // if (!ScrollTrigger.isInViewport(text_container, 1)) {
+      //   let true_height = document.body.clientHeight - window.innerHeight;
+
+      //   text_container.classList.add(`!bottom-${parseInt(true_height / 4)}`);
+      //   alert(`!bottom-${parseInt(true_height / 4)}`);
+      // }
       text_container.appendChild(pElemXRot);
       text_container.appendChild(pElemYRot);
       text_container.appendChild(pElemZRot);
       text_container.appendChild(pElemZoom);
-      // /this.addScrollTextTimeLine(text_container);
     }
 
     this.valoreInizialeXRot = this.valoreFinaleXRot;
@@ -927,7 +922,10 @@ class Vacuum extends FxScene {
 
   enableControls(flag) {
     // -> linked to Face Recognition
-    if (flag === true || flag === false) this.controls.enabled = flag;
+    this.controls.enableDamping = flag;
+    if (flag === true || flag === false) {
+      this.controls.enabled = flag;
+    }
 
     if (flag === false) {
       if (this.sketch.fxSceneA.visible === true) {
