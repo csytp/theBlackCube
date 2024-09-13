@@ -1,13 +1,11 @@
 // import "style.css";
 
-
 import WebAudio from "./webAudio.js";
 import Sketch from "./app.js";
 import FaceRecognition from "./face-recognition/face-recognition.js";
 import NoSleep from "nosleep.js";
 
-
-// rimuove bottone
+// Remove presentation
 function removePresentation(e) {
   let button_container = document.getElementById("presentation_container");
   button_container.remove();
@@ -25,13 +23,6 @@ function removePresentation(e) {
   // }
 }
 
-//Page Reload
-/*
-document.addEventListener("visibilitychange", function () {
-  if (document.visibilityState === "visible") {
-    location.reload();
-  }
-});*/
 // No Sleep
 const noSleep = new NoSleep();
 

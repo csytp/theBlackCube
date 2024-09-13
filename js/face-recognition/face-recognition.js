@@ -176,7 +176,7 @@ class FaceRecognition {
           $this.sketch.fxSceneB.faceGroup.visible = false;
         }
 
-        console.log($this.faceDetected);
+        // console.log($this.faceDetected);
 
         return;
       }
@@ -193,7 +193,7 @@ class FaceRecognition {
           $this.sketch.fxSceneB.faceGroup.visible = true;
         }
 
-        console.log($this.faceDetected);
+        // console.log($this.faceDetected);
       }
 
       let htmlMaker = "";
