@@ -738,6 +738,7 @@ class Vacuum extends FxScene {
 
   initEvents() {
     const $this = this;
+
     this.eventsArray = [
       {
         on: "change",
@@ -745,6 +746,7 @@ class Vacuum extends FxScene {
         event: (e) => {
           $this.readRotationValues();
           $this.readZoomValue();
+          $this.updateDIVText();
         },
       },
       {
@@ -766,6 +768,18 @@ class Vacuum extends FxScene {
             $this.aperturaMastercube();
             $this.masterCubeOpened = true;
           }
+        },
+      },
+      /*
+      {
+        on: "mousedown",
+        element: document,
+        event: () => {
+          
+          if (!$this.masterCubeOpened) {
+            $this.aperturaMastercube();
+            $this.masterCubeOpened = true;
+          }
 
           $this.onMouseMove = true;
 
@@ -778,14 +792,16 @@ class Vacuum extends FxScene {
         },
       },
       {
+        /*
         on: "mouseup",
         element: document,
         event: () => {
           $this.onMouseMove = false;
           clearInterval($this.needle);
-        },
+        }
       },
       {
+        /*
         on: "click",
         element: document,
         event: () => {
@@ -793,9 +809,10 @@ class Vacuum extends FxScene {
             $this.initTextScrolling();
             $this.launchTextScrolling();
           }
-        },
+        }
       },
       {
+        /*
         on: "touchstart",
         element: document,
         event: () => {
@@ -815,30 +832,97 @@ class Vacuum extends FxScene {
               $this.launchTextScrolling();
             }
           }, 2000);
-        },
+        }
       },
       {
+        /*
         on: "touchmove",
         element: document,
         event: () => {
           $this.onTouchMove = true;
-        },
+        }
       },
       {
+        /*
         on: "touchend",
         element: document,
         event: () => {
           $this.onTouchMove = false;
           clearInterval($this.needle);
-        },
-      },
+        }
+      },*/
     ];
 
     this.eventsArray.forEach((objEvent) => {
-      console.log(objEvent);
-      console.log(objEvent.element);
+      // console.log(objEvent);
+      // console.log(objEvent.element);
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
     });
+  }
+
+  updateDIVText() {
+    const text_container = document.getElementById("text_container");
+
+    let degreeXRot =
+      (this.valoreFinaleXRot - this.valoreInizialeXRot) * (180 / Math.PI);
+    let degreeYRot =
+      (this.valoreFinaleYRot - this.valoreInizialeYRot) * (180 / Math.PI);
+    let degreeZRot =
+      (this.valoreFinaleZRot - this.valoreInizialeZRot) * (180 / Math.PI);
+    let zoomValue = this.valoreZoomFinale - this.valoreZoomIniziale;
+    degreeXRot = degreeXRot.toFixed(2);
+    degreeYRot = degreeYRot.toFixed(2);
+    degreeZRot = degreeZRot.toFixed(2);
+    zoomValue = zoomValue.toFixed(2);
+    degreeXRot = degreeXRot > 0 ? "+" + degreeXRot + "°" : degreeXRot + "°";
+    degreeYRot = degreeYRot > 0 ? "+" + degreeYRot + "°" : degreeYRot + "°";
+    degreeZRot = degreeZRot > 0 ? "+" + degreeZRot + "°" : degreeZRot + "°";
+
+    let pElemXRot = document.querySelector(".x"); //document.createElement("p");
+    let pElemYRot = document.querySelector(".y"); //document.createElement("p");
+    let pElemZRot = document.querySelector(".z"); //document.createElement("p");
+    let pElemZoom = document.querySelector(".zoom"); //document.createElement("p");
+    let contentX = "<x-rotation>" + degreeXRot + "</x-rotation>";
+
+    let contentY = "<y-rotation>" + degreeYRot + "</y-rotation>";
+
+    let contentZ = "<z-rotation>" + degreeZRot + "</z-rotation>";
+
+    let contentZoom;
+
+    if (zoomValue == 0) {
+      contentZoom = "<zoom>" + zoomValue + "</zoom>";
+    } else if (zoomValue > 0) {
+      contentZoom = "<zoom-out>" + zoomValue + "</zoom-out>";
+    } else {
+      contentZoom = "<zoom-in>" + zoomValue + "</zoom-in>";
+    }
+
+    pElemXRot.innerHTML = contentX;
+    pElemYRot.innerHTML = contentY;
+    pElemZRot.innerHTML = contentZ;
+    pElemZoom.innerHTML = contentZoom;
+    // pElemYRot.appendChild(contentY);
+    // pElemZRot.appendChild(contentZ);
+    // pElemZoom.appendChild(contentZoom);
+
+    if (Math.random() > 0.7) pElemXRot.classList.add("text-blink-it");
+    if (Math.random() > 0.7) pElemYRot.classList.add("text-blink-it");
+    if (Math.random() > 0.7) pElemZRot.classList.add("text-blink-it");
+    if (Math.random() > 0.7) pElemZoom.classList.add("text-blink-it");
+
+    if (text_container) {
+      text_container.appendChild(pElemXRot);
+      text_container.appendChild(pElemYRot);
+      text_container.appendChild(pElemZRot);
+      text_container.appendChild(pElemZoom);
+      // /this.addScrollTextTimeLine(text_container);
+    }
+
+    this.valoreInizialeXRot = this.valoreFinaleXRot;
+    this.valoreInizialeYRot = this.valoreFinaleYRot;
+    this.valoreInizialeZRot = this.valoreFinaleZRot;
+    this.valoreZoomIniziale = this.valoreZoomFinale;
   }
 
   enableControls(flag) {

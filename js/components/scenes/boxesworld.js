@@ -1,7 +1,8 @@
 import * as THREE from "three";
 
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { FlyControls } from "three/addons/controls/FlyControls.js";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { TrackballControls } from "three/examples/jsm/Addons.js";
+// import { FlyControls } from "three/addons/controls/FlyControls.js";
 import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
 
 import FxScene from "../fxscene.js";
@@ -14,25 +15,23 @@ class BoxesWorld extends FxScene {
       false
     );
 
-    this.paramsFxScene = {
-      sceneAnimate: false,
-      transitionAnimate: true,
-      transition: 0,
-      useTexture: true,
-      texture: 5,
-      cycle: true,
-      threshold: 0.1,
-    };
-
-    this.rotationSpeed = new THREE.Vector3(0, -0.4, 0);
-
-    // Camera
-    this.camera.fov = 40;
-    this.camera.near = 1;
-    this.camera.position.z = 250;
+    this.cubesArray = [];
+    this.cubesgrp = new THREE.Group();
+    this.scene.add(this.cubesgrp);
 
     // Scene
     this.scene.fog = new THREE.Fog(this.scene.background, 3500, 15000);
+    this.scene.rotation.y = 1.5 * Math.PI;
+
+    // Camera
+    // 7886.111626631097, y: 308.4017021410537, z: -4600.391119593611
+    this.camera.position.set(7886, 308, -4600.39);
+    // this.camera.position.set(5000, 0, -1000); // ok - luce blue
+    // this.camera.position.set(0, 0, -1000); // OK  - luce gialla
+    // this.camera.position.set(5000, 5000, -1000); // OK - luce bianca
+
+    this.camera.lookAt(this.scene.position);
+    this.scene.add(this.camera);
 
     const s = 250;
 
@@ -57,7 +56,8 @@ class BoxesWorld extends FxScene {
       mesh.matrixAutoUpdate = false;
       mesh.updateMatrix();
 
-      this.scene.add(mesh);
+      this.cubesgrp.add(mesh);
+      // this.cubesArray.push(mesh);
     }
 
     // Lights
@@ -82,26 +82,28 @@ class BoxesWorld extends FxScene {
     this.addLight(0.995, 0.5, 0.9, 5000, 5000, -1000);
 
     //Controls
-    this.controls = new FlyControls(
+    this.controls = new OrbitControls(
       this.camera,
       this.sketch.renderer.domElement
     );
-    this.controls.movementSpeed = 2500;
-    this.controls.domElement = this.sketch.renderer.domElement;
-    this.controls.rollSpeed = Math.PI / 6;
-    this.controls.autoForward = false;
-    this.controls.dragToLook = false;
+    this.controls.enabled = true;
+    this.controls.rotateSpeed = 1;
+    this.controls.zoomSpeed = 1;
+    this.controls.noPan = true;
 
-    //return this.scene;
+    this.initCube();
+
+    console.log(this.scene);
   }
   update(delta) {
-    //console.log('bworld',delta*10000);
-    this.controls.update(delta * 10);
-    //console.log('UPDATE', this.sketch.paramsFxScene.sceneAnimate);
-    if (this.paramsFxScene.sceneAnimate) {
-      // this.scene.rotation.x += this.rotationSpeed.x * delta;
-      this.scene.rotation.y += this.rotationSpeed.y * delta * 10;
-      // this.scene.rotation.z += this.rotationSpeed.z * delta;
+    this.controls.update(delta);
+
+    for (let i = 0; i < this.cubesgrp.children.length; i++) {
+      this.cubesgrp.children[i].position.x += 100;
+      // console.log(this.cubesgrp.children[i].position.x);
+      // this.cubesgrp.children[i].getAttribute("position").needsUpdate = true;
+
+      // this.scene.rotation.x += 0.00001;
     }
   }
   addLight(h, s, l, x, y, z) {
@@ -119,6 +121,8 @@ class BoxesWorld extends FxScene {
     lensflare.addElement(new LensflareElement(this.textureFlare3, 120, 0.9));
     lensflare.addElement(new LensflareElement(this.textureFlare3, 70, 1));
     light.add(lensflare);
+
+    //console.log(light.position);
   }
   initTextures(sketch) {
     const loader = new THREE.TextureLoader();
@@ -128,11 +132,47 @@ class BoxesWorld extends FxScene {
         "./textures/transitions/transition" + (i + 1) + ".png"
       );
     }
-    // sketch.renderTransitionPass.setTexture(sketch.texturesFxScene[0]);
-    // sketch.composer.addPass(sketch.renderTransitionPass);
-    // sketch.composer.dispose();
   }
-  enableControls(flag) { // -> linked to Face Recognition
+
+  initCube() {
+    const geometry = new THREE.BoxGeometry(10, 10, 10);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+
+    this.cube = new THREE.Mesh(geometry, material);
+    this.cube.position.set(this.camera.position.x,this.camera.position.y,this.camera.position.z);
+
+    this.cube.position.set(7886, 308, -4600.39);
+    this.scene.add(this.cube);
+  }
+  initEvents() {
+    const $this = this;
+    this.eventsArray = [
+      {
+        on: "change",
+        element: this.controls,
+        event: (e) => {
+          // this.mouse.set(
+          //   (e.clientX / this.sketch.sizes.width) * 2 - 1,
+          //   -(e.clientY / this.sketch.sizes.height) * 2 + 1);
+
+          console.log(this.camera.position);
+        },
+      },
+    ];
+
+    this.eventsArray.forEach((objEvent) => {
+      objEvent.element.addEventListener(objEvent.on, objEvent.event);
+    });
+  }
+
+  removeEvents() {
+    this.eventsArray.forEach((e) => {
+      e.element.removeEventListener(e.on, e.event);
+    });
+  }
+
+  enableControls(flag) {
+    // -> linked to Face Recognition
     if (flag === true || flag === false) this.controls.enabled = flag;
 
     console.log(this.controls.enabled);

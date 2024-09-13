@@ -27,21 +27,22 @@
 
     
     #text_container{
-        @apply absolute top-0 left-0 w-full h-full z-20;
+        /* @apply absolute top-0 left-0 w-full h-full z-20; */
+        @apply absolute bottom-0 left-0 w-full z-20;
         @apply pointer-events-none;
+        @apply grid grid-cols-2;
+    }
+
+    #text_container p{
+        @apply border-2 border-red-500 ;
     }
 
     #text_container .text{
         @apply absolute left-0 -bottom-1/4;
     }
     #text_container .text-line-code{
-        /* @apply border-b-2 border-red-500; */
         @apply text-lg sm:text-xl font-bold;
-        @apply bg-gradient-to-r bg-clip-text text-transparent animate-text;
-        /* --tw-gradient-to: rgb(124 45 18 / 0)  var(--tw-gradient-to-position);
-        --tw-gradient-stops: var(--tw-gradient-from), #7c2d12 var(--tw-gradient-via-position), var(--tw-gradient-to); */
-            
-        
+        @apply bg-gradient-to-r bg-clip-text text-transparent animate-text;      
     }
     #text_container .text-blink-it{}
 

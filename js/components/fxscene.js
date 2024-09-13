@@ -22,9 +22,6 @@ class FxScene {
       threshold: 0.1,
     };
 
-    //Events
-    this.setupEvents();
-
     // Camera
     this.setupCamera();
 
@@ -54,11 +51,6 @@ class FxScene {
     this.camera.position.z = 20;
   }
 
-  setupEvents() {
-    this.events = new FxSceneEvents(this);
-  }
-
-  //"./../../public/WaltHeadLo_buffergeometry.json"
   createFace() {
     let $this = this;
     new THREE.BufferGeometryLoader().load(
