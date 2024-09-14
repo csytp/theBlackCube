@@ -164,48 +164,46 @@ class FaceRecognition {
       }
     }
     function drawBlendShapes(el, blendShapes) {
-      console.log('from FR', $this.sketch.fxSceneA.faceGroup.visible);
-      if (!blendShapes.length) {
-        //Riconosce No Face -> Togli mesh busto
-        $this.faceDetected = false;
-        $this.sketch.fxSceneA.faceGroup.visible = false;
+      //console.log("FRisVisible", $this.sketch.FRisVisible);
+      if ($this.sketch.FRisVisible === true) {
+        console.log("from FR", $this.sketch.fxSceneA.faceGroup.visible);
+        if (!blendShapes.length) {
+          //Riconosce No Face -> Togli mesh busto
+          $this.faceDetected = false;
 
+          if ($this.sketch.fxSceneA.visible === true) {
+            $this.sketch.fxSceneA.enableControls(true);
+            $this.sketch.fxSceneA.faceGroup.visible = false;
+          } else if ($this.sketch.fxSceneB.visible === true) {
+            $this.sketch.fxSceneB.enableControls(true);
+            $this.sketch.fxSceneA.faceGroup.visible = false;
+          }
 
-        if ($this.sketch.fxSceneA.visible === true) {
-          $this.sketch.fxSceneA.enableControls(true);
-        } else if ($this.sketch.fxSceneB.visible === true) {
-          $this.sketch.fxSceneB.enableControls(true);
+          // console.log($this.faceDetected);
+
+          return;
         }
 
-        // console.log($this.faceDetected);
+        //Riconosce Face -> Metti mesh
+        if ($this.faceDetected === false) {
+          $this.faceDetected = true;
 
-        return;
-      }
+          if ($this.sketch.fxSceneA.visible === true) {
+            $this.sketch.fxSceneA.enableControls(false);
+            $this.sketch.fxSceneA.faceGroup.visible = true;
+          } else if ($this.sketch.fxSceneB.visible === true) {
+            $this.sketch.fxSceneB.enableControls(false);
+            $this.sketch.fxSceneB.faceGroup.visible = true;
+          }
 
-      //Riconosce Face -> Metti mesh
-      if (
-        $this.faceDetected === false &&
-        ($this.sketch.fxSceneA.faceGroup.visible === true ||
-          $this.sketch.fxSceneB.faceGroup.visible === true)
-      ) {
-        $this.faceDetected = true;
-
-        if ($this.sketch.fxSceneA.visible === true) {
-          $this.sketch.fxSceneA.enableControls(false);
-          //$this.sketch.fxSceneA.faceGroup.visible = true;
-        } else if ($this.sketch.fxSceneB.visible === true) {
-          $this.sketch.fxSceneB.enableControls(false);
-          //$this.sketch.fxSceneB.faceGroup.visible = true;
+          // console.log($this.faceDetected);
         }
 
-        // console.log($this.faceDetected);
-      }
+        let htmlMaker = "";
 
-      let htmlMaker = "";
-
-      blendShapes[0].categories.map((shape) => {
-        //console.log(shape);
-        htmlMaker += `
+        blendShapes[0].categories.map((shape) => {
+          //console.log(shape);
+          htmlMaker += `
       <li class="blend-shapes-item">
         <span class="blend-shapes-label">${
           shape.displayName || shape.categoryName
@@ -215,9 +213,19 @@ class FaceRecognition {
         }% - 120px)">${(+shape.score).toFixed(4)}</span>
       </li>
     `;
-      });
-      //console.log(htmlMaker);
-      el.innerHTML = htmlMaker;
+        });
+        //console.log(htmlMaker);
+        el.innerHTML = htmlMaker;
+      } else {
+        $this.faceDetected = false;
+        if ($this.sketch.fxSceneA.visible === true) {
+          $this.sketch.fxSceneA.enableControls(true);
+          $this.sketch.fxSceneA.faceGroup.visible = false;
+        } else if ($this.sketch.fxSceneB.visible === true) {
+          $this.sketch.fxSceneB.enableControls(true);
+          $this.sketch.fxSceneA.faceGroup.visible = false;
+        }
+      }
     }
   }
   hasGetUserMedia() {

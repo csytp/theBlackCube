@@ -275,6 +275,8 @@ class Sketch {
       height: window.innerHeight,
     };
 
+    this.FRisVisible = 0;
+
     this.renderer = new Renderer(this);
     this.animator = new Animator(this, this.clock);
     this.composer = new EffectComposer(this.renderer);
@@ -474,13 +476,18 @@ class Sketch {
   showFR(args) {
 
     //let indexThisScene = this.getActiveScene(this.arrayScenes).index;
-    let isVisible = args[0];
+    this.FRisVisible = args[0];
 
-    console.log('visible', isVisible);
+    console.log('visible', this.FRisVisible);
+
+    if(this.FRisVisible == 0)
+      this.FRisVisible = false;
+    else if (this.FRisVisible == 1)
+      this.FRisVisible = true;
     
-    
-    if(isVisible === 0 || isVisible === 1){
-      if(isVisible){
+    /*
+    if(this.FRisVisible === 0 || this.FRisVisible === 1){
+      if(this.FRisVisible){
         if(this.transitionParams == 1)
           this.fxSceneA.faceGroup.visible = true;
           else
@@ -492,7 +499,7 @@ class Sketch {
           else
           this.fxSceneB.faceGroup.visible = false;
       }
-    }
+    }*/
     //console.log(this.arrayScenes[indexThisScene].faceGroup.visible);
 
   }
