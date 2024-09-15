@@ -20,9 +20,7 @@ class SpaceScene extends FxScene {
     //GSAP
     this.setupGSAP();
     this.myTween = [];
-
-    this.mouseX = 0;
-    this.mouseY = 0;
+    this.taskAnimationCube = [];
 
     this.pos = 0;
     this.pa = 0;
@@ -58,10 +56,47 @@ class SpaceScene extends FxScene {
     this.hovered = {};
 
     this.initSpace();
-    this.init2DCube();
-    // this.initIcosahedron();
+    this.initCube();
     this.initAnimations();
-    this.initRaycaster();
+
+    this.animationsCube = [
+      {
+        name: "rotation-dx",
+        fn: (inc) => {
+          this.cube.rotation.y += inc;
+        },
+      },
+      {
+        name: "rotation-sx",
+        fn: (inc) => {
+          this.cube.rotation.y += -inc;
+        },
+      },
+      {
+        name: "rotation-btm",
+        fn: (inc) => {
+          this.cube.rotation.x += inc;
+        },
+      },
+      {
+        name: "rotation-top",
+        fn: (inc) => {
+          this.cube.rotation.x += -inc;
+        },
+      },
+      {
+        name: "rotation-z",
+        fn: (inc) => {
+          this.cube.rotation.z += inc;
+        },
+      },
+      {
+        name: "rotation-z2",
+        fn: (inc) => {
+          this.cube.rotation.z += -inc;
+        },
+      },
+    ];
 
     // this.effect = new ParallaxBarrierEffect(this.sketch.renderer);
     // this.effect.setSize(this.sketch.sizes.width, this.sketch.sizes.height);
@@ -74,6 +109,8 @@ class SpaceScene extends FxScene {
   }
   update(delta) {
     this.controls.update(delta);
+    this.taskAnimationCube.forEach((task) => task(delta));
+
     // this.effect.render(this.scene, this.camera);
 
     //On Mouse Move
@@ -99,8 +136,6 @@ class SpaceScene extends FxScene {
       }
     }
     this.starGeo.getAttribute("position").needsUpdate = true;
-
-    //this.camera.lookAt( this.scene.position );
 
     return delta;
   }
@@ -160,19 +195,37 @@ class SpaceScene extends FxScene {
     this.stars = new THREE.Points(this.starGeo, starMaterial);
     this.scene.add(this.stars);
   }
-  init2DCube() {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshStandardMaterial({ color: 0x3471eb });
 
-    this.cube = new THREE.Mesh(geometry, material);
-    this.scene.add(this.cube);
-  }
   initCube() {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshStandardMaterial({ color: 0x3471eb });
 
     this.cube = new THREE.Mesh(geometry, material);
     this.scene.add(this.cube);
+
+    function getRandomColor() {
+      let r = Math.floor(Math.random() * 255);
+      let g = Math.floor(Math.random() * 255);
+      let b = Math.floor(Math.random() * 255);
+      //let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
+      let color = new THREE.Color("rgb(" + r + ", " + g + ", " + b + ")");
+
+      return color;
+    }
+
+    function changeCubeColor(color) {
+      gsap.to(material.color, {
+        r: color.r,
+        g: color.g,
+        b: color.b,
+        duration: Math.random(),
+      });
+    }
+
+    setInterval(() => {
+      changeCubeColor(getRandomColor());
+      //console.log('cambio');
+    }, 2000);
   }
   initIcosahedron() {
     const geometry = new THREE.IcosahedronGeometry(1, 100);
@@ -200,16 +253,16 @@ class SpaceScene extends FxScene {
       // () => (this.cube.rotation.y = -(Date.now() * 0.01)) //Cube rotation
     );*/
   }
-  initRaycaster() {
-    // EVENT LISTENERS
-
-    // console.log(this.mouse);
+  mouseIntersections(e) {
+    this.mouse.set(
+      (e.clientX / this.sketch.sizes.width) * 2 - 1,
+      -(e.clientY / this.sketch.sizes.height) * 2 + 1
+    );
 
     this.raycaster.setFromCamera(this.mouse, this.camera);
     //intersects = raycaster.intersectObjects(scene.children, true);
-    this.intersects = this.raycaster.intersectObjects(this.cube, true);
-
-    // console.log(this.intersects);
+    this.intersects = this.raycaster.intersectObjects(this.cube, false);
+    console.log(this.intersects);
     /*
       Object.keys(hovered).forEach((key) => {
         const hit = intersects.find((hit) => hit.object.uuid === key)
@@ -220,13 +273,17 @@ class SpaceScene extends FxScene {
         }
       });*/
     //});
+  }
 
-    // window.addEventListener("resize", onWindowResize);
-    //window.addEventListener("click", this.onMouseClick, false);
+  addAnimationTask(task) {
+    this.taskAnimationCube.pop();
+    this.taskAnimationCube.push(task);
   }
 
   initEvents(cam) {
     const $this = this;
+
+    //let indexTaskAnimationCube = 0;
 
     const animCubeRotationY = {
       duration: 1,
@@ -260,7 +317,10 @@ class SpaceScene extends FxScene {
       },
     };
 
-    const tl = gsap.timeline();
+    const tl1 = gsap.timeline();
+    const tl2 = gsap.timeline();
+    const rangeCameraMov = 20;
+    const durCameraMov = 0.8;
 
     this.eventsArray = [
       {
@@ -274,60 +334,82 @@ class SpaceScene extends FxScene {
         on: "mousemove",
         element: document,
         event: (e) => {
-          // this.mouse.set(
-          //   (e.clientX / this.sketch.sizes.width) * 2 - 1,
-          //   -(e.clientY / this.sketch.sizes.height) * 2 + 1);
-          // $this.mouseX = (e.clientX - $this.sketch.sizes.width) / 4;
-          // $this.mouseY = (e.clientY - $this.sketch.sizes.height) / 4;
+          $this.mouseIntersections(e);
         },
       },
       {
-        on: "click",
+        on: "keydown",
         element: document,
         event: (e) => {
-          // this.camera.position.z = -100;
-          tl.to(this.camera.position, {
-            z: -100,
-            duration: 1,
-            ease: "power3.out",
-            onUpdate: () => {
-              this.camera.lookAt(0, 0, 0);
-            },
-          });
-          tl.to(this.camera.position, {
-            z: -20,
-            y: 10,
-            duration: 1,
-            ease: "power3.out",
-            onUpdate: () => {
-              this.camera.lookAt(0, 0, 0);
-            },
-          });
-          tl.to(this.camera.position, {
-            z: -5,
-            y: 5,
-            x: 30,
-            duration: 1,
-            ease: "power3.out",
-            onUpdate: () => {
-              this.camera.lookAt(0, 0, 0);
-            },
-          });
+          const keyName = e.key;
 
-          // gsap.to(
-          //   {},
-          //   {
-          //     duration: 2,
-          //     onUpdate: function () {
-          //       // $this.camera.quaternion
-          //       //   .copy(startOrientation)
-          //       //   .slerp(targetOrientation, this.progress());
-          //     },
-          //   }
-          // );
+          if (keyName === "0") {
+            const dir = Math.random() > 0.5 ? 1 : -1;
+            const x1 = dir * Math.random() * rangeCameraMov;
+            const x2 = dir * Math.random() * rangeCameraMov;
+            const x3 = dir * Math.random() * rangeCameraMov;
+            const y1 = dir * Math.random() * rangeCameraMov;
+            const y2 = dir * Math.random() * rangeCameraMov;
+            const y3 = dir * Math.random() * rangeCameraMov;
+            const z1 = dir * Math.random() * rangeCameraMov;
+            const z2 = dir * Math.random() * rangeCameraMov;
+            const z3 = dir * Math.random() * rangeCameraMov;
 
-          // this.myTween.push(gsap.to(this.camera.rotation, animCameraRotationY));
-          // this.myTween.push(gsap.to(this.cube.rotation, animCubeRotationY));
+            tl1.to(this.camera.position, {
+              x: x1,
+              y: y1,
+              z: z1,
+              duration: durCameraMov,
+              ease: "power3.out",
+              onUpdate: () => {
+                this.camera.lookAt(0, 0, 0);
+              },
+            });
+            tl1.to(this.camera.position, {
+              x: x2,
+              y: y2,
+              z: z2,
+              duration: durCameraMov,
+              ease: "power3.out",
+              onUpdate: () => {
+                this.camera.lookAt(0, 0, 0);
+              },
+            });
+            tl1.to(this.camera.position, {
+              x: x3,
+              y: y3,
+              z: z3,
+              duration: durCameraMov,
+              ease: "power3.out",
+              onUpdate: () => {
+                this.camera.lookAt(0, 0, 0);
+              },
+            });
+          }
+
+          if (keyName === "1") {
+            $this.addAnimationTask(
+              $this.animationsCube[parseInt(Math.random() * 5)].fn
+            );
+          }
+          if (keyName === "2") {
+            tl2.to(this.cube.position, {
+              x: this.cube.position.x + (10 * Math.random() - 5),
+              y: this.cube.position.y + (10 * Math.random() - 5),
+              z: this.cube.position.z + (10 * Math.random() - 5),
+              duration: 0.5,
+              ease: "elastic",
+              onComplete: () => {
+                tl2.to(this.cube.position, {
+                  x: 0,
+                  y: 0,
+                  z: 0,
+                  duration: 0.3,
+                  ease: "elastic",
+                });
+              },
+            });
+          }
         },
       },
       {

@@ -300,6 +300,11 @@ class Sketch {
       new BoxesWorld(this),
     ];
 
+    for (let i = 0; i < this.arrayScenes.length; i++) {
+      //if (i == 0) continue;
+      this.arrayScenes[i].removeEvents();
+    }
+
     this.fxSceneA = this.arrayScenes[0];
     this.fxSceneB = this.arrayScenes[1];
 
@@ -323,7 +328,7 @@ class Sketch {
     // window.addEventListener("resize", this.events.onWindowResize.bind(this), false);
     // document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
 
-    let myscene = [0];
+    let myscene = [1];
     this.changeScene(myscene);
   }
   init() {
@@ -411,23 +416,7 @@ class Sketch {
     this.composer.addPass(this.renderTransitionPass);
     this.composer.dispose();
   }
-  removeEvents() {
-    function removeAllEvents(node, event) {
-      if (node in _eventHandlers) {
-        var handlers = _eventHandlers[node];
-        if (event in handlers) {
-          var eventHandlers = handlers[event];
-          for (var i = eventHandlers.length; i--; ) {
-            var handler = eventHandlers[i];
-            node.removeEventListener(event, handler[0], handler[1]);
-          }
-        }
-      }
-    }
-    console.log("Window", window);
-    console.log("Document", document);
-    //removeAllEvents();
-  }
+
   getActiveScene(arrayScenes) {
     let activeScene = 0;
     for (let i = 0; i < arrayScenes.length; i++) {
@@ -449,10 +438,10 @@ class Sketch {
       this.renderTransitionPass = new RenderTransitionPass(
         this.fxSceneB.scene,
         this.fxSceneB.camera,
-        this.fxSceneB.controls.reset,
+        this.fxSceneB.controls.reset(),
         this.fxSceneA.scene,
         this.fxSceneA.camera,
-        this.fxSceneA.controls.reset
+        this.fxSceneA.controls.reset()
       );
       scene.removeEvents();
       this.transitionParams.transition = 1;
@@ -461,10 +450,10 @@ class Sketch {
       this.renderTransitionPass = new RenderTransitionPass(
         this.fxSceneA.scene,
         this.fxSceneA.camera,
-        this.fxSceneA.controls.reset,
+        this.fxSceneA.controls.reset(),
         this.fxSceneB.scene,
         this.fxSceneB.camera,
-        this.fxSceneB.controls.reset
+        this.fxSceneB.controls.reset()
       );
       scene.removeEvents();
       this.transitionParams.transition = 0;
@@ -474,34 +463,10 @@ class Sketch {
     this.arrayScenes[sceneIWant].initEvents();
   }
   showFR(args) {
-
-    //let indexThisScene = this.getActiveScene(this.arrayScenes).index;
     this.FRisVisible = args[0];
 
-    console.log('visible', this.FRisVisible);
-
-    if(this.FRisVisible == 0)
-      this.FRisVisible = false;
-    else if (this.FRisVisible == 1)
-      this.FRisVisible = true;
-    
-    /*
-    if(this.FRisVisible === 0 || this.FRisVisible === 1){
-      if(this.FRisVisible){
-        if(this.transitionParams == 1)
-          this.fxSceneA.faceGroup.visible = true;
-          else
-          this.fxSceneB.faceGroup.visible = true;
-      }
-      else{
-        if(this.transitionParams == 1)
-          this.fxSceneA.faceGroup.visible = false;
-          else
-          this.fxSceneB.faceGroup.visible = false;
-      }
-    }*/
-    //console.log(this.arrayScenes[indexThisScene].faceGroup.visible);
-
+    if (this.FRisVisible == 0) this.FRisVisible = false;
+    else if (this.FRisVisible == 1) this.FRisVisible = true;
   }
   changeScene(args) {
     const $this = this;

@@ -7,6 +7,8 @@ import { Lensflare, LensflareElement } from "three/addons/objects/Lensflare.js";
 
 import FxScene from "../fxscene.js";
 
+import { gsap } from "gsap";
+
 class BoxesWorld extends FxScene {
   constructor(sketch) {
     super(
@@ -14,6 +16,12 @@ class BoxesWorld extends FxScene {
       new THREE.Color().setHSL(0.51, 0.4, 0.01, THREE.SRGBColorSpace),
       false
     );
+
+    // Mouse
+    this.raycaster = new THREE.Raycaster();
+    this.mouse = new THREE.Vector2();
+    this.intersects = [];
+    this.hovered = {};
 
     this.cubesArray = [];
     this.cubesgrp = new THREE.Group();
@@ -23,15 +31,19 @@ class BoxesWorld extends FxScene {
     this.scene.fog = new THREE.Fog(this.scene.background, 3500, 15000);
     this.scene.rotation.y = 1.5 * Math.PI;
 
-    // Camera
-    // 7886.111626631097, y: 308.4017021410537, z: -4600.391119593611
-    this.camera.position.set(7886, 308, -4600.39);
-    // this.camera.position.set(5000, 0, -1000); // ok - luce blue
-    // this.camera.position.set(0, 0, -1000); // OK  - luce gialla
-    // this.camera.position.set(5000, 5000, -1000); // OK - luce bianca
-
-    this.camera.lookAt(this.scene.position);
-    this.scene.add(this.camera);
+    // Cameras
+    this.camera1 = this.camera;
+    this.camera2 = new THREE.OrthographicCamera(
+      this.sketch.sizes.width / -2,
+      this.sketch.sizes.width / 2,
+      this.sketch.sizes.height / 2,
+      this.sketch.sizes.height / -2,
+      1,
+      15000
+    );
+    this.lookAtPosition = { x: 0, y: 0, z: 0 };
+    this.scene.add(this.camera1);
+    this.scene.add(this.camera2);
 
     const s = 250;
 
@@ -39,7 +51,7 @@ class BoxesWorld extends FxScene {
     const material = new THREE.MeshPhongMaterial({
       color: 0xffffff,
       specular: 0xffffff,
-      shininess: 50,
+      shininess: 100,
     });
 
     for (let i = 0; i < 3000; i++) {
@@ -67,61 +79,119 @@ class BoxesWorld extends FxScene {
     dirLight.color.setHSL(0.1, 0.7, 0.5);
     this.scene.add(dirLight);
 
-    // Lensflares
-    const textureLoader = new THREE.TextureLoader();
-
-    this.textureFlare0 = textureLoader.load(
-      "../../textures/lensflare/lensflare0.png"
-    );
-    this.textureFlare3 = textureLoader.load(
-      "../../textures/lensflare/lensflare3.png"
-    );
-
     this.addLight(0.55, 0.9, 0.5, 5000, 0, -1000);
     this.addLight(0.08, 0.8, 0.5, 0, 0, -1000);
     this.addLight(0.995, 0.5, 0.9, 5000, 5000, -1000);
 
     //Controls
     this.controls = new TrackballControls(
-      this.camera,
+      this.camera1,
       this.sketch.renderer.domElement
     );
     this.controls.enabled = true;
     this.controls.rotateSpeed = 1;
     this.controls.zoomSpeed = 1;
     this.controls.noPan = true;
+    this.controls.minDistance = -2.5;
 
     this.initCube();
 
-    console.log(this.scene);
+    //Set camera
+    // inquadrature
+    this.cameraShots = [
+      //Lontana
+      { x: 7106.287968341558, y: 1691.1148224695248, z: 13663.693284260788 },
+      // - Luce blu
+      { x: 8366.434176961759, y: -222.3651995605373, z: 704.963879595055 },
+      // - Luce gialla
+      { x: 1348.2002668331943, y: 149.81932063733052, z: 1168.0375768908686 },
+      // - Luce bianca
+      { x: 8888.39699061364, y: 8806.610664274955, z: 1329.933494315267 },
+    ];
+
+    this.camera1.position.set(
+      this.cameraShots[0].x,
+      this.cameraShots[0].y,
+      this.cameraShots[0].z
+    );
+
+    this.taskAnimationScene = [];
+    this.animationsScene = [
+      {
+        name: "rotation-dx",
+        fn: (inc) => {
+          this.cubesgrp.rotation.y += inc;
+        },
+      },
+      {
+        name: "rotation-sx",
+        fn: (inc) => {
+          this.cubesgrp.rotation.y += -inc;
+        },
+      },
+      {
+        name: "rotation-btm",
+        fn: (inc) => {
+          this.cubesgrp.rotation.x += inc;
+        },
+      },
+      {
+        name: "rotation-top",
+        fn: (inc) => {
+          this.cubesgrp.rotation.x += -inc;
+        },
+      },
+      {
+        name: "rotation-z",
+        fn: (inc) => {
+          this.cubesgrp.rotation.z += inc;
+        },
+      },
+      {
+        name: "rotation-z2",
+        fn: (inc) => {
+          this.cubesgrp.rotation.z += -inc;
+        },
+      },
+    ];
+    this.tl = gsap.timeline(); // GSAP Timeline
+
+    this.initEvents();
   }
   update(delta) {
     this.controls.update(delta);
-    this.camera.lookAt(7886, 308, -4600.39);
-/*
-    for (let i = 0; i < this.cubesgrp.children.length; i++) {
-      // this.cubesgrp.children[i].position.x += 100;
-      // console.log(this.cubesgrp.children[i].position.x);
-      // this.cubesgrp.children[i].getAttribute("position").needsUpdate = true;
-
-      // this.scene.rotation.x += 0.00001;
-    }*/
+    this.camera1.lookAt(
+      this.lookAtPosition.x,
+      this.lookAtPosition.y,
+      this.lookAtPosition.z
+    );
+    this.taskAnimationScene.forEach((task) => task(delta));
   }
   addLight(h, s, l, x, y, z) {
-    const light = new THREE.PointLight(0xffffff, 1.5, 2000, 0);
-    light.color.setHSL(h, s, l);
-    light.position.set(x, y, z);
-    this.scene.add(light);
+    this.light = new THREE.PointLight(0xffffff, 1.5, 2000, 0);
+    this.light.color.setHSL(h, s, l);
+    this.light.position.set(x, y, z);
+    this.scene.add(this.light);
 
-    const lensflare = new Lensflare();
-    lensflare.addElement(
-      new LensflareElement(this.textureFlare0, 700, 0, light.color)
+    // Lensflares
+    const textureLoader = new THREE.TextureLoader();
+
+    const textureFlare0 = textureLoader.load(
+      "./../../../public/textures/lensflare0.png"
     );
-    lensflare.addElement(new LensflareElement(this.textureFlare3, 60, 0.6));
-    lensflare.addElement(new LensflareElement(this.textureFlare3, 70, 0.7));
-    lensflare.addElement(new LensflareElement(this.textureFlare3, 120, 0.9));
-    lensflare.addElement(new LensflareElement(this.textureFlare3, 70, 1));
-    light.add(lensflare);
+    const textureFlare3 = textureLoader.load(
+      "./../../../public/textures/lensflare3.png"
+    );
+
+    this.lensflare = new Lensflare();
+    this.lensflare.addElement(
+      new LensflareElement(textureFlare0, 700, 0, this.light.color)
+    );
+    this.lensflare.addElement(new LensflareElement(textureFlare3, 60, 0.6));
+    this.lensflare.addElement(new LensflareElement(textureFlare3, 70, 0.7));
+    this.lensflare.addElement(new LensflareElement(textureFlare3, 120, 0.9));
+    this.lensflare.addElement(new LensflareElement(textureFlare3, 70, 1));
+    this.light.add(this.lensflare);
 
     //console.log(light.position);
   }
@@ -130,23 +200,75 @@ class BoxesWorld extends FxScene {
 
     for (let i = 0; i < 6; i++) {
       sketch.texturesFxScene[i] = loader.load(
-        "./textures/transitions/transition" + (i + 1) + ".png"
+        "./../../../public/textures/transitions/transition" + (i + 1) + ".png"
       );
     }
   }
-
   initCube() {
-    const geometry = new THREE.BoxGeometry(10, 10, 10);
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
 
     this.cube = new THREE.Mesh(geometry, material);
-    this.cube.position.set(this.camera.position.x,this.camera.position.y,this.camera.position.z);
 
-    this.cube.position.set(7886, 308, -4600.39);
+    this.cube.position.set(0, 0, 0);
     this.scene.add(this.cube);
+
+    function getRandomColor() {
+      let r = Math.floor(Math.random() * 255);
+      let g = Math.floor(Math.random() * 255);
+      let b = Math.floor(Math.random() * 255);
+      //let color = new THREE.Color("rgb("+r+"%, "+g+"%, "+b+"%)");
+      let color = new THREE.Color("rgb(" + r + ", " + g + ", " + b + ")");
+
+      return color;
+    }
+
+    setInterval(() => {
+      material.color = getRandomColor();
+    }, 400);
+  }
+  changeShots(shot_position) {
+    const animProp = {
+      x: shot_position.x,
+      y: shot_position.y,
+      z: shot_position.z,
+      duration: 2,
+      ease: "power3-out",
+    };
+
+    this.tl.to(this.camera1.position, animProp);
+    this.tl.play();
+    // this.lookAtPosition = shot_position;
+  }
+  addAnimationTask(task) {
+    this.taskAnimationScene.pop();
+    this.taskAnimationScene.push(task);
+  }
+  mouseIntersections(e) {
+    this.mouse.set(
+      (e.clientX / this.sketch.sizes.width) * 2 - 1,
+      -(e.clientY / this.sketch.sizes.height) * 2 + 1
+    );
+
+    console.log(this.cube);
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    //intersects = raycaster.intersectObjects(scene.children, true);
+    this.intersects = this.raycaster.intersectObjects(this.cube, true);
+    console.log(this.intersects);
+    /*
+      Object.keys(hovered).forEach((key) => {
+        const hit = intersects.find((hit) => hit.object.uuid === key)
+        if (hit === undefined) {
+          const hoveredItem = hovered[key]
+          if (hoveredItem.object.onPointerOver) hoveredItem.object.onPointerOut(hoveredItem)
+          delete hovered[key]
+        }
+      });*/
+    //});
   }
   initEvents() {
     const $this = this;
+
     this.eventsArray = [
       {
         on: "change",
@@ -155,8 +277,31 @@ class BoxesWorld extends FxScene {
           // this.mouse.set(
           //   (e.clientX / this.sketch.sizes.width) * 2 - 1,
           //   -(e.clientY / this.sketch.sizes.height) * 2 + 1);
+        },
+      },
+      {
+        on: "mousemove",
+        element: document,
+        event: (e) => {
+          $this.mouseIntersections(e);
+        },
+      },
+      {
+        on: "keydown",
+        element: document,
+        event: (e) => {
+          const keyName = e.key;
 
-          console.log(this.camera.position);
+          if (keyName === "0") {
+            let l = $this.cameraShots.length - 1;
+            l = parseInt(Math.random() * l);
+            $this.changeShots($this.cameraShots[l]);
+          }
+          if (keyName === "1") {
+            let l = $this.animationsScene.length - 1;
+            l = parseInt(Math.random() * l);
+            $this.addAnimationTask($this.animationsScene[l].fn);
+          }
         },
       },
     ];
@@ -175,8 +320,6 @@ class BoxesWorld extends FxScene {
   enableControls(flag) {
     // -> linked to Face Recognition
     if (flag === true || flag === false) this.controls.enabled = flag;
-
-    console.log(this.controls.enabled);
 
     if (flag === false) {
       if (this.sketch.fxSceneA.visible === true) {

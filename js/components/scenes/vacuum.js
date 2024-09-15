@@ -216,7 +216,6 @@ class Vacuum extends FxScene {
     this.initLights();
     // this.initRoom();
     this.initControls();
-    this.initRaycaster();
 
     this.sketch.animator.add(
       () =>
@@ -409,22 +408,23 @@ class Vacuum extends FxScene {
       thiz_fxscene.masterCubeGrp.add(cube.mesh);
     });
   }
-  initRaycaster() {
+  mouseIntersections(e) {
     // EVENT LISTENERS
-    window.addEventListener("pointermove", (e) => {
-      this.mouse.set(
-        (e.clientX / this.sketch.sizes.width) * 2 - 1,
-        -(e.clientY / this.sketch.sizes.height) * 2 + 1
-      );
 
-      this.raycaster.setFromCamera(this.mouse, this.camera);
-      //intersects = raycaster.intersectObjects(scene.children, true);
-      this.intersects = this.raycaster.intersectObjects(
-        this.masterCubeGrp.children,
-        true
-      );
+    this.mouse.set(
+      (e.clientX / this.sketch.sizes.width) * 2 - 1,
+      -(e.clientY / this.sketch.sizes.height) * 2 + 1
+    );
 
-      /*
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    //intersects = raycaster.intersectObjects(scene.children, true);
+    this.intersects = this.raycaster.intersectObjects(
+      this.masterCubeGrp.children,
+      true
+    );
+
+    console.log(this.intersects);
+    /*
       Object.keys(hovered).forEach((key) => {
         const hit = intersects.find((hit) => hit.object.uuid === key)
         if (hit === undefined) {
@@ -433,11 +433,7 @@ class Vacuum extends FxScene {
           delete hovered[key]
         }
       });*/
-      this.randomCubeRotation(this.myTween, this.masterCubeGrp);
-    });
-
-    // window.addEventListener("resize", onWindowResize);
-    //window.addEventListener("click", this.onMouseClick, false);
+    this.randomCubeRotation(this.myTween, this.masterCubeGrp);
   }
   aperturaMastercube() {
     this.cubeArray.forEach((cube, index) => {
@@ -749,6 +745,13 @@ class Vacuum extends FxScene {
           $this.readRotationValues();
           $this.readZoomValue();
           $this.updateDIVText();
+        },
+      },
+      {
+        on: "mousemove",
+        element: document,
+        event: (e) => {
+          $this.mouseIntersections(e);
         },
       },
       {
