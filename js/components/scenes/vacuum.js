@@ -800,11 +800,13 @@ class Vacuum extends FxScene {
       },
     ];
 
+    let j = 0;
     this.eventsArray.forEach((objEvent) => {
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
       console.log(objEvent);
-
+      j++;
     });
+    console.log('lungh. array event', j);
   }
 
   updateDIVText() {
