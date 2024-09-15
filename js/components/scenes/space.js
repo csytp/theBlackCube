@@ -111,6 +111,10 @@ class SpaceScene extends FxScene {
     this.controls.update(delta);
     this.taskAnimationCube.forEach((task) => task(delta));
 
+    if (this.visible === true)
+      document.getElementById("text_container").classList.add("hidden");
+    else document.getElementById("text_container").classList.remove("hidden");
+
     // this.effect.render(this.scene, this.camera);
 
     //On Mouse Move
