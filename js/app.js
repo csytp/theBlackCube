@@ -325,9 +325,6 @@ class Sketch {
 
     this.events = new Events(this);
 
-    // window.addEventListener("resize", this.events.onWindowResize.bind(this), false);
-    // document.addEventListener("keydown", this.onKeyPressed.bind(this), false);
-
     let myscene = [1];
     this.changeScene(myscene);
   }

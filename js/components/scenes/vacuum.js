@@ -775,49 +775,8 @@ class Vacuum extends FxScene {
           }
         },
       },
-      /*
-      {
-        on: "mousedown",
-        element: document,
-        event: () => {
-          
-          if (!$this.masterCubeOpened) {
-            $this.aperturaMastercube();
-            $this.masterCubeOpened = true;
-          }
 
-          $this.onMouseMove = true;
-
-          $this.needle = setInterval(() => {
-            if ($this.onMouseMove) {
-              $this.initTextScrolling();
-              $this.launchTextScrolling($this);
-            }
-          }, 1200);
-        },
-      },
       {
-        /*
-        on: "mouseup",
-        element: document,
-        event: () => {
-          $this.onMouseMove = false;
-          clearInterval($this.needle);
-        }
-      },
-      {
-        /*
-        on: "click",
-        element: document,
-        event: () => {
-          if (!$this.onMouseMove) {
-            $this.initTextScrolling();
-            $this.launchTextScrolling();
-          }
-        }
-      },
-      {
-        /*
         on: "touchstart",
         element: document,
         event: () => {
@@ -837,30 +796,26 @@ class Vacuum extends FxScene {
               $this.launchTextScrolling();
             }
           }, 2000);
-        }
+        },
       },
       {
-        /*
         on: "touchmove",
         element: document,
         event: () => {
           $this.onTouchMove = true;
-        }
+        },
       },
       {
-        /*
         on: "touchend",
         element: document,
         event: () => {
           $this.onTouchMove = false;
           clearInterval($this.needle);
-        }
-      },*/
+        },
+      },
     ];
 
     this.eventsArray.forEach((objEvent) => {
-      // console.log(objEvent);
-      // console.log(objEvent.element);
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
     });
   }
