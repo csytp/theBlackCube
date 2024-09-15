@@ -472,6 +472,8 @@ class Sketch {
     let activeSceneObj = this.getActiveScene(this.arrayScenes);
     this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant);
 
+    console.log(sceneIWant);
+
     switch (sceneIWant) {
       case 0:
         document.getElementById("text_container").classList.remove("!hidden");
