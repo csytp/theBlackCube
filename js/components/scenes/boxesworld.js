@@ -93,6 +93,7 @@ class BoxesWorld extends FxScene {
     this.controls.zoomSpeed = 1;
     this.controls.noPan = true;
     this.controls.minDistance = -2.5;
+    this.controls.maxDistance = 16393;
 
     //this.initCube();
 
@@ -274,6 +275,7 @@ class BoxesWorld extends FxScene {
         on: "change",
         element: this.controls,
         event: (e) => {
+          console.log(this.camera1.position);
           // this.mouse.set(
           //   (e.clientX / this.sketch.sizes.width) * 2 - 1,
           //   -(e.clientY / this.sketch.sizes.height) * 2 + 1);
