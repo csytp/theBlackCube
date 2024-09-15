@@ -423,7 +423,7 @@ class Vacuum extends FxScene {
       true
     );
 
-    console.log(this.intersects);
+    // console.log(this.intersects);
     /*
       Object.keys(hovered).forEach((key) => {
         const hit = intersects.find((hit) => hit.object.uuid === key)
@@ -802,6 +802,8 @@ class Vacuum extends FxScene {
 
     this.eventsArray.forEach((objEvent) => {
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
+      console.log(objEvent);
+
     });
   }
 

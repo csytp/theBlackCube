@@ -187,14 +187,14 @@ io.on("connection", (socket) => {
     const event = messageParts[1];
     const args = messageParts.slice(2);
 
-    console.log(`Target Index: ${targetIndex}, Event: ${event}, Args: ${args}`);
+    //console.log(`Target Index: ${targetIndex}, Event: ${event}, Args: ${args}`);
 
     const targetSocket = connectedSockets[targetIndex - 1]; // Adjust for zero-based index
 
     if (targetSocket) {
-      console.log(
+      /*console.log(
         `Sending event '${event}' to socket with index ${targetIndex}, ID: ${targetSocket.id}`
-      );
+      );*/
       targetSocket.emit(event, args);
     } else {
       console.error(`Socket at index ${targetIndex} not found.`);
@@ -212,7 +212,7 @@ io.on("connection", (socket) => {
 // }, 1000);
 
 server.listen(5174, () => {
-  console.log("Server is listening on port 8000");
+  // console.log("Server is listening on port 8000");
 });
 
 //*/

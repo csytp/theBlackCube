@@ -260,7 +260,7 @@ class SpaceScene extends FxScene {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     //intersects = raycaster.intersectObjects(scene.children, true);
     this.intersects = this.raycaster.intersectObjects(this.cube, false);
-    console.log(this.intersects);
+    // console.log(this.intersects);
     /*
       Object.keys(hovered).forEach((key) => {
         const hit = intersects.find((hit) => hit.object.uuid === key)
@@ -278,7 +278,7 @@ class SpaceScene extends FxScene {
     this.taskAnimationCube.push(task);
   }
 
-  initEvents(cam) {
+  initEvents() {
     const $this = this;
 
     //let indexTaskAnimationCube = 0;
@@ -290,11 +290,11 @@ class SpaceScene extends FxScene {
       ease: "sine",
       y: (360 * Math.PI) / 180,
       onStart: function () {
-        console.log("start cube rotation");
+        // console.log("start cube rotation");
       },
       onComplete: function () {
         $this.myTween.shift().kill();
-        console.log("cube rotation done!");
+        // console.log("cube rotation done!");
         $this.cube.rotation.set(0, 0, 0);
       },
     };
@@ -306,11 +306,11 @@ class SpaceScene extends FxScene {
       ease: "sine",
       y: Math.PI * 0.25,
       onStart: function () {
-        console.log("start camera rotation");
+        // console.log("start camera rotation");
       },
       onComplete: function () {
         $this.myTween.shift().kill();
-        console.log("camera rotation done!");
+        // console.log("camera rotation done!");
         // $this.cube.rotation.set(0, 0, 0);
       },
     };
@@ -419,6 +419,8 @@ class SpaceScene extends FxScene {
 
     this.eventsArray.forEach((objEvent) => {
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
+      console.log(objEvent);
+
     });
   }
 
@@ -432,7 +434,7 @@ class SpaceScene extends FxScene {
     // -> linked to Face Recognition
     if (flag === true || flag === false) this.controls.enabled = flag;
 
-    console.log(this.controls.enabled);
+    // console.log(this.controls.enabled);
 
     if (flag === false) {
       if (this.sketch.fxSceneA.visible === true) {

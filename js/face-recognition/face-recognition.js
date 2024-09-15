@@ -57,9 +57,9 @@ class FaceRecognition {
     }
     // Enable the live webcam view and start detection.
     function enableCam(event) {
-      console.log("enableCam FR");
+      // console.log("enableCam FR");
       if (!faceLandmarker) {
-        console.log("Wait! faceLandmarker not loaded yet.");
+        // console.log("Wait! faceLandmarker not loaded yet.");
         return;
       }
       if (webcamRunning === true) {
@@ -155,7 +155,7 @@ class FaceRecognition {
         }
       }*/
 
-      // console.log('NO FACE!');
+      console.log('NO FACE!');
       drawBlendShapes(videoBlendShapes, results.faceBlendshapes);
 
       // Call this function again to keep predicting when the browser is ready.
@@ -164,9 +164,9 @@ class FaceRecognition {
       }
     }
     function drawBlendShapes(el, blendShapes) {
-      //console.log("FRisVisible", $this.sketch.FRisVisible);
+      console.log("FRisVisible", $this.sketch.FRisVisible);
       if ($this.sketch.FRisVisible === true) {
-        console.log("from FR", $this.sketch.fxSceneA.faceGroup.visible);
+        // console.log("from FR", $this.sketch.fxSceneA.faceGroup.visible);
         if (!blendShapes.length) {
           //Riconosce No Face -> Togli mesh busto
           $this.faceDetected = false;
@@ -202,7 +202,7 @@ class FaceRecognition {
         let htmlMaker = "";
 
         blendShapes[0].categories.map((shape) => {
-          //console.log(shape);
+          // console.log(shape);
           htmlMaker += `
       <li class="blend-shapes-item">
         <span class="blend-shapes-label">${
@@ -214,7 +214,7 @@ class FaceRecognition {
       </li>
     `;
         });
-        //console.log(htmlMaker);
+        // console.log(htmlMaker);
         el.innerHTML = htmlMaker;
       } else {
         $this.faceDetected = false;
@@ -232,7 +232,7 @@ class FaceRecognition {
     return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
   }
   startFR() {
-    console.log("startFR");
+    // console.log("startFR");
     document
       .getElementById("webcamButton")
       .dispatchEvent(new MouseEvent("click"));

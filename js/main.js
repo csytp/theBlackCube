@@ -64,7 +64,7 @@ document.addEventListener("visibilitychange", function () {
 // SOCKET-IO -> THREEJS
 
 socket.on("chgScn", (ctrlValue) => {
-  console.log(ctrlValue);
+  // console.log(ctrlValue);
   sketch.changeScene(ctrlValue);
 });
 

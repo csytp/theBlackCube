@@ -392,7 +392,7 @@ class Sketch {
   onKeyPressed(event) {
     const keyName = event.key;
     if (keyName === "1") {
-      console.log("pressed 1");
+      // console.log("pressed 1");
       this.fxSceneA = this.arrayScenes[0];
       this.renderTransitionPass = new RenderTransitionPass(
         this.fxSceneB.scene,
@@ -401,7 +401,7 @@ class Sketch {
         this.fxSceneA.camera
       );
     } else if (keyName === "2") {
-      console.log("pressed 2");
+      // console.log("pressed 2");
       this.fxSceneB = this.arrayScenes[2];
       this.renderTransitionPass = new RenderTransitionPass(
         this.fxSceneB.scene,

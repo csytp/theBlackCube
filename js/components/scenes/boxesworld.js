@@ -308,7 +308,12 @@ class BoxesWorld extends FxScene {
 
     this.eventsArray.forEach((objEvent) => {
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
+      console.log(objEvent);
     });
+    // for await (const results of array) {
+    //   await longRunningTask()
+    // }
+    // console.log('I will wait');
   }
 
   removeEvents() {

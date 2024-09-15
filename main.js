@@ -489,7 +489,7 @@ function initRaycaster() {
     );
 
     if (isIntersected) {
-      console.log("Mesh clicked!");
+      //console.log("Mesh clicked!");
     }
   }
 
@@ -571,8 +571,8 @@ function getRandomColor() {
 }
 
 function detectBrowser() {
-  console.log(navigator.userAgent);
-  console.log(navigator);
+  //console.log(navigator.userAgent);
+  //console.log(navigator);
   // Opera 8.0+
   var isOpera =
     (!!window.opr && !!opr.addons) ||
@@ -617,7 +617,7 @@ function detectBrowser() {
   output += "isEdge: " + isEdge + "\n";
   output += "isEdgeChromium: " + isEdgeChromium + "\n";
   output += "isBlink: " + isBlink + "\n";
-  console.log(output);
+  //console.log(output);
 }
 
 /* ******************************* EVENTS LISTENERS ******************************* */
@@ -920,14 +920,14 @@ document.addEventListener(
 function touchFuncs() {
   const el = document.getElementById("app");
   el.addEventListener("touchstart", () => {
-    console.log("touchstart!!");
+    //console.log("touchstart!!");
 
     /*
       flash();*/
     //toggleText(1, document.getElementById('text-container'));
   });
   el.addEventListener("touchend", () => {
-    console.log("touchend!!");
+    //console.log("touchend!!");
     //toggleText(0, document.getElementById('text-container'));
 
     /*
@@ -935,10 +935,10 @@ function touchFuncs() {
       clearInterval(goFlash,100);*/
   });
   el.addEventListener("touchcancel", () => {
-    console.log("touchcancel!!");
+    //console.log("touchcancel!!");
   });
   el.addEventListener("touchmove", () => {
-    console.log("touchmove!!");
+    //console.log("touchmove!!");
 
     /*
       console.log(camera.rotation.x);
@@ -946,7 +946,7 @@ function touchFuncs() {
       console.log(camera.rotation.z);
   */
   });
-  console.log("Initialized.");
+  //console.log("Initialized.");
 }
 document.addEventListener("DOMContentLoaded", touchFuncs);
 
@@ -1030,7 +1030,7 @@ function start() {
   initRaycaster();
   //audio();
 
-  console.log(scene);
+  //console.log(scene);
 }
 
 document
