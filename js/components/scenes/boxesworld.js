@@ -250,11 +250,11 @@ class BoxesWorld extends FxScene {
       -(e.clientY / this.sketch.sizes.height) * 2 + 1
     );
 
-    console.log(this.cube);
+    //console.log(this.cube);
     this.raycaster.setFromCamera(this.mouse, this.camera);
     //intersects = raycaster.intersectObjects(scene.children, true);
     this.intersects = this.raycaster.intersectObjects(this.cube, true);
-    console.log(this.intersects);
+    //console.log(this.intersects);
     /*
       Object.keys(hovered).forEach((key) => {
         const hit = intersects.find((hit) => hit.object.uuid === key)
@@ -283,7 +283,7 @@ class BoxesWorld extends FxScene {
         on: "mousemove",
         element: document,
         event: (e) => {
-          $this.mouseIntersections(e);
+          //$this.mouseIntersections(e);
         },
       },
       {
