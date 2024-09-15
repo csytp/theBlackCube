@@ -423,7 +423,8 @@ class SpaceScene extends FxScene {
       console.log(objEvent);
       j++;
     });
-    console.log('lungh. array event', j);
+    console.log('Scena 2 array event', j);
+
   }
 
   removeEvents() {

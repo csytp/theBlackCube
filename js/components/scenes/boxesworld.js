@@ -312,7 +312,7 @@ class BoxesWorld extends FxScene {
       console.log(objEvent);
       j++;
     });
-    console.log('lungh. array event', j);
+    console.log('Scena 3 array event', j);
   }
 
   removeEvents() {
