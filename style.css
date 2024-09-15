@@ -99,7 +99,7 @@
     }
 
     #presentation_container #presentation{
-        @apply flex flex-col items-center space-y-5 text-center;
+        @apply flex flex-col items-center space-y-8 text-center;
     }
     #presentation_container #presentation .title{
         @apply text-3xl;
@@ -107,8 +107,15 @@
     #presentation_container #presentation .subtitle{
         @apply text-xl lg:text-2xl;
     }
+    #presentation_container #presentation .names{
+        @apply grid gap-0 grid-cols-1 md:grid-cols-3;
+        /* @apply mt-4; */
+    }
+    #presentation_container #presentation .names p{
+        @apply text-base md:text-lg;
+    }
     #presentation_container .instructions_container{
-        @apply max-w-lg text-lg;
+        @apply max-w-lg text-base sm:text-lg;
     }
     #presentation_container .instructions_container ul{
         @apply list-disc list-inside;

@@ -295,9 +295,9 @@ class Sketch {
     this.texturesFxScene = []; //Textures for renderTransitionPass
 
     this.arrayScenes = [
-      new Vacuum(this),
-      new SpaceScene(this, 20000), //params-> (this Sketch, starsCount)
-      new BoxesWorld(this),
+      new Vacuum(this, 0),
+      new SpaceScene(this, 20000, 1), //params-> (this Sketch, starsCount)
+      new BoxesWorld(this, 2),
     ];
 
     for (let i = 0; i < this.arrayScenes.length; i++) {
@@ -441,6 +441,7 @@ class Sketch {
         this.fxSceneA.controls.reset()
       );
       scene.removeEvents();
+      scene.removeIntervals();
       this.transitionParams.transition = 1;
     } else {
       this.fxSceneA = this.arrayScenes[sceneIWant];
@@ -453,11 +454,13 @@ class Sketch {
         this.fxSceneB.controls.reset()
       );
       scene.removeEvents();
+      scene.removeIntervals();
       this.transitionParams.transition = 0;
     }
 
     this.arrayScenes[sceneIWant].visible = true;
     this.arrayScenes[sceneIWant].initEvents();
+    this.arrayScenes[sceneIWant].initIntervals();
   }
   showFR(args) {
     this.FRisVisible = args[0];
@@ -472,15 +475,9 @@ class Sketch {
     let activeSceneObj = this.getActiveScene(this.arrayScenes);
     this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant);
 
-    console.log(sceneIWant);
-
-    switch (sceneIWant) {
-      case 0:
-        document.getElementById("text_container").classList.remove("!hidden");
-        break;
-      default:
-        document.getElementById("text_container").classList.add("!hidden");
-    }
+    if (sceneIWant)
+      document.getElementById("text_container").classList.add("!hidden");
+    else document.getElementById("text_container").classList.remove("!hidden");
   }
   getRandomTailwindColor() {
     return this.tailwind_colors_array[

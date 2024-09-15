@@ -14,11 +14,11 @@ import srcStarMap from "../../../img/star.png";
 import spaceTexture from "../../../public/img/space.jpg";
 
 class SpaceScene extends FxScene {
-  constructor(sketch, starsCount) {
-    super(sketch, new THREE.Color(0x000000), false);
+  constructor(sketch, starsCount, n_scene) {
+    super(sketch, new THREE.Color(0x000000), false, n_scene);
 
     //GSAP
-    this.setupGSAP();
+    //this.setupGSAP();
     this.myTween = [];
     this.taskAnimationCube = [];
 
@@ -26,6 +26,9 @@ class SpaceScene extends FxScene {
     this.pa = 0;
     this.vel = 0;
     this.va = 0;
+
+    this.intervalIDArray = [];
+    this.intervalArray = [];
 
     this.scene.add(new THREE.AmbientLight(0xaaaaaa, 3));
 
@@ -111,6 +114,8 @@ class SpaceScene extends FxScene {
     this.controls.update(delta);
     this.taskAnimationCube.forEach((task) => task(delta));
 
+    if (this.visible) this.scene.rotation.x += -delta * 0.1;
+
     //On Mouse Move
     // this.camera.position.x += (this.mouseX - this.camera.position.x) * 0.005;
     // this.camera.position.y += (-this.mouseY - this.camera.position.y) * 0.005;
@@ -133,18 +138,13 @@ class SpaceScene extends FxScene {
         this.va[2 * point_index] = this.va[6 * point_index + 1] = 0;
       }
     }
-    this.starGeo.getAttribute("position").needsUpdate = true;
+    if (this.visible) this.starGeo.getAttribute("position").needsUpdate = true;
+    else
+    this.starGeo.getAttribute("position").needsUpdate = false;
 
     return delta;
   }
-  setupGSAP() {
-    //gsap.registerPlugin(ScrollTrigger);
-    // ScrollTrigger.refresh(true);
-    // ScrollTrigger.create({
-    //   start: 0,
-    //   end: "max",
-    // });
-  }
+
   initSpace() {
     this.starGeo = new THREE.BufferGeometry();
     this.starGeo.setAttribute(
@@ -278,6 +278,74 @@ class SpaceScene extends FxScene {
     this.taskAnimationCube.push(task);
   }
 
+  moveCam(this_scene) {
+    if (this_scene.intervalTimingNeedle) {
+      const dir = Math.random() > 0.5 ? 1 : -1;
+      const x1 = dir * Math.random() * this_scene.rangeCameraMov;
+      // const x2 = dir * Math.random() * this_scene.rangeCameraMov;
+      // const x3 = dir * Math.random() * this_scene.rangeCameraMov;
+      const y1 = dir * Math.random() * this_scene.rangeCameraMov;
+      // const y2 = dir * Math.random() * this_scene.rangeCameraMov;
+      // const y3 = dir * Math.random() * this_scene.rangeCameraMov;
+      const z1 = dir * Math.random() * this_scene.rangeCameraMov;
+      // const z2 = dir * Math.random() * this_scene.rangeCameraMov;
+      // const z3 = dir * Math.random() * this_scene.rangeCameraMov;
+
+      this_scene.tl1.to(this_scene.camera.position, {
+        x: x1,
+        y: y1,
+        z: z1,
+        duration: this_scene.durCameraMov,
+        ease: "power3.out",
+        onUpdate: () => {
+          this_scene.camera.lookAt(0, 0, 0);
+        },
+      });
+      /*
+      this_scene.tl1.to(this_scene.camera.position, {
+        x: x2,
+        y: y2,
+        z: z2,
+        duration: this_scene.durCameraMov,
+        ease: "power3.out",
+        onUpdate: () => {
+          this_scene.camera.lookAt(0, 0, 0);
+        },
+      });
+      this_scene.tl1.to(this_scene.camera.position, {
+        x: x3,
+        y: y3,
+        z: z3,
+        duration: this_scene.durCameraMov,
+        ease: "power3.out",
+        onUpdate: () => {
+          this_scene.camera.lookAt(0, 0, 0);
+        },
+      });*/
+    }
+  }
+
+  bounceCube(this_scene) {
+    if (this_scene.intervalTimingNeedle) {
+      this_scene.tl2.to(this_scene.cube.position, {
+        x: this_scene.cube.position.x + (10 * Math.random() - 5),
+        y: this_scene.cube.position.y + (10 * Math.random() - 5),
+        z: this_scene.cube.position.z + (10 * Math.random() - 5),
+        duration: 0.5,
+        ease: "elastic",
+        onComplete: () => {
+          this_scene.tl2.to(this_scene.cube.position, {
+            x: 0,
+            y: 0,
+            z: 0,
+            duration: 0.3,
+            ease: "elastic",
+          });
+        },
+      });
+    }
+  }
+
   initEvents() {
     const $this = this;
 
@@ -315,11 +383,6 @@ class SpaceScene extends FxScene {
       },
     };
 
-    const tl1 = gsap.timeline();
-    const tl2 = gsap.timeline();
-    const rangeCameraMov = 20;
-    const durCameraMov = 0.8;
-
     this.eventsArray = [
       {
         on: "change",
@@ -332,7 +395,7 @@ class SpaceScene extends FxScene {
         on: "mousemove",
         element: document,
         event: (e) => {
-          $this.mouseIntersections(e);
+          // $this.mouseIntersections(e);
         },
       },
       {
@@ -342,71 +405,11 @@ class SpaceScene extends FxScene {
           const keyName = e.key;
 
           if (keyName === "0") {
-            const dir = Math.random() > 0.5 ? 1 : -1;
-            const x1 = dir * Math.random() * rangeCameraMov;
-            const x2 = dir * Math.random() * rangeCameraMov;
-            const x3 = dir * Math.random() * rangeCameraMov;
-            const y1 = dir * Math.random() * rangeCameraMov;
-            const y2 = dir * Math.random() * rangeCameraMov;
-            const y3 = dir * Math.random() * rangeCameraMov;
-            const z1 = dir * Math.random() * rangeCameraMov;
-            const z2 = dir * Math.random() * rangeCameraMov;
-            const z3 = dir * Math.random() * rangeCameraMov;
-
-            tl1.to(this.camera.position, {
-              x: x1,
-              y: y1,
-              z: z1,
-              duration: durCameraMov,
-              ease: "power3.out",
-              onUpdate: () => {
-                this.camera.lookAt(0, 0, 0);
-              },
-            });
-            tl1.to(this.camera.position, {
-              x: x2,
-              y: y2,
-              z: z2,
-              duration: durCameraMov,
-              ease: "power3.out",
-              onUpdate: () => {
-                this.camera.lookAt(0, 0, 0);
-              },
-            });
-            tl1.to(this.camera.position, {
-              x: x3,
-              y: y3,
-              z: z3,
-              duration: durCameraMov,
-              ease: "power3.out",
-              onUpdate: () => {
-                this.camera.lookAt(0, 0, 0);
-              },
-            });
           }
 
           if (keyName === "1") {
-            $this.addAnimationTask(
-              $this.animationsCube[parseInt(Math.random() * 5)].fn
-            );
           }
           if (keyName === "2") {
-            tl2.to(this.cube.position, {
-              x: this.cube.position.x + (10 * Math.random() - 5),
-              y: this.cube.position.y + (10 * Math.random() - 5),
-              z: this.cube.position.z + (10 * Math.random() - 5),
-              duration: 0.5,
-              ease: "elastic",
-              onComplete: () => {
-                tl2.to(this.cube.position, {
-                  x: 0,
-                  y: 0,
-                  z: 0,
-                  duration: 0.3,
-                  ease: "elastic",
-                });
-              },
-            });
           }
         },
       },
@@ -417,19 +420,67 @@ class SpaceScene extends FxScene {
       },
     ];
 
-    let j = 0;
     this.eventsArray.forEach((objEvent) => {
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
-      console.log(objEvent);
-      j++;
     });
-    console.log('Scena 2 array event', j);
-
   }
 
   removeEvents() {
     this.eventsArray.forEach((e) => {
       e.element.removeEventListener(e.on, e.event);
+    });
+  }
+
+  initIntervals() {
+    const $this = this;
+    this.intervalTimingNeedle = false;
+    this.intervalTiming = 7000; //ms
+
+    this.tl1 = gsap.timeline();
+    this.tl2 = gsap.timeline();
+    this.rangeCameraMov = 20;
+    this.durCameraMov = 0.8;
+
+    this.intervalIDArray = [];
+    this.intervalArray = [
+      {
+        //Needle
+        fn: () => {
+          this.intervalTimingNeedle = this.intervalTimingNeedle ? false : true;
+        },
+        interval: this.intervalTiming,
+        args: "",
+      },
+      {
+        fn: this.moveCam,
+        interval: 4000,
+        args: this,
+      },
+      {
+        fn: this.bounceCube,
+        interval: 2500,
+        args: this,
+      },
+      {
+        fn: () => {
+          this.addAnimationTask(
+            this.animationsCube[parseInt(Math.random() * 5)].fn
+          );
+        },
+        interval: 4000,
+        args: "",
+      },
+    ];
+
+    this.intervalArray.forEach((objInteval) => {
+      $this.intervalIDArray.push(
+        setInterval(objInteval.fn, objInteval.interval, objInteval.args)
+      );
+    });
+  }
+  removeIntervals() {
+    this.intervalIDArray.forEach((id) => {
+      clearInterval(id);
     });
   }
 

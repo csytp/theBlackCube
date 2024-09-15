@@ -10,12 +10,16 @@ import FxScene from "../fxscene.js";
 import { gsap } from "gsap";
 
 class BoxesWorld extends FxScene {
-  constructor(sketch) {
+  constructor(sketch, n_scene) {
     super(
       sketch,
       new THREE.Color().setHSL(0.51, 0.4, 0.01, THREE.SRGBColorSpace),
-      false
+      false,
+      n_scene
     );
+
+    this.intervalIDArray = [];
+    this.intervalArray = [];
 
     // Mouse
     this.raycaster = new THREE.Raycaster();
@@ -32,18 +36,17 @@ class BoxesWorld extends FxScene {
     this.scene.rotation.y = 1.5 * Math.PI;
 
     // Cameras
-    this.camera1 = this.camera;
-    this.camera2 = new THREE.OrthographicCamera(
-      this.sketch.sizes.width / -2,
-      this.sketch.sizes.width / 2,
-      this.sketch.sizes.height / 2,
-      this.sketch.sizes.height / -2,
-      1,
-      15000
-    );
-    this.lookAtPosition = { x: 0, y: 0, z: 0 };
-    this.scene.add(this.camera1);
-    this.scene.add(this.camera2);
+    // this.camera = this.camera;
+    // this.camera2 = new THREE.OrthographicCamera(
+    //   this.sketch.sizes.width / -2,
+    //   this.sketch.sizes.width / 2,
+    //   this.sketch.sizes.height / 2,
+    //   this.sketch.sizes.height / -2,
+    //   1,
+    //   15000
+    // );
+    this.scene.add(this.camera);
+    // this.scene.add(this.camera2);
 
     const s = 250;
 
@@ -85,7 +88,7 @@ class BoxesWorld extends FxScene {
 
     //Controls
     this.controls = new TrackballControls(
-      this.camera1,
+      this.camera,
       this.sketch.renderer.domElement
     );
     this.controls.enabled = true;
@@ -101,7 +104,7 @@ class BoxesWorld extends FxScene {
     // inquadrature
     this.cameraShots = [
       //Lontana
-      { x: 7106.287968341558, y: 1691.1148224695248, z: 13663.693284260788 },
+      { x: 0, y: 0, z: 16393 },
       // - Luce blu
       { x: 8366.434176961759, y: -222.3651995605373, z: 704.963879595055 },
       // - Luce gialla
@@ -109,12 +112,6 @@ class BoxesWorld extends FxScene {
       // - Luce bianca
       { x: 8888.39699061364, y: 8806.610664274955, z: 1329.933494315267 },
     ];
-
-    this.camera1.position.set(
-      this.cameraShots[0].x,
-      this.cameraShots[0].y,
-      this.cameraShots[0].z
-    );
 
     this.taskAnimationScene = [];
     this.animationsScene = [
@@ -161,11 +158,6 @@ class BoxesWorld extends FxScene {
   }
   update(delta) {
     this.controls.update(delta);
-    this.camera1.lookAt(
-      this.lookAtPosition.x,
-      this.lookAtPosition.y,
-      this.lookAtPosition.z
-    );
     this.taskAnimationScene.forEach((task) => task(delta));
   }
   addLight(h, s, l, x, y, z) {
@@ -237,9 +229,8 @@ class BoxesWorld extends FxScene {
       ease: "power3-out",
     };
 
-    this.tl.to(this.camera1.position, animProp);
+    this.tl.to(this.camera.position, animProp);
     this.tl.play();
-    // this.lookAtPosition = shot_position;
   }
   addAnimationTask(task) {
     this.taskAnimationScene.pop();
@@ -275,10 +266,7 @@ class BoxesWorld extends FxScene {
         on: "change",
         element: this.controls,
         event: (e) => {
-          console.log(this.camera1.position);
-          // this.mouse.set(
-          //   (e.clientX / this.sketch.sizes.width) * 2 - 1,
-          //   -(e.clientY / this.sketch.sizes.height) * 2 + 1);
+          //console.log(this.camera.position);
         },
       },
       {
@@ -295,31 +283,71 @@ class BoxesWorld extends FxScene {
           const keyName = e.key;
 
           if (keyName === "0") {
-            let l = $this.cameraShots.length - 1;
-            l = parseInt(Math.random() * l);
-            $this.changeShots($this.cameraShots[l]);
           }
           if (keyName === "1") {
-            let l = $this.animationsScene.length - 1;
-            l = parseInt(Math.random() * l);
-            $this.addAnimationTask($this.animationsScene[l].fn);
           }
         },
       },
     ];
 
-    let j = 0;
     this.eventsArray.forEach((objEvent) => {
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
-      console.log(objEvent);
-      j++;
     });
-    console.log('Scena 3 array event', j);
   }
 
   removeEvents() {
     this.eventsArray.forEach((e) => {
       e.element.removeEventListener(e.on, e.event);
+    });
+  }
+
+  initIntervals() {
+    const $this = this;
+    this.intervalTimingNeedle = false;
+    this.intervalTiming = 8000; //ms
+
+    this.intervalIDArray = [];
+    this.intervalArray = [
+      {
+        //Needle
+        fn: () => {
+          this.intervalTimingNeedle = this.intervalTimingNeedle ? false : true;
+          console.log(this.intervalTimingNeedle);
+        },
+        interval: this.intervalTiming,
+        args: this,
+      },
+      {
+        fn: () => {
+          if (this.intervalTimingNeedle) {
+            let l = this.cameraShots.length - 1;
+            l = parseInt(Math.random() * l);
+            this.changeShots(this.cameraShots[l]);
+          }
+        },
+        interval: 5000,
+        args: "",
+      },
+      {
+        fn: () => {
+          if (this.intervalTimingNeedle) {
+            let l = this.animationsScene.length - 1;
+            l = parseInt(Math.random() * l);
+            this.addAnimationTask(this.animationsScene[l].fn);
+          }
+        },
+        interval: 3000,
+        args: "",
+      },
+    ];
+
+    this.intervalArray.forEach((objInteval) => {
+      $this.intervalIDArray.push(setInterval(objInteval.fn, objInteval.interval, objInteval.args));
+    });
+  }
+  removeIntervals() {
+    this.intervalIDArray.forEach((id) => {
+      clearInterval(id);
     });
   }
 

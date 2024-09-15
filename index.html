@@ -25,24 +25,6 @@
       <p class="zoom"></p>
     </div>
 
-    <div id="face-recognition" class="flow-root">
-      <h2>Demo: Webcam continuous face landmarks detection</h2>
-      <p>Hold your face in front of your webcam to get real-time face landmarker detection.</br>Click <b>enable webcam</b> below and grant access to the webcam if prompted.</p>
-      <div id="liveView" class="videoView">
-        <button id="webcamButton" class="mdc-button mdc-button--raised">
-          <span class="mdc-button__ripple"></span>
-          <span class="mdc-button__label">ENABLE WEBCAM</span>
-        </button>
-        <div style="position: relative;">
-          <video id="webcam" class="hidden" autoplay playsinline></video>
-          <canvas class="output_canvas" id="output_canvas"></canvas>
-        </div>
-      </div>
-      <div class="blend-shapes">
-        <ul class="blend-shapes-list" id="video-blend-shapes"></ul>
-      </div>
-    </div>
-
     <div id="presentation_container">
       <div id="cube_container">
         <div id="cube">
@@ -59,7 +41,8 @@
           <h1>WEB BOX</h1>
         </div>
         <div class="subtitle">
-          <h4>Surveillance and Manipulation in the Digital Age 
+          <h4>
+            Surveillance and Manipulation in the Digital Age
             <span class="block">
               Trans-interactive installation for physical and web environments
             </span>
@@ -67,25 +50,25 @@
         </div>
         <div class="instructions_container">
           <ul>
-            <li>Connect with the physical environment by zooming, scrolling
-              and exploring virtual space.</li>
             <li>
-              Turn up the volume and activate the phone ringer for the
-          full experience.
+              Interact with the digital web box by zooming and navigating
+              through different environments.
             </li>
-          </ul>          
+            <li>
+              For the best experience, activate the phone's ringer and increase
+              the volume.
+            </li>
+          </ul>
         </div>
 
         <div class="names">
-          <p>
-            Lorenzo Ballerini <span class="block">with</span>
-            Giuseppe Ernandez & Massimo Reina
-          </p>
+          <p>Lorenzo Ballerini</p>
+          <p>Giuseppe Ernandez</p>
+          <p>Massimo Reina</p>
         </div>
       </div>
       <button id="hideButton">START</button>
     </div>
-
 
     <script type="module" src="js/main.js"></script>
   </body>

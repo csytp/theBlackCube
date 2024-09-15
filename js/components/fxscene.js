@@ -7,10 +7,11 @@ import FxSceneEvents from "./fxscene_events.js";
 // import Controls from "./../components/controls";
 
 class FxScene {
-  constructor(sketch, backgroundColor, visible = false) {
+  constructor(sketch, backgroundColor, visible = false, n_scene) {
     this.sketch = sketch;
     this.delta = this.sketch.clock.getDelta();
     this.visible = visible;
+    this.n_scene = n_scene;
 
     this.paramsFxScene = {
       sceneAnimate: false,
@@ -48,7 +49,9 @@ class FxScene {
       0.1,
       15000
     );
-    this.camera.position.z = 20;
+
+    if (this.n_scene == 2) this.camera.position.z = 16393;
+    else this.camera.position.z = 20;
   }
 
   createFace() {

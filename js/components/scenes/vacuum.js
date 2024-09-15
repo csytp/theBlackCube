@@ -10,8 +10,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 class Vacuum extends FxScene {
-  constructor(sketch) {
-    super(sketch, new THREE.Color(0xcfcccc), true);
+  constructor(sketch, n_scene) {
+    super(sketch, new THREE.Color(0xcfcccc), true, n_scene);
+
     //this.settings = { ...settings };
     let $this = this;
 
@@ -23,6 +24,9 @@ class Vacuum extends FxScene {
     this.mouse = new THREE.Vector2();
     this.intersects = [];
     this.hovered = {};
+
+    this.intervalIDArray = [];
+    this.intervalArray = [];
 
     this.masterCubeOpened = false;
 
@@ -525,8 +529,9 @@ class Vacuum extends FxScene {
     ); // Rotation
   }
 
-  randomCubeColor() {
-    const $this = this;
+  randomCubeColor(this_scene) {
+    // console.log("random");
+    const $this = this_scene;
     function getRandomColor() {
       let r = Math.floor(Math.random() * 255);
       let g = Math.floor(Math.random() * 255);
@@ -537,32 +542,34 @@ class Vacuum extends FxScene {
       return color;
     }
 
-    // Random Cubes Rotation
-    const cubeIndex = Math.floor(Math.random() * 26);
-    const cube = $this.masterCubeGrp.children[cubeIndex];
-    const resetColor = "#000000";
+    if ($this.intervalTimingNeedle && $this.masterCubeOpened) {
+      // Random Cubes Rotation
+      const cubeIndex = Math.floor(Math.random() * 26);
+      const cube = $this.masterCubeGrp.children[cubeIndex];
+      const resetColor = "#000000";
 
-    let myRepeatColor = 0;
+      let myRepeatColor = 0;
 
-    let animPropColor = {
-      duration: 1,
-      delay: 0,
-      repeat: myRepeatColor,
-      ease: "sine",
+      let animPropColor = {
+        duration: 1,
+        delay: 0,
+        repeat: myRepeatColor,
+        ease: "sine",
 
-      onStart: function () {
-        cube.material.color = getRandomColor();
-      },
+        onStart: function () {
+          cube.material.color = getRandomColor();
+        },
 
-      onComplete: function () {
-        cube.material.color = resetColor;
-        if (!myRepeatColor) {
-          $this.myTween.shift().kill();
-        }
-      },
-    };
+        onComplete: function () {
+          cube.material.color = resetColor;
+          if (!myRepeatColor) {
+            $this.myTween.shift().kill();
+          }
+        },
+      };
 
-    $this.myTween.push(gsap.to(cube, animPropColor));
+      $this.myTween.push(gsap.to(cube, animPropColor));
+    }
   }
 
   readRotationValues() {
@@ -728,12 +735,6 @@ class Vacuum extends FxScene {
     tl.play();
   }
 
-  removeEvents() {
-    this.eventsArray.forEach((e) => {
-      e.element.removeEventListener(e.on, e.event);
-    });
-  }
-
   initEvents() {
     const $this = this;
 
@@ -789,24 +790,57 @@ class Vacuum extends FxScene {
       {
         on: "touchmove",
         element: document,
-        event: () => {
-        },
+        event: () => {},
       },
       {
         on: "touchend",
         element: document,
-        event: () => {
-        },
+        event: () => {},
       },
     ];
 
-    let j = 0;
     this.eventsArray.forEach((objEvent) => {
       objEvent.element.addEventListener(objEvent.on, objEvent.event);
-      console.log(objEvent);
-      j++;
     });
-    console.log('Scena 1 array event', j);
+  }
+  removeEvents() {
+    this.eventsArray.forEach((e) => {
+      e.element.removeEventListener(e.on, e.event);
+    });
+  }
+
+  initIntervals() {
+    const $this = this;
+    this.intervalTimingNeedle = false;
+    this.intervalTiming = 5000; //ms
+
+    this.intervalArray = [
+      {
+        //Needle
+        fn: () => {
+          this.intervalTimingNeedle = this.intervalTimingNeedle ? false : true;
+          // console.log(this.intervalTimingNeedle);
+        },
+        interval: this.intervalTiming,
+        args: this,
+      },
+      {
+        fn: this.randomCubeColor,
+        interval: 200,
+        args: this,
+      },
+    ];
+
+    this.intervalArray.forEach((objInteval) => {
+      $this.intervalIDArray.push(
+        setInterval(objInteval.fn, objInteval.interval, objInteval.args)
+      );
+    });
+  }
+  removeIntervals() {
+    this.intervalIDArray.forEach((id) => {
+      clearInterval(id);
+    });
   }
 
   updateDIVText() {
