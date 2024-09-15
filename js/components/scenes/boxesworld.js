@@ -94,7 +94,7 @@ class BoxesWorld extends FxScene {
     this.controls.noPan = true;
     this.controls.minDistance = -2.5;
 
-    this.initCube();
+    //this.initCube();
 
     //Set camera
     // inquadrature

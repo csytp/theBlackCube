@@ -784,33 +784,18 @@ class Vacuum extends FxScene {
             $this.aperturaMastercube();
             $this.masterCubeOpened = true;
           }
-
-          if (!$this.onTouchMove) {
-            $this.initTextScrolling();
-            $this.launchTextScrolling();
-          }
-
-          $this.needle = setInterval(() => {
-            if ($this.onTouchMove) {
-              $this.initTextScrolling();
-              $this.launchTextScrolling();
-            }
-          }, 2000);
         },
       },
       {
         on: "touchmove",
         element: document,
         event: () => {
-          $this.onTouchMove = true;
         },
       },
       {
         on: "touchend",
         element: document,
         event: () => {
-          $this.onTouchMove = false;
-          clearInterval($this.needle);
         },
       },
     ];
