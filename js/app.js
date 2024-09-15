@@ -325,7 +325,7 @@ class Sketch {
 
     this.events = new Events(this);
 
-    let myscene = [1];
+    let myscene = [0];
     this.changeScene(myscene);
   }
   init() {
