@@ -471,6 +471,14 @@ class Sketch {
 
     let activeSceneObj = this.getActiveScene(this.arrayScenes);
     this.setActiveScene(activeSceneObj.scene, activeSceneObj.index, sceneIWant);
+
+    switch (sceneIWant) {
+      case 0:
+        document.getElementById("text_container").classList.remove("!hidden");
+        break;
+      default:
+        document.getElementById("text_container").classList.add("!hidden");
+    }
   }
   getRandomTailwindColor() {
     return this.tailwind_colors_array[
