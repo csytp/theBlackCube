@@ -790,7 +790,9 @@ class Vacuum extends FxScene {
       {
         on: "touchmove",
         element: document,
-        event: () => {},
+        event: () => {
+          $this.mouseIntersections(e);
+        },
       },
       {
         on: "touchend",
